@@ -287,7 +287,6 @@ async function mutateSQLPool(
 async function mutateManySQL(
   configOrConnection: ConfigOrConnection,
   sql: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params: BindParameters[] = [],
   options: ExecuteManyOptions = {}
 ): Promise<Results> {
@@ -347,7 +346,6 @@ async function mutateManySQL(
 async function mutateManySQLPool(
   config: ConnectionAttributes,
   sql: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params: BindParameters[] = [],
   options: ExecuteManyOptions = {}
 ): Promise<Results> {
