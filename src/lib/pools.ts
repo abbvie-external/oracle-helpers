@@ -1,4 +1,3 @@
-/* eslint-disable no-async-promise-executor */
 import oracledb, {
   Connection,
   ConnectionAttributes,
@@ -84,18 +83,14 @@ async function promiseOrTimeout<T>(
   promise: Promise<T>,
   timeout = 3000
 ): Promise<T> {
-  return await new Promise(async (resolve, reject) => {
-    const timerId = setTimeout(() => {
-      reject('Timeout');
-    }, timeout);
-    try {
-      resolve(await promise);
-    } catch (error) {
-      reject(error);
-    } finally {
-      clearTimeout(timerId);
-    }
-  });
+  return await Promise.race([
+    promise,
+    new Promise<never>((_resolve, reject) => {
+      setTimeout(() => {
+        reject('Timeout');
+      }, timeout);
+    }),
+  ]);
 }
 async function recreatePool(
   dbConfig: ConnectionAttributes,
