@@ -40,20 +40,20 @@ function doRelease(connection: oracledb.Connection): void {
  *
  * @returns The values as an array by default or nothing if there is a callback instead
  */
-function getSQL<T>(
+function getSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string,
   params?: BindParameters,
   options?: ExecuteOptions
 ): Promise<T[]>;
-function getSQL<T>(
+function getSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string,
   params: BindParameters,
   options: ExecuteOptions,
   cb: (record: T) => void
 ): Promise<void>;
-function getSQL<T>(
+function getSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string,
   params: BindParameters = {},
@@ -122,20 +122,20 @@ function getSQL<T>(
  *
  * @returns The values as an array by default or nothing if there is a callback instead
  */
-function getSQLPool<T>(
+function getSqlPool<T>(
   config: ConnectionAttributes,
   sql: string,
   params?: BindParameters,
   options?: ExecuteOptions
 ): Promise<T[]>;
-function getSQLPool<T>(
+function getSqlPool<T>(
   config: ConnectionAttributes,
   sql: string,
   params: BindParameters,
   options: ExecuteOptions,
   cb: (record: T) => void
 ): Promise<void>;
-function getSQLPool<T>(
+function getSqlPool<T>(
   config: ConnectionAttributes,
   sql: string,
   params: BindParameters = {},
@@ -188,7 +188,7 @@ function getSQLPool<T>(
  * @param options The oracle options for the SQL execution. `options.autoCommit` is set by default based on if `configOrConnection` is config.
  * @returns The result object for the execution
  */
-async function mutateSQL(
+async function mutateSql(
   configOrConnection: ConfigOrConnection,
   sql: string,
   params: BindParameters = {},
@@ -240,7 +240,7 @@ async function mutateSQL(
  *
  * @returns The result object for the execution
  */
-async function mutateSQLPool(
+async function mutateSqlPool(
   config: ConnectionAttributes,
   sql: string,
   params: BindParameters = {},
@@ -284,7 +284,7 @@ async function mutateSQLPool(
  * @param options The oracle options for the SQL execution. `options.autoCommit` is set by default based on if `configOrConnection` is config.
  * @returns The result objects for the execution. There are many results as there are many executions.
  */
-async function mutateManySQL(
+async function mutateManySql(
   configOrConnection: ConfigOrConnection,
   sql: string,
   params: BindParameters[] = [],
@@ -343,7 +343,7 @@ async function mutateManySQL(
  *
  * @returns The result objects for the execution. There are many results as there are many executions.
  */
-async function mutateManySQLPool(
+async function mutateManySqlPool(
   config: ConnectionAttributes,
   sql: string,
   params: BindParameters[] = [],
@@ -374,10 +374,10 @@ async function mutateManySQLPool(
 }
 
 export {
-  getSQL,
-  mutateSQL,
-  mutateSQLPool,
-  getSQLPool,
-  mutateManySQL,
-  mutateManySQLPool,
+  getSql,
+  mutateSql,
+  mutateSqlPool,
+  getSqlPool,
+  mutateManySql,
+  mutateManySqlPool,
 };

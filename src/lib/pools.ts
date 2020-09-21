@@ -17,7 +17,7 @@ interface Configuration {
  */
 export const configuration: Configuration = {
   pingTime: 1000 * 60,
-  connectionTimeout: 3000,
+  connectionTimeout: 10000,
   pingTimeout: 3000,
 };
 
