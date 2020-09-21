@@ -4,8 +4,23 @@ import oracledb, {
   Pool,
   PoolAttributes,
 } from 'oracledb';
+interface Configuration {
+  /** Amount of time (in ms) between pings to check on connection behavior. */
+  pingTime: number;
+  /** Amount of time to wait (in ms) for getting a connection before deciding that there's a problem with the pool */
+  connectionTimeout: number;
+  /** Amount of time to wait (in ms) for the ping to complete before deciding that there's a problem with the pool */
+  pingTimeout: number;
+}
+/**
+ * Various Configurations to customize the way the pools works.
+ */
+export const configuration: Configuration = {
+  pingTime: 1000 * 60,
+  connectionTimeout: 3000,
+  pingTimeout: 3000,
+};
 
-export const configuration = { pingTime: 1000 * 60 };
 const pools: Record<string, Pool> = {};
 const poolPromises: Record<string, Promise<Pool>> = {};
 const pings: Record<string, Date> = {};
@@ -65,13 +80,16 @@ export async function getPoolConnection(
   // let pool = pools[connectString];
   let pool = await createPool(dbConfig);
   try {
-    const connection = await promiseOrTimeout(pool.getConnection());
+    const connection = await promiseOrTimeout(
+      pool.getConnection(),
+      configuration.connectionTimeout
+    );
     if (
       new Date().valueOf() >
       pings[connectString].valueOf() + configuration.pingTime
     ) {
       pings[connectString] = new Date();
-      await promiseOrTimeout(connection.ping());
+      await promiseOrTimeout(connection.ping(), configuration.pingTimeout);
     }
     return connection;
   } catch (error) {
@@ -79,6 +97,7 @@ export async function getPoolConnection(
     return pool.getConnection();
   }
 }
+
 async function promiseOrTimeout<T>(
   promise: Promise<T>,
   timeout = 3000
@@ -92,6 +111,7 @@ async function promiseOrTimeout<T>(
     }),
   ]);
 }
+
 async function recreatePool(
   dbConfig: ConnectionAttributes,
   pool: Pool

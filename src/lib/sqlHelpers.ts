@@ -202,7 +202,7 @@ async function mutateSQL(
         password: configOrConnection.password,
         connectString: configOrConnection.connectString,
       });
-  let sqlResult;
+  let sqlResult: Result;
   try {
     sqlResult = await connection.execute(
       // The statement to execute
