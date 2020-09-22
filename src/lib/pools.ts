@@ -21,6 +21,12 @@ export const configuration: Configuration = {
   pingTimeout: 3000,
 };
 
+/**
+ * Use this to set the options for the pool based on the connect string
+ *
+ */
+export const poolOptions: Record<string, PoolAttributes> = {};
+
 const pools: Record<string, Pool> = {};
 const poolPromises: Record<string, Promise<Pool>> = {};
 const pings: Record<string, Date> = {};
@@ -49,12 +55,19 @@ export async function createPool(
     poolMin: 3,
     poolMax: 12,
     ...options,
+    ...(poolOptions[connectString] ?? {}),
     user: dbConfig.user,
     password: dbConfig.password,
     connectString: connectString,
   });
   poolPromises[connectString] = promise;
-  pools[connectString] = await promise;
+  try {
+    pools[connectString] = await promise;
+  } catch (error) {
+    delete poolPromises[connectString];
+    delete pools[connectString];
+    throw error;
+  }
   pings[connectString] = new Date();
   delete poolPromises[connectString];
   return pools[connectString];
@@ -94,7 +107,7 @@ export async function getPoolConnection(
     return connection;
   } catch (error) {
     pool = await recreatePool(dbConfig, pool);
-    return pool.getConnection();
+    return await pool.getConnection();
   }
 }
 
@@ -120,7 +133,10 @@ async function recreatePool(
   if (!connectString) {
     throw Error('Invalid Connection');
   }
-  await pool.close(1000);
+  try {
+    await pool.close(1000);
+    // eslint-disable-next-line no-empty
+  } catch {}
   delete pools[connectString];
   delete poolPromises[connectString];
   pool = await createPool(dbConfig);

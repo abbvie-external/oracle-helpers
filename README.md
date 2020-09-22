@@ -18,6 +18,8 @@ npm install @abv/oracle-helpers
 
 # Options
 
+Configuration lets you set up certain behaviors to customize how the pools work outside of oracle
+
 ```js
 import { configuration } from '@abv/oracle-helpers';
 /** Amount of time (in ms) between pings to check on connection behavior. */
@@ -26,6 +28,18 @@ configuration.pingTime = 60000; // 1 minute
 configuration.connectionTimeout = 10000; // 10 seconds
 /** Amount of time to wait (in ms) for the ping to complete before deciding that there's a problem with the pool */
 configuration.pingTimeout = 3000; // 3 seconds
+```
+
+poolOptions lets you set the behavior of the pools within oracle
+
+```js
+import { poolOptions } from '@abv/oracle-helpers';
+
+poolOptions['oracle db connection string'] = {
+  poolMin: 12,
+  poolMax: 20,
+  poolTimeout: 120,
+};
 ```
 
 # Usage
