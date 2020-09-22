@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](***REMOVED***/oracle-helpers/compare/v2.0.0...v2.0.1) (2020-09-22)
+
+
+### Bug Fixes
+
+* **pools:** Prevents lockdown when there are a lot of errors all at once (e.g. internet down) ([97f9df0](***REMOVED***/oracle-helpers/commit/97f9df04c64be99d8633b0382bafe8dafcc3a218))
+
 ## [2.0.0](***REMOVED***/oracle-helpers/compare/v1.1.1...v2.0.0) (2020-09-21)
 
 
