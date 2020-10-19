@@ -20,7 +20,13 @@
     "sandboxed",
     "transpiled",
     "typedoc",
-    "untracked"
+    "untracked",
+    "npmrc",
+    "inbetween",
+    "oracledb",
+    "miliseconds",
+    "subquery",
+    "CLOB"
   ],
   "flagWords": [],
   "ignorePaths": [

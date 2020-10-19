@@ -78,7 +78,7 @@ export async function createPool(
  * Has a 3 seconds timeout before it abandons the currently extant pool and tries again.
  * This is in order to make the application able to recover.
  *
- * Will also run a ping on a connection at least every `configuation.pingTime` miliseconds.
+ * Will also run a ping on a connection at least every `configuration.pingTime` miliseconds.
  * This is set to 1 minute by default as it can be slower.
  *
  * @returns an oracle connection object
