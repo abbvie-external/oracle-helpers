@@ -30,7 +30,7 @@ test('should build sql with child sql statements', (t) => {
   t.deepEqual(query.values, ['Blake']);
 });
 
-test('should not cache values for mysql compatibility', (t) => {
+test('should cache values because oracle supports it', (t) => {
   const ids = [1, 2, 3];
   const query = sql`SELECT * FROM books WHERE id IN (${join(
     ids
@@ -38,10 +38,23 @@ test('should not cache values for mysql compatibility', (t) => {
 
   t.is(
     query.sql,
-    'SELECT * FROM books WHERE id IN (:1,:2,:3) OR author_id IN (:4,:5,:6)'
+    'SELECT * FROM books WHERE id IN (:1,:2,:3) OR author_id IN (:1,:2,:3)'
   );
 
-  t.deepEqual(query.values, [1, 2, 3, 1, 2, 3]);
+  t.deepEqual(query.values, [1, 2, 3]);
+});
+
+test('should separate strings from numbers when caching', (t) => {
+  const ids = [1, '1'];
+  const query = sql`SELECT * FROM books WHERE id IN (${join(
+    ids
+  )}) OR author_id IN (${join(ids)})`;
+
+  t.is(
+    query.sql,
+    'SELECT * FROM books WHERE id IN (:1,:2) OR author_id IN (:1,:2)'
+  );
+  t.deepEqual(query.values, [1, '1']);
 });
 
 test('should provide "empty" helper', (t) => {

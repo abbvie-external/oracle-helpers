@@ -20,8 +20,8 @@ export type RawValue = Value | Sql;
  */
 export class Sql {
   #values: Value[];
+  #valueMap: Map<Value, number> = new Map();
   strings: string[];
-  isArray: boolean;
   constructor(
     rawStrings: ReadonlyArray<string>,
     rawValues: ReadonlyArray<RawValue>
@@ -66,7 +66,11 @@ export class Sql {
 
         let childIndex = 0;
         while (childIndex < child.#values.length) {
-          this.#values[position++] = child.#values[childIndex++];
+          const value = child.#values[childIndex++];
+          this.#values[position++] = value;
+          // if (!this.#valueMap.has(value)) {
+          //   this.#valueMap.set(value, position - 1);
+          // }
           this.strings[position] = child.strings[childIndex];
         }
 
@@ -74,19 +78,39 @@ export class Sql {
         this.strings[position] += rawString;
       } else {
         this.#values[position++] = child;
+        // if (!this.#valueMap.has(child)) {
+        //   this.#valueMap.set(child, position - 1);
+        // }
         this.strings[position] = rawString;
       }
     }
   }
-
+  private updateMap() {
+    if (this.#valueMap.size) {
+      return;
+    }
+    this.#values.forEach((value, index) => {
+      if (!this.#valueMap.has(value)) {
+        this.#valueMap.set(value, index);
+      }
+    });
+  }
   get sql() {
-    return this.strings.reduce((text, part, index) =>
-      `${text}:${index}${part}`.replace(/\n\s*/g, '\n')
-    );
+    this.updateMap();
+    return this.strings
+      .reduce((text, part, index) => {
+        const position = this.#valueMap.get(this.#values[index - 1]);
+        return `${text}:${position + 1}${part}`;
+      })
+      .replace(/\n\s*/g, '\n');
   }
 
   get values() {
+    this.updateMap();
     let numRows = 0;
+    const uniqueValues = this.#values.filter((values, position) => {
+      return this.#valueMap.get(values) === position;
+    });
     this.#values.forEach((value) => {
       if (Array.isArray(value)) {
         if (numRows && numRows !== value.length) {
@@ -97,7 +121,7 @@ export class Sql {
     });
     // const isArray = this._values.some(value=>Array.isArray(value));
     if (numRows) {
-      return this.#values.reduce<Value[][]>(
+      return uniqueValues.reduce<Value[][]>(
         (rows, values) => {
           if (Array.isArray(values)) {
             // values is an array of column values
@@ -111,7 +135,7 @@ export class Sql {
         new Array(numRows).fill(null).map(() => [])
       );
     } else {
-      return this.#values;
+      return uniqueValues;
     }
   }
 
