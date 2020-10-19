@@ -11,6 +11,7 @@ import oracledb, {
 } from 'oracledb';
 
 import { getPoolConnection } from './pools';
+import { Sql, Value } from './sql';
 
 oracledb.fetchAsBuffer = [oracledb.BLOB];
 oracledb.fetchAsString = [oracledb.CLOB];
@@ -33,6 +34,36 @@ function doRelease(connection: oracledb.Connection): void {
  * Runs SQL to get values
  *
  * @param configOrConnection Either a dbConfig object or the connection to execute with
+ * @param sql The SQL to execute - the result of the sql template tag - Should be a SELECT type for this
+ * @param options The oracle options for the SQL execution
+ *
+ * @returns The values as an array by default or nothing if there is a callback instead
+ */
+function getSql<T>(
+  configOrConnection: ConfigOrConnection,
+  sql: Sql,
+  options?: ExecuteOptions
+): Promise<T[]>;
+/**
+ * Runs SQL to get values
+ *
+ * @param configOrConnection Either a dbConfig object or the connection to execute with
+ * @param sql The SQL to execute - the result of the sql template tag - Should be a SELECT type for this
+ * @param options The oracle options for the SQL execution
+ * @param cb A callback method to allow you to take the return from the sql and transform the object. This is in lieu of returning an array of data.
+ *
+ * @returns The values as an array by default or nothing if there is a callback instead
+ */
+function getSql<T>(
+  configOrConnection: ConfigOrConnection,
+  sql: Sql,
+  options: ExecuteOptions,
+  cb: (record: T) => void
+): Promise<void>;
+/**
+ * Runs SQL to get values
+ *
+ * @param configOrConnection Either a dbConfig object or the connection to execute with
  * @param sql The SQL to execute - Should be a SELECT type for this
  * @param params The Parameters to pass into the SQL execution
  * @param options The oracle options for the SQL execution
@@ -46,6 +77,17 @@ function getSql<T>(
   params?: BindParameters,
   options?: ExecuteOptions
 ): Promise<T[]>;
+/**
+ * Runs SQL to get values
+ *
+ * @param configOrConnection Either a dbConfig object or the connection to execute with
+ * @param sql The SQL to execute - Should be a SELECT type for this
+ * @param params The Parameters to pass into the SQL execution
+ * @param options The oracle options for the SQL execution
+ * @param cb A callback method to allow you to take the return from the sql and transform the object. This is in lieu of returning an array of data.
+ *
+ * @returns The values as an array by default or nothing if there is a callback instead
+ */
 function getSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string,
@@ -55,9 +97,11 @@ function getSql<T>(
 ): Promise<void>;
 function getSql<T>(
   configOrConnection: ConfigOrConnection,
-  sql: string,
-  params: BindParameters = {},
-  options: ExecuteOptions = {},
+  sql: string | Sql,
+  paramsOrOptions: BindParameters | ExecuteOptions = {},
+  optionsOrCb: ExecuteOptions | ((record: T) => void) = sql instanceof Sql
+    ? undefined
+    : {},
   cb?: (record: T) => void
 ): Promise<void | T[]> {
   return new Promise(async (resolve, reject) => {
@@ -71,10 +115,25 @@ function getSql<T>(
             connectString: configOrConnection.connectString,
           });
       let sqlResult: Result;
+      let text = '';
+      let params: BindParameters = {};
+      let options: ExecuteOptions = {};
       try {
+        if (sql instanceof Sql) {
+          text = sql.sql;
+          params = sql.values;
+          options = paramsOrOptions as ExecuteOptions;
+          if (typeof optionsOrCb === 'function') {
+            cb = optionsOrCb;
+          }
+        } else {
+          text = sql;
+          params = paramsOrOptions as BindParameters;
+          options = optionsOrCb as ExecuteOptions;
+        }
         sqlResult = await connection.execute(
           // The statement to execute
-          sql,
+          text,
           // ex: The "bind value" 180 for the "bind variable" :id
           params,
           // query options
@@ -115,6 +174,37 @@ function getSql<T>(
  * Uses a connection from a connection pool to run SQL to get values
  *
  * @param config The DBConfig object to get the connection from
+ * @param sql The SQL to execute - the result of the sql template tag - Should be a SELECT type for this
+ * @param options The oracle options for the SQL execution
+ * @param cb A callback method to allow you to take the return from the sql and transform the object. This is in lieu of returning an array of data.
+ *
+ * @returns The values as an array by default or nothing if there is a callback instead
+ */
+function getSqlPool<T>(
+  config: ConnectionAttributes,
+  sql: Sql,
+  options?: ExecuteOptions
+): Promise<T[]>;
+/**
+ * Uses a connection from a connection pool to run SQL to get values
+ *
+ * @param config The DBConfig object to get the connection from
+ * @param sql The SQL to execute - the result of the sql template tag - Should be a SELECT type for this
+ * @param options The oracle options for the SQL execution
+ * @param cb A callback method to allow you to take the return from the sql and transform the object. This is in lieu of returning an array of data.
+ *
+ * @returns The values as an array by default or nothing if there is a callback instead
+ */
+function getSqlPool<T>(
+  config: ConnectionAttributes,
+  sql: Sql,
+  options: ExecuteOptions,
+  cb: (record: T) => void
+): Promise<void>;
+/**
+ * Uses a connection from a connection pool to run SQL to get values
+ *
+ * @param config The DBConfig object to get the connection from
  * @param sql The SQL to execute - Should be a SELECT type for this
  * @param params The Parameters to pass into the SQL execution
  * @param options The oracle options for the SQL execution
@@ -128,6 +218,17 @@ function getSqlPool<T>(
   params?: BindParameters,
   options?: ExecuteOptions
 ): Promise<T[]>;
+/**
+ * Uses a connection from a connection pool to run SQL to get values
+ *
+ * @param config The DBConfig object to get the connection from
+ * @param sql The SQL to execute - Should be a SELECT type for this
+ * @param params The Parameters to pass into the SQL execution
+ * @param options The oracle options for the SQL execution
+ * @param cb A callback method to allow you to take the return from the sql and transform the object. This is in lieu of returning an array of data.
+ *
+ * @returns The values as an array by default or nothing if there is a callback instead
+ */
 function getSqlPool<T>(
   config: ConnectionAttributes,
   sql: string,
@@ -137,17 +238,34 @@ function getSqlPool<T>(
 ): Promise<void>;
 function getSqlPool<T>(
   config: ConnectionAttributes,
-  sql: string,
-  params: BindParameters = {},
-  options: ExecuteOptions = {},
+  sql: string | Sql,
+  paramsOrOptions: BindParameters | ExecuteOptions = {},
+  optionsOrCb: ExecuteOptions | ((record: T) => void) = sql instanceof Sql
+    ? undefined
+    : {},
   cb?: (record: T) => void
 ): Promise<void | T[]> {
   return new Promise(async (resolve, reject) => {
     try {
       const connection: Connection = await getPoolConnection(config);
       let sqlResult: Result;
+      let text = '';
+      let params: BindParameters = {};
+      let options: ExecuteOptions = {};
       try {
-        sqlResult = await connection.execute(sql, params, {
+        if (sql instanceof Sql) {
+          text = sql.sql;
+          params = sql.values;
+          options = paramsOrOptions as ExecuteOptions;
+          if (typeof optionsOrCb === 'function') {
+            cb = optionsOrCb;
+          }
+        } else {
+          text = sql;
+          params = paramsOrOptions as BindParameters;
+          options = optionsOrCb as ExecuteOptions;
+        }
+        sqlResult = await connection.execute(text, params, {
           ...options,
           outFormat: oracledb.OBJECT, // return as json object
           extendedMetaData: false, // return additional metadata
@@ -179,7 +297,18 @@ function getSqlPool<T>(
     }
   });
 }
-
+/**
+ * Executes SQL mutate the database
+ * @param configOrConnection Either a dbConfig object or the connection to execute with
+ * @param sql The SQL to execute - the result of the sql template tag - Should be some sort of mutation
+ * @param options The oracle options for the SQL execution. `options.autoCommit` is set by default based on if `configOrConnection` is config.
+ * @returns The result object for the execution
+ */
+function mutateSql(
+  configOrConnection: ConfigOrConnection,
+  sql: Sql,
+  options?: ExecuteOptions
+): Promise<Result>;
 /**
  * Executes SQL mutate the database
  * @param configOrConnection Either a dbConfig object or the connection to execute with
@@ -188,10 +317,16 @@ function getSqlPool<T>(
  * @param options The oracle options for the SQL execution. `options.autoCommit` is set by default based on if `configOrConnection` is config.
  * @returns The result object for the execution
  */
-async function mutateSql(
+function mutateSql(
   configOrConnection: ConfigOrConnection,
   sql: string,
-  params: BindParameters = {},
+  params?: BindParameters,
+  options?: ExecuteOptions
+): Promise<Result>;
+async function mutateSql(
+  configOrConnection: ConfigOrConnection,
+  sql: string | Sql,
+  paramsOrOptions: BindParameters | ExecuteOptions = {},
   options: ExecuteOptions = {}
 ): Promise<Result> {
   const isConfig = !isConnection(configOrConnection);
@@ -203,10 +338,20 @@ async function mutateSql(
         connectString: configOrConnection.connectString,
       });
   let sqlResult: Result;
+  let text = '';
+  let params: BindParameters = {};
   try {
+    if (sql instanceof Sql) {
+      text = sql.sql;
+      params = sql.values;
+      options = paramsOrOptions as ExecuteOptions;
+    } else {
+      text = sql;
+      params = paramsOrOptions as BindParameters;
+    }
     sqlResult = await connection.execute(
       // The statement to execute
-      sql,
+      text,
       // ex: The "bind value" 180 for the "bind variable" :id
       params,
       // query options
@@ -234,24 +379,55 @@ async function mutateSql(
  * If you need to run multiple mutations in a single transaction use `mutateSQL` with a connection from the pool instead.
  *
  * @param config The DBConfig object to get the connection from
+ * @param sql The SQL to execute - the result of the sql template tag - Should be some sort of mutation
+ * @param options The oracle options for the SQL execution. `options.autoCommit` is forced to true, as the connection is automatically closed afterwards
+ * @returns The result object for the execution
+ */
+function mutateSqlPool(
+  config: ConnectionAttributes,
+  sql: Sql,
+  options?: ExecuteOptions
+): Promise<Result>;
+/**
+ * Uses a connection from a connection pool to execute SQL to mutate the database
+ *
+ * If you need to run multiple mutations in a single transaction use `mutateSQL` with a connection from the pool instead.
+ *
+ * @param config The DBConfig object to get the connection from
  * @param sql The SQL to execute - Should be some sort of mutation
  * @param params The Parameters to pass into the SQL execution
  * @param options The oracle options for the SQL execution. `options.autoCommit` is forced to true, as the connection is automatically closed afterwards
  *
  * @returns The result object for the execution
  */
-async function mutateSqlPool(
+function mutateSqlPool(
   config: ConnectionAttributes,
   sql: string,
-  params: BindParameters = {},
+  params?: BindParameters,
+  options?: ExecuteOptions
+): Promise<Result>;
+async function mutateSqlPool(
+  config: ConnectionAttributes,
+  sql: string | Sql,
+  paramsOrOptions: BindParameters | ExecuteOptions = {},
   options: ExecuteOptions = {}
 ): Promise<Result> {
   const connection: Connection = await getPoolConnection(config);
   let sqlResult: Result;
+  let text = '';
+  let params: BindParameters = {};
   try {
+    if (sql instanceof Sql) {
+      text = sql.sql;
+      params = sql.values;
+      options = paramsOrOptions as ExecuteOptions;
+    } else {
+      text = sql;
+      params = paramsOrOptions as BindParameters;
+    }
     sqlResult = await connection.execute(
       // The statement to execute
-      sql,
+      text,
       // ex: The "bind value" 180 for the "bind variable" :id
       params,
       // query options
@@ -279,15 +455,38 @@ async function mutateSqlPool(
  * This takes an array of bindParameters and loops over them.
  *
  * @param configOrConnection Either a dbConfig object or the connection to execute with
+ * @param sql The SQL to execute - the result of the sql template tag - Should be some sort of mutation
+ * @param options The oracle options for the SQL execution. `options.autoCommit` is set by default based on if `configOrConnection` is config.
+ * @returns The result object for the execution. There are many results as there are many executions.
+ */
+function mutateManySql(
+  configOrConnection: ConfigOrConnection,
+  sql: Sql,
+  options?: ExecuteManyOptions
+): Promise<Results>;
+/**
+ * Executes SQL mutate the database via the `executeMany` command.
+ *
+ * This takes an array of bindParameters and loops over them.
+ *
+ * @param configOrConnection Either a dbConfig object or the connection to execute with
  * @param sql The SQL to execute - Should be some sort of mutation
  * @param params An array of the Parameters to pass into the SQL execution. `executeMany` loops over them in a single transaction
  * @param options The oracle options for the SQL execution. `options.autoCommit` is set by default based on if `configOrConnection` is config.
- * @returns The result objects for the execution. There are many results as there are many executions.
+ * @returns The result object for the execution. There are many results as there are many executions.
  */
-async function mutateManySql(
+function mutateManySql(
   configOrConnection: ConfigOrConnection,
   sql: string,
-  params: BindParameters[] = [],
+  params?: BindParameters[],
+  options?: ExecuteManyOptions
+): Promise<Results>;
+async function mutateManySql(
+  configOrConnection: ConfigOrConnection,
+  sql: string | Sql,
+  paramsOrOptions: BindParameters[] | ExecuteManyOptions = sql instanceof Sql
+    ? {}
+    : [],
   options: ExecuteManyOptions = {}
 ): Promise<Results> {
   const isConfig = !isConnection(configOrConnection);
@@ -300,7 +499,21 @@ async function mutateManySql(
       });
   // if (!isConfig) connection = configOrConnection;
   let sqlResult: Results;
+  let text = '';
+  let params: BindParameters[] = [];
   try {
+    if (sql instanceof Sql) {
+      text = sql.sql;
+      const values = sql.values;
+      if (!Array.isArray(values[0])) {
+        throw new TypeError('Sql must be using array values for mutateMany');
+      }
+      params = values as Value[][];
+      options = paramsOrOptions as ExecuteManyOptions;
+    } else {
+      text = sql;
+      params = paramsOrOptions as BindParameters[];
+    }
     // if (isConfig) {
     //   connection = await oracledb.getConnection({
     //     user: configOrConnection.user,
@@ -310,7 +523,7 @@ async function mutateManySql(
     // }
     sqlResult = await connection.executeMany(
       // The statement to execute
-      sql,
+      text,
       // ex: The "bind value" 180 for the "bind variable" :id
       params,
       // query options
@@ -337,24 +550,62 @@ async function mutateManySql(
  * If you need to run multiple different SQL mutations in a single transaction use `mutateManySQL` with a connection from the pool instead.
  *
  * @param config The DBConfig object to get the connection from
+ * @param sql The SQL to execute - the result of the sql template tag - Should be some sort of mutation
+ * @param options The oracle options for the SQL execution. `options.autoCommit` is set by default based on if `configOrConnection` is config.
+ * @returns The result object for the execution. There are many results as there are many executions.
+ */
+function mutateManySqlPool(
+  config: ConnectionAttributes,
+  sql: Sql,
+  options?: ExecuteManyOptions
+): Promise<Results>;
+/**
+ * Uses a connection from a connection pool to execute SQL to mutate the database via the `executeMany` command.
+ *
+ * This takes an array of bindParameters and loops over them.
+ *
+ * If you need to run multiple different SQL mutations in a single transaction use `mutateManySQL` with a connection from the pool instead.
+ *
+ * @param config The DBConfig object to get the connection from
  * @param sql The SQL to execute - Should be some sort of mutation
  * @param params An array of the Parameters to pass into the SQL execution. `executeMany` loops over them in a single transaction
- * @param options The oracle options for the SQL execution. `options.autoCommit` is forced to true, as the connection is automatically closed afterwards
- *
- * @returns The result objects for the execution. There are many results as there are many executions.
+ * @param options The oracle options for the SQL execution. `options.autoCommit` is set by default based on if `configOrConnection` is config.
+ * @returns The result object for the execution. There are many results as there are many executions.
  */
-async function mutateManySqlPool(
+function mutateManySqlPool(
   config: ConnectionAttributes,
   sql: string,
-  params: BindParameters[] = [],
+  params?: BindParameters[],
+  options?: ExecuteManyOptions
+): Promise<Results>;
+async function mutateManySqlPool(
+  config: ConnectionAttributes,
+  sql: string | Sql,
+  paramsOrOptions: BindParameters[] | ExecuteOptions = sql instanceof Sql
+    ? {}
+    : [],
   options: ExecuteManyOptions = {}
 ): Promise<Results> {
   const connection: Connection = await getPoolConnection(config);
   let sqlResult: Results;
+  let text = '';
+  let params: BindParameters[] = [];
   try {
+    if (sql instanceof Sql) {
+      text = sql.sql;
+      const values = sql.values;
+      if (!Array.isArray(values[0])) {
+        throw new TypeError('Sql must be using array values for mutateMany');
+      }
+      params = values as Value[][];
+      options = paramsOrOptions as ExecuteManyOptions;
+    } else {
+      text = sql;
+      params = paramsOrOptions as BindParameters[];
+    }
     sqlResult = await connection.executeMany(
       // The statement to execute
-      sql,
+      text,
       // ex: The "bind value" 180 for the "bind variable" :id
       params,
       // query options

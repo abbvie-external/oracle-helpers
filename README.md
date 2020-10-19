@@ -50,27 +50,60 @@ poolOptions['oracle db connection string'] = {
 
 # Usage
 
-## Getters
+## sql tagged template vs sql text + params:
 
 ```ts
-import { getSql, getSqlPool } from '@abv/oracle-helpers';
+import { sql, getSql, getSqlPool } from '@abv/oracle-helpers';
 
 const dbConfig = {
   user: 'username',
   password: 'password',
   connectString: 'oracle db connection string',
 };
-const sql = `SELECT * FROM TABLE where ID=:id`;
 
-getSql<{ ID: number; NAME: string }[]>(dbConfig, sql, { id: 5 }).then(
+// sql tagged template!
+const query = sql`SELECT * FROM TABLE where ID=${5}`;
+
+getSql<{ ID: number; NAME: string }[]>(dbConfig, query).then((rows) => {
+  console.log(rows);
+});
+
+// sql text + params:
+const sqlText = `SELECT * FROM TABLE where ID=:id`;
+
+getSql<{ ID: number; NAME: string }[]>(dbConfig, sqlText, { id: 5 }).then(
   (rows) => {
     console.log(rows);
   }
 );
 
-getSqlPool<{ ID: number; NAME: string }[]>(dbConfig, sql, {
-  id: 5,
-}).then((rows) => {
+// sql tagged template with params (for syntax highlighting only):
+const query2 = sql`SELECT * FROM TABLE where ID=:id`;
+
+getSql<{ ID: number; NAME: string }[]>(dbConfig, query2.sql, { id: 5 }).then(
+  (rows) => {
+    console.log(rows);
+  }
+);
+```
+
+## Getters
+
+```ts
+import { sql, getSql, getSqlPool } from '@abv/oracle-helpers';
+
+const dbConfig = {
+  user: 'username',
+  password: 'password',
+  connectString: 'oracle db connection string',
+};
+const query = sql`SELECT * FROM TABLE where ID=${5}`;
+
+getSql<{ ID: number; NAME: string }[]>(dbConfig, query).then((rows) => {
+  console.log(rows);
+});
+
+getSqlPool<{ ID: number; NAME: string }[]>(dbConfig, query).then((rows) => {
   console.log(rows);
 });
 ```
@@ -79,6 +112,7 @@ getSqlPool<{ ID: number; NAME: string }[]>(dbConfig, sql, {
 
 ```ts
 import {
+  sql,
   mutateSql,
   mutateSqlPool,
   mutateManySql,
@@ -91,21 +125,32 @@ const dbConfig = {
   connectString: 'oracle db connection string',
 };
 
-const sql = `INSERT INTO TABLE (ID, NAME) VALUES (:id, :name)`;
 const runSql = async () => {
-  await mutateSql(dbConfig, sql, { id: 5, name: 'test' });
+  const query = sql`INSERT INTO TABLE (ID, NAME) VALUES (:id, :name)`;
 
-  await mutateSqlPool(dbConfig, sql, { id: 6, name: 'test2' });
+  await mutateSql(dbConfig, query.sql, { id: 5, name: 'test' });
 
-  await mutateManySql(dbConfig, sql, [
+  await mutateSqlPool(dbConfig, query.sql, { id: 6, name: 'test2' });
+
+  await mutateManySql(dbConfig, query.sql, [
     { id: 7, name: 'test3' },
     { id: 8, name: 'test4' },
   ]);
 
-  await mutateManySqlPool(dbConfig, sql, [
+  await mutateManySqlPool(dbConfig, query.sql, [
     { id: 8, name: 'test5' },
     { id: 9, name: 'test6' },
   ]);
+};
+
+// Using the full tagged template query with different values than what was started with doesn't work, so use mutateMany if you need multiple values at once:
+
+const runSql = async () => {
+  const query = sql`INSERT INTO TABLE (ID, NAME)
+                    VALUES (${[7, 8, 9, 10]},
+                            ${['test', 'test2', 'test3', 'test4']}
+                          )`;
+  await mutateManySql(dbConfig, query);
 };
 ```
 
@@ -114,7 +159,7 @@ const runSql = async () => {
 Run multiple mutations with a get inbetween in a single all-or-nothing transaction including returning a value from an insert.
 
 ```ts
-import { NUMBER, BIND_OUT } from 'oracledb';
+import { STRING, NUMBER, BIND_OUT, BIND_IN } from 'oracledb';
 import { getPoolConnection, getSql, mutateSql } from '@abv/oracle-helpers';
 const dbConfig = {
   user: 'username',
@@ -128,10 +173,19 @@ const runSql = async () => {
   const connection = await getPoolConnection(dbConfig);
 
   try {
-    const result = await mutateSql(connection, sql, {
-      name: 'test',
-      id: { type: NUMBER, dir: BIND_OUT },
-    });
+    const result = await mutateSql(
+      connection,
+      sql,
+      {
+        name: 'test',
+      },
+      {
+        bindDefs: {
+          name: { type: STRING, dir: BIND_IN },
+          id: { type: NUMBER, dir: BIND_OUT },
+        },
+      }
+    );
 
     const id = (result.outBinds as { id: number[] }).id[0];
 
@@ -167,6 +221,61 @@ const runSql = async () => {
 };
 ```
 
+### Advanced with the tagged template:
+
+```ts
+import { STRING, NUMBER, BIND_IN, BIND_OUT } from 'oracledb';
+import { sql, getPoolConnection, getSql, mutateSql } from '@abv/oracle-helpers';
+const dbConfig = {
+  user: 'username',
+  password: 'password',
+  connectString: 'oracle db connection string',
+};
+const query = sql`INSERT INTO TABLE (ID, NAME) VALUES (ID_SEQ.NEXT_VAL, ${'test'}) returning ID into :id`;
+const runSql = async () => {
+  const connection = await getPoolConnection(dbConfig);
+
+  try {
+    const result = await mutateSql(connection, query, {
+      bindDefs: {
+        1: { type: STRING, dir: BIND_IN },
+        id: { type: NUMBER, dir: BIND_OUT },
+      },
+    });
+
+    const id = (result.outBinds as { id: number[] }).id[0];
+
+    const selectSql = sql`SELECT * FROM TABLE where ID=${id}`;
+
+    const row = await getSql(connection, selectSql)[0];
+
+    const terms = [
+      'Yes',
+      'No',
+      'Maybe',
+      'Y',
+      'N',
+      'M',
+      'Yeah',
+      'Nah',
+      'Aye',
+      'Nay',
+    ];
+
+    const insertMultipleSql = $`INSERT INTO TABLE_TERM
+           (TABLE_ID, TERM_ID, TERM) 
+    VALUES (${id}, ID_SEQ.NEXT_VAL, ${terms})`;
+
+    await mutateManySql(connection, insertMultipleSql, {
+      autoCommit: true, // Make it commit upon success.
+    });
+  } finally {
+    // Close the connection. This should only be necessary on success, as if there's an error it'll automatically rollback/close the connection before propagating the error
+    connection.close();
+  }
+};
+```
+
 # SQL Template Tag
 
 > ES2015 tagged template string for preparing SQL statements, works for this oracle helpers library.
@@ -180,6 +289,10 @@ https://github.com/blakeembrey/sql-template-tag
 ```
 npm install sql-template-tag --save
 ```
+
+## Extension for syntax highlighting (basic):
+
+https://marketplace.visualstudio.com/items?itemName=frigus02.vscode-sql-tagged-template-literals-syntax-only
 
 ## Usage
 
