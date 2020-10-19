@@ -16,6 +16,10 @@ Install using
 npm install @abv/oracle-helpers
 ```
 
+### API Page
+
+***REMOVED***/oracle-helpers/
+
 # Options
 
 Configuration lets you set up certain behaviors to customize how the pools work outside of oracle
