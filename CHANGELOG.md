@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](***REMOVED***/oracle-helpers/compare/v2.0.1...v2.1.0) (2020-10-19)
+
+
+### Features
+
+* **helpers:** Add support for the sql tagged templates in the sql helpers ([2d104bc](***REMOVED***/oracle-helpers/commit/2d104bc51dc73c7df9cb6ef3f1e1524432c1085b))
+
+
+### Bug Fixes
+
+* **docs:** Add words to the tests so that they are recognized in the docs ([995c159](***REMOVED***/oracle-helpers/commit/995c15926e680daffb7a35413af5f313ff7756db))
+
 ### [2.0.1](***REMOVED***/oracle-helpers/compare/v2.0.0...v2.0.1) (2020-09-22)
 
 
