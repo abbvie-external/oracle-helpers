@@ -11,7 +11,7 @@ import oracledb, {
 } from 'oracledb';
 
 import { getPoolConnection } from './pools';
-import { Sql, Value } from './sql';
+import { Sql } from './sql';
 
 oracledb.fetchAsBuffer = [oracledb.BLOB];
 oracledb.fetchAsString = [oracledb.CLOB];
@@ -121,7 +121,11 @@ function getSql<T>(
       try {
         if (sql instanceof Sql) {
           text = sql.sql;
-          params = sql.values;
+          const values = sql.values;
+          if (Array.isArray(values)) {
+            throw new TypeError('Cannot bind array values in getSql');
+          }
+          params = values;
           options = paramsOrOptions as ExecuteOptions;
           if (typeof optionsOrCb === 'function') {
             cb = optionsOrCb;
@@ -255,7 +259,11 @@ function getSqlPool<T>(
       try {
         if (sql instanceof Sql) {
           text = sql.sql;
-          params = sql.values;
+          const values = sql.values;
+          if (Array.isArray(values)) {
+            throw new TypeError('Cannot bind array values in getSql');
+          }
+          params = values;
           options = paramsOrOptions as ExecuteOptions;
           if (typeof optionsOrCb === 'function') {
             cb = optionsOrCb;
@@ -343,7 +351,11 @@ async function mutateSql(
   try {
     if (sql instanceof Sql) {
       text = sql.sql;
-      params = sql.values;
+      const values = sql.values;
+      if (Array.isArray(values)) {
+        throw new TypeError('Cannot bind array values in mutateSql');
+      }
+      params = values;
       options = paramsOrOptions as ExecuteOptions;
     } else {
       text = sql;
@@ -419,7 +431,11 @@ async function mutateSqlPool(
   try {
     if (sql instanceof Sql) {
       text = sql.sql;
-      params = sql.values;
+      const values = sql.values;
+      if (Array.isArray(values)) {
+        throw new TypeError('Cannot bind array values in mutateSql');
+      }
+      params = values;
       options = paramsOrOptions as ExecuteOptions;
     } else {
       text = sql;
@@ -505,10 +521,10 @@ async function mutateManySql(
     if (sql instanceof Sql) {
       text = sql.sql;
       const values = sql.values;
-      if (!Array.isArray(values[0])) {
+      if (!Array.isArray(values)) {
         throw new TypeError('Sql must be using array values for mutateMany');
       }
-      params = values as Value[][];
+      params = values; // as Value[][];
       options = paramsOrOptions as ExecuteManyOptions;
     } else {
       text = sql;
@@ -594,10 +610,10 @@ async function mutateManySqlPool(
     if (sql instanceof Sql) {
       text = sql.sql;
       const values = sql.values;
-      if (!Array.isArray(values[0])) {
+      if (!Array.isArray(values)) {
         throw new TypeError('Sql must be using array values for mutateMany');
       }
-      params = values as Value[][];
+      params = values;
       options = paramsOrOptions as ExecuteManyOptions;
     } else {
       text = sql;

@@ -1,14 +1,12 @@
 import { inspect } from 'util';
 
+import { BindParameter } from 'oracledb';
+
 export type Value =
-  | string
-  | number
-  | boolean
-  | Record<string, unknown>
-  | Value[]
-  | null
-  | undefined;
-export type RawValue = Value | Sql;
+  // | Record<string, unknown>
+  BindParameter | string | number | Date | Buffer | null;
+export type ValueArray = Value[] | Value;
+export type RawValue = Value | Sql | Value[];
 
 /**
  * A SQL instance can be nested within each other to build SQL strings.
@@ -19,8 +17,8 @@ export type RawValue = Value | Sql;
  *
  */
 export class Sql {
-  #values: Value[];
-  #valueMap: Map<Value, number> = new Map();
+  #values: ValueArray[];
+  #valueMap: Map<ValueArray, number> = new Map();
   strings: string[];
   constructor(
     rawStrings: ReadonlyArray<string>,
@@ -105,7 +103,7 @@ export class Sql {
       .replace(/\n\s*/g, '\n');
   }
 
-  get values() {
+  get values(): Record<string, Value> | Record<string, Value>[] {
     this.updateMap();
     let numRows = 0;
     const uniqueValues = this.#values.filter((values, position) => {
@@ -121,21 +119,33 @@ export class Sql {
     });
     // const isArray = this._values.some(value=>Array.isArray(value));
     if (numRows) {
-      return uniqueValues.reduce<Value[][]>(
-        (rows, values) => {
+      return uniqueValues.reduce<Record<number, Value>[]>(
+        (rows, values, position) => {
           if (Array.isArray(values)) {
             // values is an array of column values
-            values.forEach((value, index) => rows[index].push(value));
+            values.forEach(
+              (value, index) => (rows[index][position + 1] = value)
+            );
             // rows.forEach((row,index))
           } else {
-            rows.forEach((row) => row.push(values));
+            rows.forEach((row) => (row[position + 1] = values));
           }
           return rows;
         },
-        new Array(numRows).fill(null).map(() => [])
+        new Array(numRows).fill(null).map(() => ({}))
       );
     } else {
-      return uniqueValues;
+      return uniqueValues.reduce<Record<number, Value>>(
+        (row, value, position) => {
+          // This isn't an array - checked earlier!
+          if (Array.isArray(value)) {
+            throw new TypeError("value shouldn't be array here");
+          }
+          row[position + 1] = value;
+          return row;
+        },
+        {}
+      );
     }
   }
 

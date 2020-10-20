@@ -231,19 +231,24 @@ const dbConfig = {
   password: 'password',
   connectString: 'oracle db connection string',
 };
-const query = sql`INSERT INTO TABLE (ID, NAME) VALUES (ID_SEQ.NEXT_VAL, ${'test'}) returning ID into :id`;
+
 const runSql = async () => {
   const connection = await getPoolConnection(dbConfig);
 
   try {
-    const result = await mutateSql(connection, query, {
-      bindDefs: {
-        1: { type: STRING, dir: BIND_IN },
-        id: { type: NUMBER, dir: BIND_OUT },
-      },
-    });
+    const value = 'test';
 
-    const id = (result.outBinds as { id: number[] }).id[0];
+    const result = await mutateSql(
+      connection,
+      sql`INSERT INTO TABLE (ID, NAME)
+        VALUES (ID_SEQ.NEXT_VAL,${value})
+        returning ID into ${{
+          dir: BIND_OUT,
+          type: NUMBER,
+        }}`
+    );
+
+    const id = (result.outBinds as { 2: number[] })[2][0];
 
     const selectSql = sql`SELECT * FROM TABLE where ID=${id}`;
 
@@ -262,13 +267,27 @@ const runSql = async () => {
       'Nay',
     ];
 
-    const insertMultipleSql = $`INSERT INTO TABLE_TERM
-           (TABLE_ID, TERM_ID, TERM) 
-    VALUES (${id}, ID_SEQ.NEXT_VAL, ${terms})`;
+    const insertMultipleSql = sql`INSERT INTO TABLE_TERM
+           (TABLE_ID, TERM_ID, TERM)
+    VALUES (${id}, ID_SEQ.NEXT_VAL, ${terms}) returning TERM_ID into :termId`;
 
-    await mutateManySql(connection, insertMultipleSql, {
+    const results = await mutateManySql(connection, insertMultipleSql, {
       autoCommit: true, // Make it commit upon success.
+      bindDefs: {
+        termId: { dir: BIND_OUT, type: NUMBER },
+        1: {
+          dir: BIND_IN,
+          type: NUMBER,
+        },
+        2: {
+          dir: BIND_IN,
+          type: STRING,
+          maxSize: Math.max(...terms.map((term) => term.length)),
+        },
+      },
     });
+    const termIds = results.outBinds.map(({ termId }) => termId[0]);
+    return termIds;
   } finally {
     // Close the connection. This should only be necessary on success, as if there's an error it'll automatically rollback/close the connection before propagating the error
     connection.close();
