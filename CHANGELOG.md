@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.1](***REMOVED***/oracle-helpers/compare/v2.1.0...v2.1.1) (2020-10-20)
+
+
+### Bug Fixes
+
+* **tag:** Make tags work using named parameters ([c4e61af](***REMOVED***/oracle-helpers/commit/c4e61afcff5b75d4c9bcb64c8b553c0a9bd53bcd))
+
 ## [2.1.0](***REMOVED***/oracle-helpers/compare/v2.0.1...v2.1.0) (2020-10-19)
 
 
