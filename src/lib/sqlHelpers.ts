@@ -114,7 +114,7 @@ function getSql<T>(
             password: configOrConnection.password,
             connectString: configOrConnection.connectString,
           });
-      let sqlResult: Result;
+      let sqlResult: Result<T>;
       let text = '';
       let params: BindParameters = {};
       let options: ExecuteOptions = {};
@@ -143,7 +143,7 @@ function getSql<T>(
           // query options
           {
             ...options,
-            outFormat: oracledb.OBJECT, // return as json object
+            outFormat: oracledb.OUT_FORMAT_OBJECT, // return as json object
             extendedMetaData: false, // return additional metadata
             resultSet: true,
           }
@@ -165,7 +165,7 @@ function getSql<T>(
         console.error(err);
         return reject(err);
       });
-      stream.on('end', function () {
+      stream.on('close', function () {
         if (isConfig) doRelease(connection);
         resolve(cb ? undefined : result);
       });
@@ -252,7 +252,7 @@ function getSqlPool<T>(
   return new Promise(async (resolve, reject) => {
     try {
       const connection: Connection = await getPoolConnection(config);
-      let sqlResult: Result;
+      let sqlResult: Result<T>;
       let text = '';
       let params: BindParameters = {};
       let options: ExecuteOptions = {};
@@ -275,7 +275,7 @@ function getSqlPool<T>(
         }
         sqlResult = await connection.execute(text, params, {
           ...options,
-          outFormat: oracledb.OBJECT, // return as json object
+          outFormat: oracledb.OUT_FORMAT_OBJECT, // return as json object
           extendedMetaData: false, // return additional metadata
           resultSet: true,
         });
@@ -296,7 +296,7 @@ function getSqlPool<T>(
         console.error(err);
         return reject(err);
       });
-      stream.on('end', function () {
+      stream.on('close', function () {
         doRelease(connection);
         resolve(cb ? undefined : result);
       });
@@ -312,11 +312,11 @@ function getSqlPool<T>(
  * @param options The oracle options for the SQL execution. `options.autoCommit` is set by default based on if `configOrConnection` is config.
  * @returns The result object for the execution
  */
-function mutateSql(
+function mutateSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: Sql,
   options?: ExecuteOptions
-): Promise<Result>;
+): Promise<Result<T>>;
 /**
  * Executes SQL mutate the database
  * @param configOrConnection Either a dbConfig object or the connection to execute with
@@ -325,18 +325,18 @@ function mutateSql(
  * @param options The oracle options for the SQL execution. `options.autoCommit` is set by default based on if `configOrConnection` is config.
  * @returns The result object for the execution
  */
-function mutateSql(
+function mutateSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string,
   params?: BindParameters,
   options?: ExecuteOptions
-): Promise<Result>;
-async function mutateSql(
+): Promise<Result<T>>;
+async function mutateSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string | Sql,
   paramsOrOptions: BindParameters | ExecuteOptions = {},
   options: ExecuteOptions = {}
-): Promise<Result> {
+): Promise<Result<T>> {
   const isConfig = !isConnection(configOrConnection);
   const connection: Connection = isConnection(configOrConnection)
     ? configOrConnection
@@ -345,7 +345,7 @@ async function mutateSql(
         password: configOrConnection.password,
         connectString: configOrConnection.connectString,
       });
-  let sqlResult: Result;
+  let sqlResult: Result<T>;
   let text = '';
   let params: BindParameters = {};
   try {
@@ -370,7 +370,7 @@ async function mutateSql(
       {
         autoCommit: isConfig,
         ...options,
-        outFormat: oracledb.OBJECT, // return as json object
+        outFormat: oracledb.OUT_FORMAT_OBJECT, // return as json object
         extendedMetaData: false, // return additional metadata
         // resultSet: true,
       }
@@ -395,11 +395,11 @@ async function mutateSql(
  * @param options The oracle options for the SQL execution. `options.autoCommit` is forced to true, as the connection is automatically closed afterwards
  * @returns The result object for the execution
  */
-function mutateSqlPool(
+function mutateSqlPool<T>(
   config: ConnectionAttributes,
   sql: Sql,
   options?: ExecuteOptions
-): Promise<Result>;
+): Promise<Result<T>>;
 /**
  * Uses a connection from a connection pool to execute SQL to mutate the database
  *
@@ -412,20 +412,20 @@ function mutateSqlPool(
  *
  * @returns The result object for the execution
  */
-function mutateSqlPool(
+function mutateSqlPool<T>(
   config: ConnectionAttributes,
   sql: string,
   params?: BindParameters,
   options?: ExecuteOptions
-): Promise<Result>;
-async function mutateSqlPool(
+): Promise<Result<T>>;
+async function mutateSqlPool<T>(
   config: ConnectionAttributes,
   sql: string | Sql,
   paramsOrOptions: BindParameters | ExecuteOptions = {},
   options: ExecuteOptions = {}
-): Promise<Result> {
+): Promise<Result<T>> {
   const connection: Connection = await getPoolConnection(config);
-  let sqlResult: Result;
+  let sqlResult: Result<T>;
   let text = '';
   let params: BindParameters = {};
   try {
@@ -449,7 +449,7 @@ async function mutateSqlPool(
       // query options
       {
         ...options,
-        outFormat: oracledb.OBJECT, // return as json object
+        outFormat: oracledb.OUT_FORMAT_OBJECT, // return as json object
         extendedMetaData: false, // return additional metadata
         autoCommit: true,
         // resultSet: true,
@@ -475,11 +475,11 @@ async function mutateSqlPool(
  * @param options The oracle options for the SQL execution. `options.autoCommit` is set by default based on if `configOrConnection` is config.
  * @returns The result object for the execution. There are many results as there are many executions.
  */
-function mutateManySql(
+function mutateManySql<T>(
   configOrConnection: ConfigOrConnection,
   sql: Sql,
   options?: ExecuteManyOptions
-): Promise<Results>;
+): Promise<Results<T>>;
 /**
  * Executes SQL mutate the database via the `executeMany` command.
  *
@@ -491,20 +491,20 @@ function mutateManySql(
  * @param options The oracle options for the SQL execution. `options.autoCommit` is set by default based on if `configOrConnection` is config.
  * @returns The result object for the execution. There are many results as there are many executions.
  */
-function mutateManySql(
+function mutateManySql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string,
   params?: BindParameters[],
   options?: ExecuteManyOptions
-): Promise<Results>;
-async function mutateManySql(
+): Promise<Results<T>>;
+async function mutateManySql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string | Sql,
   paramsOrOptions: BindParameters[] | ExecuteManyOptions = sql instanceof Sql
     ? {}
     : [],
   options: ExecuteManyOptions = {}
-): Promise<Results> {
+): Promise<Results<T>> {
   const isConfig = !isConnection(configOrConnection);
   const connection: Connection = isConnection(configOrConnection)
     ? configOrConnection
@@ -514,7 +514,7 @@ async function mutateManySql(
         connectString: configOrConnection.connectString,
       });
   // if (!isConfig) connection = configOrConnection;
-  let sqlResult: Results;
+  let sqlResult: Results<T>;
   let text = '';
   let params: BindParameters[] = [];
   try {
@@ -570,11 +570,11 @@ async function mutateManySql(
  * @param options The oracle options for the SQL execution. `options.autoCommit` is set by default based on if `configOrConnection` is config.
  * @returns The result object for the execution. There are many results as there are many executions.
  */
-function mutateManySqlPool(
+function mutateManySqlPool<T>(
   config: ConnectionAttributes,
   sql: Sql,
   options?: ExecuteManyOptions
-): Promise<Results>;
+): Promise<Results<T>>;
 /**
  * Uses a connection from a connection pool to execute SQL to mutate the database via the `executeMany` command.
  *
@@ -588,22 +588,22 @@ function mutateManySqlPool(
  * @param options The oracle options for the SQL execution. `options.autoCommit` is set by default based on if `configOrConnection` is config.
  * @returns The result object for the execution. There are many results as there are many executions.
  */
-function mutateManySqlPool(
+function mutateManySqlPool<T>(
   config: ConnectionAttributes,
   sql: string,
   params?: BindParameters[],
   options?: ExecuteManyOptions
-): Promise<Results>;
-async function mutateManySqlPool(
+): Promise<Results<T>>;
+async function mutateManySqlPool<T>(
   config: ConnectionAttributes,
   sql: string | Sql,
   paramsOrOptions: BindParameters[] | ExecuteOptions = sql instanceof Sql
     ? {}
     : [],
   options: ExecuteManyOptions = {}
-): Promise<Results> {
+): Promise<Results<T>> {
   const connection: Connection = await getPoolConnection(config);
-  let sqlResult: Results;
+  let sqlResult: Results<T>;
   let text = '';
   let params: BindParameters[] = [];
   try {

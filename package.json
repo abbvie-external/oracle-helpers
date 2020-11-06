@@ -46,7 +46,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@types/oracledb": "^3.1.8",
+    "@types/oracledb": "^5.0.0",
     "@ava/typescript": "^1.1.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
@@ -70,7 +70,7 @@
     "typescript": "^4.0.2"
   },
   "peerDependencies": {
-    "oracledb": "^3.1.2"
+    "oracledb": "^5.0.0"
   },
   "files": [
     "build/main",
