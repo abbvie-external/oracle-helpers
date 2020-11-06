@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](***REMOVED***/oracle-helpers/compare/v2.1.1...v3.0.0) (2020-11-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* Requires newer versions of Node and OracleDb. Won't support older versions due to changes in constants
+
+* move support to OracleDb 5 ([f5f3973](***REMOVED***/oracle-helpers/commit/f5f39732d25a143aeff319a66370ddb5b8946ed2))
+
 ### [2.1.1](***REMOVED***/oracle-helpers/compare/v2.1.0...v2.1.1) (2020-10-20)
 
 
