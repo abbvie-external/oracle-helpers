@@ -106,9 +106,17 @@ export class Sql {
   get values(): Record<string, Value> | Record<string, Value>[] {
     this.updateMap();
     let numRows = 0;
-    const uniqueValues = this.#values.filter((values, position) => {
-      return this.#valueMap.get(values) === position;
-    });
+
+    const uniqueValues = this.#values
+      .map<[ValueArray, number]>((values, index) => {
+        const position = this.#valueMap.get(values);
+        if (position !== index) {
+          return null;
+        }
+        return [values, position];
+      })
+      .filter((val) => val);
+
     this.#values.forEach((value) => {
       if (Array.isArray(value)) {
         if (numRows && numRows !== value.length) {
@@ -117,10 +125,10 @@ export class Sql {
         numRows = value.length;
       }
     });
-    // const isArray = this._values.some(value=>Array.isArray(value));
+
     if (numRows) {
       return uniqueValues.reduce<Record<number, Value>[]>(
-        (rows, values, position) => {
+        (rows, [values, position]) => {
           if (Array.isArray(values)) {
             // values is an array of column values
             values.forEach(
@@ -136,7 +144,7 @@ export class Sql {
       );
     } else {
       return uniqueValues.reduce<Record<number, Value>>(
-        (row, value, position) => {
+        (row, [value, position]) => {
           // This isn't an array - checked earlier!
           if (Array.isArray(value)) {
             throw new TypeError("value shouldn't be array here");

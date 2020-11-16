@@ -28,7 +28,9 @@
     "subquery",
     "CLOB",
     "postgres",
-    "dedupe"
+    "dedupe",
+    "deduped",
+    "deduping"
   ],
   "flagWords": [],
   "ignorePaths": [

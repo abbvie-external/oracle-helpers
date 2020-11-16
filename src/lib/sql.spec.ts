@@ -44,6 +44,73 @@ test('should cache values because oracle supports it', (t) => {
   t.deepEqual(query.values, { 1: 1, 2: 2, 3: 3 });
 });
 
+test('should dedupe values correctly when there are values after the deduped ones', (t) => {
+  const query = sql`update ARS_FIELDS
+  set GROUP = ${1},
+      LABEL = ${2},
+      TYPE = ${1},
+      IS_UPDATABLE = ${3}`;
+  t.is(
+    query.sql,
+    'update ARS_FIELDS\nset GROUP = :1,\nLABEL = :2,\nTYPE = :1,\nIS_UPDATABLE = :4'
+  );
+
+  t.deepEqual(query.values, { 1: 1, 2: 2, 4: 3 });
+});
+
+test('should dedupe values correctly with a bunch of deduping', (t) => {
+  const fieldGroup = 'Initiate',
+    fieldLabel = 'Approval Completed',
+    fieldType = 'v-select',
+    colWidth = 3,
+    isUpdatable = 0,
+    requiredField = 1,
+    valueType = null,
+    columnId = null,
+    groupOrder = 1,
+    fieldOrder = 130,
+    fieldId = 52;
+  const query = sql`update ARS_FIELDS
+  set FIELD_GROUP = ${fieldGroup},
+      FIELD_LABEL = ${fieldLabel},
+      FIELD_TYPE  = ${fieldType},
+      COL_WIDTH   = ${colWidth},
+      IS_UPDATABLE = ${isUpdatable},
+      REQUIRED_FIELD = ${requiredField},
+      VALUE_TYPE = ${valueType},
+      COLUMN_ID = ${columnId},
+      GROUP_ORDER = ${groupOrder},
+      FIELD_ORDER = ${fieldOrder}
+  where FIELD_ID = ${fieldId}`;
+  t.is(
+    query.sql,
+    'update ARS_FIELDS\n' +
+      'set FIELD_GROUP = :1,\n' +
+      'FIELD_LABEL = :2,\n' +
+      'FIELD_TYPE  = :3,\n' +
+      'COL_WIDTH   = :4,\n' +
+      'IS_UPDATABLE = :5,\n' +
+      'REQUIRED_FIELD = :6,\n' +
+      'VALUE_TYPE = :7,\n' +
+      'COLUMN_ID = :7,\n' +
+      'GROUP_ORDER = :6,\n' +
+      'FIELD_ORDER = :10\n' +
+      'where FIELD_ID = :11'
+  );
+
+  t.deepEqual(query.values, {
+    '1': 'Initiate',
+    '2': 'Approval Completed',
+    '3': 'v-select',
+    '4': 3,
+    '5': 0,
+    '6': 1,
+    '7': null,
+    '10': 130,
+    '11': 52,
+  });
+});
+
 test('should separate strings from numbers when caching', (t) => {
   const ids = [1, '1'];
   const query = sql`SELECT * FROM books WHERE id IN (${join(
