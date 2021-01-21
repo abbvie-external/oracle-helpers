@@ -1,10 +1,10 @@
 import { inspect } from 'util';
 
 import { BindParameter } from 'oracledb';
-
+type BindWithName = BindParameter & { name: string };
 export type Value =
   // | Record<string, unknown>
-  BindParameter | string | number | Date | Buffer | null;
+  BindParameter | BindWithName | string | number | Date | Buffer | null;
 export type ValueArray = Value[] | Value;
 export type RawValue = Value | Sql | Value[];
 
@@ -97,8 +97,13 @@ export class Sql {
     this.updateMap();
     return this.strings
       .reduce((text, part, index) => {
-        const position = this.#valueMap.get(this.#values[index - 1]);
-        return `${text}:${position + 1}${part}`;
+        const value = this.#values[index - 1];
+        const position = this.#valueMap.get(value);
+        let name: string | number = position + 1;
+        if (typeof value === 'object' && 'name' in value) {
+          name = value.name;
+        }
+        return `${text}:${name}${part}`;
       })
       .replace(/\n\s*/g, '\n');
   }
@@ -108,12 +113,16 @@ export class Sql {
     let numRows = 0;
 
     const uniqueValues = this.#values
-      .map<[ValueArray, number]>((values, index) => {
+      .map<[ValueArray, number | string]>((values, index) => {
         const position = this.#valueMap.get(values);
+        let name: number | string = position + 1;
+        if (typeof values === 'object' && 'name' in values) {
+          name = values.name;
+        }
         if (position !== index) {
           return null;
         }
-        return [values, position];
+        return [values, name];
       })
       .filter((val) => val);
 
@@ -127,29 +136,33 @@ export class Sql {
     });
 
     if (numRows) {
-      return uniqueValues.reduce<Record<number, Value>[]>(
+      return uniqueValues.reduce<Record<number | string, Value>[]>(
         (rows, [values, position]) => {
           if (Array.isArray(values)) {
             // values is an array of column values
-            values.forEach(
-              (value, index) => (rows[index][position + 1] = value)
-            );
+            values.forEach((value, index) => (rows[index][position] = value));
             // rows.forEach((row,index))
           } else {
-            rows.forEach((row) => (row[position + 1] = values));
+            if (typeof values === 'object' && 'name' in values) {
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              const { name, ...bindParams } = values;
+              rows.forEach((row) => (row[position] = bindParams));
+            } else {
+              rows.forEach((row) => (row[position] = values));
+            }
           }
           return rows;
         },
         new Array(numRows).fill(null).map(() => ({}))
       );
     } else {
-      return uniqueValues.reduce<Record<number, Value>>(
+      return uniqueValues.reduce<Record<number | string, Value>>(
         (row, [value, position]) => {
           // This isn't an array - checked earlier!
           if (Array.isArray(value)) {
             throw new TypeError("value shouldn't be array here");
           }
-          row[position + 1] = value;
+          row[position] = value;
           return row;
         },
         {}
