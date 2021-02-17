@@ -100,7 +100,7 @@ export class Sql {
         const value = this.#values[index - 1];
         const position = this.#valueMap.get(value);
         let name: string | number = position + 1;
-        if (typeof value === 'object' && 'name' in value) {
+        if (value && typeof value === 'object' && 'name' in value) {
           name = value.name;
         }
         return `${text}:${name}${part}`;
@@ -116,7 +116,7 @@ export class Sql {
       .map<[ValueArray, number | string]>((values, index) => {
         const position = this.#valueMap.get(values);
         let name: number | string = position + 1;
-        if (typeof values === 'object' && 'name' in values) {
+        if (values && typeof values === 'object' && 'name' in values) {
           name = values.name;
         }
         if (position !== index) {
@@ -143,7 +143,7 @@ export class Sql {
             values.forEach((value, index) => (rows[index][position] = value));
             // rows.forEach((row,index))
           } else {
-            if (typeof values === 'object' && 'name' in values) {
+            if (values && typeof values === 'object' && 'name' in values) {
               // eslint-disable-next-line @typescript-eslint/no-unused-vars
               const { name, ...bindParams } = values;
               rows.forEach((row) => (row[position] = bindParams));
