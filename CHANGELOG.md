@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](***REMOVED***/oracle-helpers/compare/v3.0.1...v3.1.0) (2021-02-17)
+
+
+### Features
+
+* Add ability to bind values with a name to be used ([b943883](***REMOVED***/oracle-helpers/commit/b943883454c3f8b5667eb5edfb17acd18f8cb82f))
+
+
+### Bug Fixes
+
+* possible failure in deduping ([0a0a2f0](***REMOVED***/oracle-helpers/commit/0a0a2f05cf5853aa30747a476e0769fb7f6f7bcb))
+
 ### [3.0.1](***REMOVED***/oracle-helpers/compare/v3.0.0...v3.0.1) (2020-11-16)
 
 
