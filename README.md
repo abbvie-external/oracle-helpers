@@ -20,7 +20,7 @@ npm install @abv/oracle-helpers
 
 ### API Page
 
-***REMOVED***/oracle-helpers/
+https://abbvie-external.github.io/oracle-helpers/
 
 # Options
 
