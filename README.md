@@ -164,7 +164,7 @@ This means that if you want to use `returning` in mutateMany, you need to set up
 
 ```ts
 import OracleDB from 'oracledb';
-import { mutateManySql } from '@abv/oracle-helpers';
+import { mutateManySqlPool, toBindDefs } from '@abv/oracle-helpers';
 const dbConfig = {
   user: 'username',
   password: 'password',
