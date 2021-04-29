@@ -1,8 +1,10 @@
 import { inspect } from 'util';
 
 import test from 'ava';
+import OracleDB from 'oracledb';
 
 import { empty, join, raw, sql, Sql } from './sql';
+import { toBindDefs } from './sqlHelpers';
 
 test('should generate sql', (t) => {
   const query = sql`SELECT * FROM books`;
@@ -171,8 +173,6 @@ test('should join list', (t) => {
 test('should error joining an empty list', (t) => {
   t.throws(() => join([]), { instanceOf: TypeError });
 });
-// test('join', (t) => {
-// });
 
 test('should accept any string', (t) => {
   const value = Math.random().toString();
@@ -181,8 +181,6 @@ test('should accept any string', (t) => {
   t.is(query.sql, value);
   t.deepEqual(query.values, {});
 });
-// test('raw', (t) => {
-// });
 
 test('should format arrays correctly for mutateMany', (t) => {
   const query = sql`INSERT INTO books (author, genre) values(${[
@@ -235,4 +233,50 @@ test('should clean up extra new lines', (t) => {
     `Hi\nI'm\nA\nLong string\nAnd\nI have\nlot's of spaces and new lines!\n`
   );
   t.deepEqual(query.values, {});
+});
+
+test('Should work with toBindDefs', (t) => {
+  const query = sql`INSERT INTO books (author, genre) values(${[
+    'bob',
+    'joe',
+    'bill',
+  ]}, ${'fantasy'})`;
+  const { values } = query;
+  const bindDefs = toBindDefs(values);
+  t.deepEqual(bindDefs, {
+    1: { dir: OracleDB.BIND_IN, type: OracleDB.STRING, maxSize: 4 },
+    2: {
+      dir: OracleDB.BIND_IN,
+      type: OracleDB.STRING,
+      maxSize: 'fantasy'.length,
+    },
+  });
+});
+
+test('toBindDefs should work with an out bind override', (t) => {
+  const query = sql`INSERT INTO books (author, genre) values(${[
+    'bob',
+    'joe',
+    'bill',
+  ]}, ${'fantasy'}) RETURNING id into :id`;
+  const { values } = query;
+  const overrides = {
+    id: {
+      dir: OracleDB.BIND_OUT,
+      type: OracleDB.NUMBER,
+    },
+    2: {
+      maxSize: 100,
+    },
+  };
+  const bindDefs = toBindDefs(values, overrides);
+  t.deepEqual(bindDefs, {
+    ...overrides,
+    1: { dir: OracleDB.BIND_IN, type: OracleDB.STRING, maxSize: 4 },
+    2: {
+      dir: OracleDB.BIND_IN,
+      type: OracleDB.STRING,
+      maxSize: 100,
+    },
+  });
 });

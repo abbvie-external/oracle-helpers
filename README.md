@@ -154,6 +154,49 @@ const runSql = async () => {
 };
 ```
 
+## toBindDefs
+
+You can use `toBindDefs` to automatically set up bind definitions from the values from the Sql template tag result.
+
+This is especially important in `mutateMany` in which you can't include the bind definitions as part of the parameters (due to how Node Oracledb works).
+
+This means that if you want to use `returning` in mutateMany, you need to set up the whole bind definitions object yourself. And that's what `toBindDefs` helps solve.
+
+```ts
+import OracleDB from 'oracledb';
+import { getPoolConnection, getSql, mutateSql } from '@abv/oracle-helpers';
+const dbConfig = {
+  user: 'username',
+  password: 'password',
+  connectString: 'oracle db connection string',
+};
+
+const runSql = async () => {
+  const query = sql`INSERT INTO books (author, genre) values(${[
+    'bob',
+    'joe',
+    'bill',
+  ]}, ${'fantasy'}) RETURNING id into :id`;
+  // Important to pull values out of query ahead of time to avoid extra calculations.
+  const { values, sql: sqlQuery } = query;
+  const result = await mutateManySqlPool<{ id: [number] }>(
+    dbConfig,
+    sqlQuery,
+    values,
+    {
+      bindDefs: toBindDefs(values, {
+        id: {
+          dir: OracleDB.BIND_OUT,
+          type: OracleDB.NUMBER,
+        },
+      }),
+    }
+  );
+  const ids = results.outBinds.map(({ id }) => id[0]);
+  console.log('newIds:', ids);
+};
+```
+
 ## Advanced
 
 Run multiple mutations with a get inbetween in a single all-or-nothing transaction including returning a value from an insert.
@@ -225,7 +268,13 @@ const runSql = async () => {
 
 ```ts
 import { STRING, NUMBER, BIND_IN, BIND_OUT } from 'oracledb';
-import { sql, getPoolConnection, getSql, mutateSql } from '@abv/oracle-helpers';
+import {
+  sql,
+  getPoolConnection,
+  getSql,
+  mutateSql,
+  toBindDefs,
+} from '@abv/oracle-helpers';
 const dbConfig = {
   user: 'username',
   password: 'password',
@@ -270,21 +319,10 @@ const runSql = async () => {
     const insertMultipleSql = sql`INSERT INTO TABLE_TERM
            (TABLE_ID, TERM_ID, TERM)
     VALUES (${id}, ID_SEQ.NEXT_VAL, ${terms}) returning TERM_ID into :termId`;
-
-    const results = await mutateManySql(connection, insertMultipleSql, {
+    const { values: params, sql: querySql } = insertMultipleSql;
+    const results = await mutateManySql(connection, sql, params, {
       autoCommit: true, // Make it commit upon success.
-      bindDefs: {
-        termId: { dir: BIND_OUT, type: NUMBER },
-        1: {
-          dir: BIND_IN,
-          type: NUMBER,
-        },
-        2: {
-          dir: BIND_IN,
-          type: STRING,
-          maxSize: Math.max(...terms.map((term) => term.length)),
-        },
-      },
+      bindDefs: toBindDefs(values, { termId: { dir: BIND_OUT, type: NUMBER } }),
     });
     const termIds = results.outBinds.map(({ termId }) => termId[0]);
     return termIds;
@@ -320,9 +358,8 @@ import { sql, empty, join, raw, getSql, mutateManySql } from 'sql-template-tag';
 
 const query = sql`SELECT * FROM books WHERE id = ${id}`;
 
-query.sql; //=> "SELECT * FROM books WHERE id = ?"
-query.text; //=> "SELECT * FROM books WHERE id = $1"
-query.values; //=> [id]
+query.sql; //=> "SELECT * FROM books WHERE id = $1"
+query.values; //=> {1: id}
 
 getSql(dbConfig, query.sql, query.values);
 
@@ -349,8 +386,8 @@ Accepts an array of values and returns a SQL instance with the values joined by 
 ```js
 const query = join([1, 2, 3]);
 
-query.sql; //=> "?, ?, ?"
-query.values; //=> [1, 2, 3]
+query.sql; //=> "$1, $2, $3"
+query.values; //=> {1: $1, 2: $2, 3: $3}
 ```
 
 ### Raw
