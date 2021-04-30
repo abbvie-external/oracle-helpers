@@ -75,7 +75,7 @@
 				<a href="#api-page" id="api-page" style="color: inherit; text-decoration: none;">
 					<h3>API Page</h3>
 				</a>
-				<p><a href="***REMOVED***/oracle-helpers/">***REMOVED***/oracle-helpers/</a></p>
+				<p><a href="https://abbvie-external.github.io/oracle-helpers/">https://abbvie-external.github.io/oracle-helpers/</a></p>
 				<a href="#options" id="options" style="color: inherit; text-decoration: none;">
 					<h1>Options</h1>
 				</a>
@@ -201,6 +201,45 @@
 <span style="color: #000000">  </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">mutateManySql</span><span style="color: #000000">(</span><span style="color: #001080">dbConfig</span><span style="color: #000000">, </span><span style="color: #001080">query</span><span style="color: #000000">);</span>
 <span style="color: #000000">};</span>
 </code></pre>
+				<a href="#tobinddefs" id="tobinddefs" style="color: inherit; text-decoration: none;">
+					<h2>toBindDefs</h2>
+				</a>
+				<p>You can use <code>toBindDefs</code> to automatically set up bind definitions from the values from the Sql template tag result.</p>
+				<p>This is especially important in <code>mutateMany</code> in which you can&#39;t include the bind definitions as part of the parameters (due to how Node Oracledb works).</p>
+				<p>This means that if you want to use <code>returning</code> in mutateMany, you need to set up the whole bind definitions object yourself. And that&#39;s what <code>toBindDefs</code> helps solve.</p>
+				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">OracleDB</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;oracledb&#039;</span><span style="color: #000000">;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">mutateManySqlPool</span><span style="color: #000000">, </span><span style="color: #001080">toBindDefs</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@abv/oracle-helpers&#039;</span><span style="color: #000000">;</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">dbConfig</span><span style="color: #000000"> = {</span>
+<span style="color: #000000">  </span><span style="color: #001080">user:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;username&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">password:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;password&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">connectString:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;oracle db connection string&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">};</span>
+
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">runSql</span><span style="color: #000000"> = </span><span style="color: #0000FF">async</span><span style="color: #000000"> () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">query</span><span style="color: #000000"> = </span><span style="color: #795E26">sql</span><span style="color: #A31515">`INSERT INTO books (author, genre) values(</span><span style="color: #0000FF">${</span><span style="color: #000000FF">[</span>
+<span style="color: #000000FF">    </span><span style="color: #A31515">&#039;bob&#039;</span><span style="color: #000000FF">,</span>
+<span style="color: #000000FF">    </span><span style="color: #A31515">&#039;joe&#039;</span><span style="color: #000000FF">,</span>
+<span style="color: #000000FF">    </span><span style="color: #A31515">&#039;bill&#039;</span><span style="color: #000000FF">,</span>
+<span style="color: #000000FF">  ]</span><span style="color: #0000FF">}</span><span style="color: #A31515">, </span><span style="color: #0000FF">${</span><span style="color: #A31515">&#039;fantasy&#039;</span><span style="color: #0000FF">}</span><span style="color: #A31515">) RETURNING id into :id`</span><span style="color: #000000">;</span>
+<span style="color: #000000">  </span><span style="color: #008000">// Important to pull values out of query ahead of time to avoid extra calculations.</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> { </span><span style="color: #0070C1">values</span><span style="color: #000000">, </span><span style="color: #001080">sql</span><span style="color: #000000">: </span><span style="color: #0070C1">sqlQuery</span><span style="color: #000000"> } = </span><span style="color: #001080">query</span><span style="color: #000000">;</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">result</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">mutateManySqlPool</span><span style="color: #000000">&lt;{ </span><span style="color: #001080">id</span><span style="color: #000000">: [</span><span style="color: #267F99">number</span><span style="color: #000000">] }&gt;(</span>
+<span style="color: #000000">    </span><span style="color: #001080">dbConfig</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">sqlQuery</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">values</span><span style="color: #000000">,</span>
+<span style="color: #000000">    {</span>
+<span style="color: #000000">      </span><span style="color: #001080">bindDefs:</span><span style="color: #000000"> </span><span style="color: #795E26">toBindDefs</span><span style="color: #000000">(</span><span style="color: #001080">values</span><span style="color: #000000">, {</span>
+<span style="color: #000000">        </span><span style="color: #001080">id:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">          </span><span style="color: #001080">dir:</span><span style="color: #000000"> </span><span style="color: #001080">OracleDB</span><span style="color: #000000">.</span><span style="color: #0070C1">BIND_OUT</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #001080">OracleDB</span><span style="color: #000000">.</span><span style="color: #0070C1">NUMBER</span><span style="color: #000000">,</span>
+<span style="color: #000000">        },</span>
+<span style="color: #000000">      }),</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  );</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">ids</span><span style="color: #000000"> = </span><span style="color: #001080">results</span><span style="color: #000000">.</span><span style="color: #001080">outBinds</span><span style="color: #000000">.</span><span style="color: #795E26">map</span><span style="color: #000000">(({ </span><span style="color: #001080">id</span><span style="color: #000000"> }) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">id</span><span style="color: #000000">[</span><span style="color: #098658">0</span><span style="color: #000000">]);</span>
+<span style="color: #000000">  </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;newIds:&#039;</span><span style="color: #000000">, </span><span style="color: #001080">ids</span><span style="color: #000000">);</span>
+<span style="color: #000000">};</span>
+</code></pre>
 				<a href="#advanced" id="advanced" style="color: inherit; text-decoration: none;">
 					<h2>Advanced</h2>
 				</a>
@@ -270,7 +309,13 @@
 					<h3>Advanced with the tagged template:</h3>
 				</a>
 				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">STRING</span><span style="color: #000000">, </span><span style="color: #001080">NUMBER</span><span style="color: #000000">, </span><span style="color: #001080">BIND_IN</span><span style="color: #000000">, </span><span style="color: #001080">BIND_OUT</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;oracledb&#039;</span><span style="color: #000000">;</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">sql</span><span style="color: #000000">, </span><span style="color: #001080">getPoolConnection</span><span style="color: #000000">, </span><span style="color: #001080">getSql</span><span style="color: #000000">, </span><span style="color: #001080">mutateSql</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@abv/oracle-helpers&#039;</span><span style="color: #000000">;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #001080">sql</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">getPoolConnection</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">getSql</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">mutateSql</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">toBindDefs</span><span style="color: #000000">,</span>
+<span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@abv/oracle-helpers&#039;</span><span style="color: #000000">;</span>
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">dbConfig</span><span style="color: #000000"> = {</span>
 <span style="color: #000000">  </span><span style="color: #001080">user:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;username&#039;</span><span style="color: #000000">,</span>
 <span style="color: #000000">  </span><span style="color: #001080">password:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;password&#039;</span><span style="color: #000000">,</span>
@@ -315,21 +360,10 @@
 <span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">insertMultipleSql</span><span style="color: #000000"> = </span><span style="color: #795E26">sql</span><span style="color: #A31515">`INSERT INTO TABLE_TERM</span>
 <span style="color: #A31515">           (TABLE_ID, TERM_ID, TERM)</span>
 <span style="color: #A31515">    VALUES (</span><span style="color: #0000FF">${</span><span style="color: #001080">id</span><span style="color: #0000FF">}</span><span style="color: #A31515">, ID_SEQ.NEXT_VAL, </span><span style="color: #0000FF">${</span><span style="color: #001080">terms</span><span style="color: #0000FF">}</span><span style="color: #A31515">) returning TERM_ID into :termId`</span><span style="color: #000000">;</span>
-
-<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">results</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">mutateManySql</span><span style="color: #000000">(</span><span style="color: #001080">connection</span><span style="color: #000000">, </span><span style="color: #001080">insertMultipleSql</span><span style="color: #000000">, {</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> { </span><span style="color: #001080">values</span><span style="color: #000000">: </span><span style="color: #0070C1">params</span><span style="color: #000000">, </span><span style="color: #001080">sql</span><span style="color: #000000">: </span><span style="color: #0070C1">querySql</span><span style="color: #000000"> } = </span><span style="color: #001080">insertMultipleSql</span><span style="color: #000000">;</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">results</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">mutateManySql</span><span style="color: #000000">(</span><span style="color: #001080">connection</span><span style="color: #000000">, </span><span style="color: #001080">sql</span><span style="color: #000000">, </span><span style="color: #001080">params</span><span style="color: #000000">, {</span>
 <span style="color: #000000">      </span><span style="color: #001080">autoCommit:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">, </span><span style="color: #008000">// Make it commit upon success.</span>
-<span style="color: #000000">      </span><span style="color: #001080">bindDefs:</span><span style="color: #000000"> {</span>
-<span style="color: #000000">        </span><span style="color: #001080">termId:</span><span style="color: #000000"> { </span><span style="color: #001080">dir:</span><span style="color: #000000"> </span><span style="color: #0070C1">BIND_OUT</span><span style="color: #000000">, </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #0070C1">NUMBER</span><span style="color: #000000"> },</span>
-<span style="color: #000000">        </span><span style="color: #098658">1</span><span style="color: #001080">:</span><span style="color: #000000"> {</span>
-<span style="color: #000000">          </span><span style="color: #001080">dir:</span><span style="color: #000000"> </span><span style="color: #0070C1">BIND_IN</span><span style="color: #000000">,</span>
-<span style="color: #000000">          </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #0070C1">NUMBER</span><span style="color: #000000">,</span>
-<span style="color: #000000">        },</span>
-<span style="color: #000000">        </span><span style="color: #098658">2</span><span style="color: #001080">:</span><span style="color: #000000"> {</span>
-<span style="color: #000000">          </span><span style="color: #001080">dir:</span><span style="color: #000000"> </span><span style="color: #0070C1">BIND_IN</span><span style="color: #000000">,</span>
-<span style="color: #000000">          </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #0070C1">STRING</span><span style="color: #000000">,</span>
-<span style="color: #000000">          </span><span style="color: #001080">maxSize:</span><span style="color: #000000"> </span><span style="color: #267F99">Math</span><span style="color: #000000">.</span><span style="color: #795E26">max</span><span style="color: #000000">(...</span><span style="color: #001080">terms</span><span style="color: #000000">.</span><span style="color: #795E26">map</span><span style="color: #000000">((</span><span style="color: #001080">term</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">term</span><span style="color: #000000">.</span><span style="color: #001080">length</span><span style="color: #000000">)),</span>
-<span style="color: #000000">        },</span>
-<span style="color: #000000">      },</span>
+<span style="color: #000000">      </span><span style="color: #001080">bindDefs:</span><span style="color: #000000"> </span><span style="color: #795E26">toBindDefs</span><span style="color: #000000">(</span><span style="color: #001080">values</span><span style="color: #000000">, { </span><span style="color: #001080">termId:</span><span style="color: #000000"> { </span><span style="color: #001080">dir:</span><span style="color: #000000"> </span><span style="color: #0070C1">BIND_OUT</span><span style="color: #000000">, </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #0070C1">NUMBER</span><span style="color: #000000"> } }),</span>
 <span style="color: #000000">    });</span>
 <span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">termIds</span><span style="color: #000000"> = </span><span style="color: #001080">results</span><span style="color: #000000">.</span><span style="color: #001080">outBinds</span><span style="color: #000000">.</span><span style="color: #795E26">map</span><span style="color: #000000">(({ </span><span style="color: #001080">termId</span><span style="color: #000000"> }) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">termId</span><span style="color: #000000">[</span><span style="color: #098658">0</span><span style="color: #000000">]);</span>
 <span style="color: #000000">    </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #001080">termIds</span><span style="color: #000000">;</span>
@@ -365,9 +399,8 @@
 
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">query</span><span style="color: #000000"> = </span><span style="color: #795E26">sql</span><span style="color: #A31515">`SELECT * FROM books WHERE id = </span><span style="color: #0000FF">${</span><span style="color: #001080">id</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">;</span>
 
-<span style="color: #001080">query</span><span style="color: #000000">.</span><span style="color: #001080">sql</span><span style="color: #000000">; </span><span style="color: #008000">//=&gt; &quot;SELECT * FROM books WHERE id = ?&quot;</span>
-<span style="color: #001080">query</span><span style="color: #000000">.</span><span style="color: #001080">text</span><span style="color: #000000">; </span><span style="color: #008000">//=&gt; &quot;SELECT * FROM books WHERE id = $1&quot;</span>
-<span style="color: #001080">query</span><span style="color: #000000">.</span><span style="color: #001080">values</span><span style="color: #000000">; </span><span style="color: #008000">//=&gt; [id]</span>
+<span style="color: #001080">query</span><span style="color: #000000">.</span><span style="color: #001080">sql</span><span style="color: #000000">; </span><span style="color: #008000">//=&gt; &quot;SELECT * FROM books WHERE id = $1&quot;</span>
+<span style="color: #001080">query</span><span style="color: #000000">.</span><span style="color: #001080">values</span><span style="color: #000000">; </span><span style="color: #008000">//=&gt; {1: id}</span>
 
 <span style="color: #795E26">getSql</span><span style="color: #000000">(</span><span style="color: #001080">dbConfig</span><span style="color: #000000">, </span><span style="color: #001080">query</span><span style="color: #000000">.</span><span style="color: #001080">sql</span><span style="color: #000000">, </span><span style="color: #001080">query</span><span style="color: #000000">.</span><span style="color: #001080">values</span><span style="color: #000000">);</span>
 
@@ -392,8 +425,8 @@
 				<p>Accepts an array of values and returns a SQL instance with the values joined by the separator. E.g.</p>
 				<pre><code class="language-js"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">query</span><span style="color: #000000"> = </span><span style="color: #795E26">join</span><span style="color: #000000">([</span><span style="color: #098658">1</span><span style="color: #000000">, </span><span style="color: #098658">2</span><span style="color: #000000">, </span><span style="color: #098658">3</span><span style="color: #000000">]);</span>
 
-<span style="color: #001080">query</span><span style="color: #000000">.</span><span style="color: #001080">sql</span><span style="color: #000000">; </span><span style="color: #008000">//=&gt; &quot;?, ?, ?&quot;</span>
-<span style="color: #001080">query</span><span style="color: #000000">.</span><span style="color: #001080">values</span><span style="color: #000000">; </span><span style="color: #008000">//=&gt; [1, 2, 3]</span>
+<span style="color: #001080">query</span><span style="color: #000000">.</span><span style="color: #001080">sql</span><span style="color: #000000">; </span><span style="color: #008000">//=&gt; &quot;$1, $2, $3&quot;</span>
+<span style="color: #001080">query</span><span style="color: #000000">.</span><span style="color: #001080">values</span><span style="color: #000000">; </span><span style="color: #008000">//=&gt; {1: $1, 2: $2, 3: $3}</span>
 </code></pre>
 				<a href="#raw" id="raw" style="color: inherit; text-decoration: none;">
 					<h3>Raw</h3>
