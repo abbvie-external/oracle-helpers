@@ -1,6 +1,6 @@
 import OracleDB from 'oracledb';
-import { toBindDefs } from '..';
 import { sql } from './sql';
+import { toBindDefs } from './toBindDefs';
 
 describe('toBindDefs', () => {
   test('Should work with a non-array input', () => {

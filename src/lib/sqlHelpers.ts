@@ -1,7 +1,6 @@
 /* eslint-disable no-async-promise-executor */
 
 import oracledb, {
-  BindDefinition,
   BindParameters,
   Connection,
   ConnectionAttributes,
@@ -10,9 +9,8 @@ import oracledb, {
   Result,
   Results,
 } from 'oracledb';
-
 import { getPoolConnection } from './pools';
-import { Sql, Value } from './sql';
+import { Sql } from './sql';
 
 oracledb.fetchAsBuffer = [oracledb.BLOB];
 oracledb.fetchAsString = [oracledb.CLOB];
@@ -640,80 +638,6 @@ async function mutateManySqlPool<T>(
   if (connection) doRelease(connection);
   return sqlResult;
 }
-function getTypeFromValue(value?: Value) {
-  if (typeof value === 'string') {
-    return oracledb.STRING;
-  }
-  if (typeof value === 'number' || typeof value === 'bigint') {
-    return oracledb.NUMBER;
-  }
-  if (value instanceof Date) {
-    return oracledb.DATE;
-  }
-  if (value instanceof Buffer) {
-    return oracledb.BUFFER;
-  }
-  return oracledb.DEFAULT;
-}
-
-function getMaxSize(
-  key: string,
-  type: number,
-  values: Record<string, Value>[]
-): number | undefined {
-  switch (type) {
-    case oracledb.BUFFER:
-      return Math.max(
-        ...values.map((valueObj) => {
-          return (valueObj[key] as Buffer)?.byteLength ?? null;
-        })
-      );
-    case oracledb.STRING:
-      return Math.max(
-        ...values.map((valueObj) => {
-          return Buffer.byteLength((valueObj[key] as string) ?? '', 'utf-8');
-        })
-      );
-    default:
-      return undefined;
-  }
-}
-
-/**
- *  Convert Sql values to the relevant bind definitions.
- *  This is important because inline BindDefs don't work in mutateMany
- * @param valueOrValues Sql.values property
- * @param overrides Overrides to add into the generated definitions
- * @returns Oracle Bind Definitions
- */
-function toBindDefs(
-  valueOrValues: Record<string, Value> | Record<string, Value>[],
-  overrides: Record<string, BindDefinition> = {}
-): Record<string, BindDefinition> {
-  if (
-    Array.isArray(valueOrValues)
-      ? !valueOrValues.length
-      : !Object.keys(valueOrValues)?.length
-  ) {
-    return overrides;
-  }
-  const defs: Record<string, BindDefinition> = overrides;
-  const valuesArr = Array.isArray(valueOrValues)
-    ? valueOrValues
-    : [valueOrValues];
-  const firstValue = valuesArr[0];
-  for (const key of Object.keys(firstValue)) {
-    const type = overrides[key]?.type ?? getTypeFromValue(firstValue[key]);
-    defs[key] = {
-      ...overrides[key],
-      dir: overrides[key]?.dir ?? oracledb.BIND_IN,
-      type,
-      maxSize: overrides[key]?.maxSize ?? getMaxSize(key, type, valuesArr),
-    };
-  }
-
-  return defs;
-}
 
 export {
   getSql,
@@ -722,5 +646,4 @@ export {
   getSqlPool,
   mutateManySql,
   mutateManySqlPool,
-  toBindDefs,
 };
