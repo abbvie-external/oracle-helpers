@@ -701,7 +701,7 @@ function toBindDefs(
   const valuesArr = Array.isArray(valueOrValues)
     ? valueOrValues
     : [valueOrValues];
-  const firstValue = valueOrValues[0];
+  const firstValue = valuesArr[0];
   for (const key of Object.keys(firstValue)) {
     const type = overrides[key]?.type ?? getTypeFromValue(firstValue[key]);
     defs[key] = {
