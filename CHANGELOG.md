@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file. See [standa
 
 - Add ability to bind values with a name to be used ([b943883](***REMOVED***/oracle-helpers/commit/b943883454c3f8b5667eb5edfb17acd18f8cb82f))
 
+- Add toBindDefs ([1e13b5b](https://github.com/abbvie-external/oracle-helpers/commit/09eca01e54af132f734e8de98679b6b24b711a3f))
+
+  This will assist with using `returning` in mutateManySql
+
 ### Bug Fixes
 
 - possible failure in deduping ([0a0a2f0](***REMOVED***/oracle-helpers/commit/0a0a2f05cf5853aa30747a476e0769fb7f6f7bcb))
