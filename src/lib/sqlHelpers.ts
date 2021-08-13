@@ -665,15 +665,13 @@ function getMaxSize(
     case oracledb.BUFFER:
       return Math.max(
         ...values.map((valueObj) => {
-          const value = valueObj[key] as Buffer;
-          return value?.byteLength;
+          return (valueObj[key] as Buffer)?.byteLength ?? null;
         })
       );
     case oracledb.STRING:
       return Math.max(
         ...values.map((valueObj) => {
-          const value = valueObj[key] as string;
-          return value?.length;
+          return Buffer.byteLength((valueObj[key] as string) ?? '', 'utf-8');
         })
       );
     default:
