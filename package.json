@@ -85,11 +85,12 @@
   "ava": {
     "failFast": true,
     "timeout": "60s",
-    "typescript": {
-      "rewritePaths": {
-        "src/": "build/main/"
-      }
-    },
+    "extensions":[
+      "ts"
+    ],
+    "require":[
+      "ts-node/register"
+    ],
     "files": [
       "!build/module/**"
     ]

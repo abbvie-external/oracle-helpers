@@ -182,6 +182,12 @@ test('should accept any string', (t) => {
   t.deepEqual(query.values, {});
 });
 
+test('raw should no-op on Sql instance', (t) => {
+  const query = sql`test`;
+  const rawQuery = raw(query);
+  t.deepEqual(query, rawQuery);
+});
+
 test('should format arrays correctly for mutateMany', (t) => {
   const query = sql`INSERT INTO books (author, genre) values(${[
     'bob',

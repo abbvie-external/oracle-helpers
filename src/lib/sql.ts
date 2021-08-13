@@ -202,8 +202,11 @@ export function join(values: RawValue[], separator = ',') {
 /**
  * Create raw SQL statement.
  */
-export function raw(value: string) {
-  return new Sql([value], []);
+export function raw(value: string | Sql) {
+  if (typeof value === 'string') {
+    return new Sql([value], []);
+  }
+  return value;
 }
 
 /**
