@@ -15,6 +15,14 @@ import { Sql } from './sql';
 oracledb.fetchAsBuffer = [oracledb.BLOB];
 oracledb.fetchAsString = [oracledb.CLOB];
 
+type Logger = (error: Error, sql: string, params: BindParameters) => void;
+
+let logger: Logger;
+
+export function setSqlErrorLogger(newLoggerFn: Logger) {
+  logger = newLoggerFn;
+}
+
 type ConfigOrConnection = Connection | ConnectionAttributes;
 function isConnection(
   connection: ConfigOrConnection
@@ -148,6 +156,7 @@ function getSql<T>(
           }
         );
       } catch (error) {
+        logger?.(error, text, params);
         if (connection) {
           doRelease(connection);
         }
@@ -279,6 +288,7 @@ function getSqlPool<T>(
           resultSet: true,
         });
       } catch (error) {
+        logger?.(error, text, params);
         if (connection) {
           doRelease(connection);
         }
@@ -375,6 +385,7 @@ async function mutateSql<T>(
       }
     );
   } catch (error) {
+    logger?.(error, text, params);
     if (connection) {
       doRelease(connection);
     }
@@ -455,6 +466,7 @@ async function mutateSqlPool<T>(
       }
     );
   } catch (error) {
+    logger?.(error, text, params);
     if (connection) {
       doRelease(connection);
     }
@@ -548,6 +560,7 @@ async function mutateManySql<T>(
       }
     );
   } catch (error) {
+    logger?.(error, text, params);
     if (connection) {
       doRelease(connection);
     }
@@ -630,6 +643,7 @@ async function mutateManySqlPool<T>(
       }
     );
   } catch (error) {
+    logger?.(error, text, params);
     if (connection) {
       doRelease(connection);
     }

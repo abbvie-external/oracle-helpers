@@ -48,6 +48,18 @@ poolOptions['oracle db connection string'] = {
 };
 ```
 
+For improved debugging, you can set up a function to log the errors from oracle with the sql and parameters
+
+```js
+import { setSqlErrorLogger } from '@abv/oracle-helpers';
+
+if (process.env.NODE_ENV === 'development') {
+  setSqlErrorLogger((error, sql, params) => {
+    console.error(error, sql, params);
+  });
+}
+```
+
 # Usage
 
 ## sql tagged template vs sql text + params:
@@ -126,18 +138,18 @@ const dbConfig = {
 };
 
 const runSql = async () => {
-  const query = sql`INSERT INTO TABLE (ID, NAME) VALUES (:id, :name)`;
+  const query = `INSERT INTO TABLE (ID, NAME) VALUES (:id, :name)`;
 
-  await mutateSql(dbConfig, query.sql, { id: 5, name: 'test' });
+  await mutateSql(dbConfig, query, { id: 5, name: 'test' });
 
-  await mutateSqlPool(dbConfig, query.sql, { id: 6, name: 'test2' });
+  await mutateSqlPool(dbConfig, query, { id: 6, name: 'test2' });
 
-  await mutateManySql(dbConfig, query.sql, [
+  await mutateManySql(dbConfig, query, [
     { id: 7, name: 'test3' },
     { id: 8, name: 'test4' },
   ]);
 
-  await mutateManySqlPool(dbConfig, query.sql, [
+  await mutateManySqlPool(dbConfig, query, [
     { id: 8, name: 'test5' },
     { id: 9, name: 'test6' },
   ]);
@@ -216,7 +228,7 @@ const runSql = async () => {
   const connection = await getPoolConnection(dbConfig);
 
   try {
-    const result = await mutateSql(
+    const result = await mutateSql<{ id: number[] }>(
       connection,
       sql,
       {
@@ -230,7 +242,7 @@ const runSql = async () => {
       }
     );
 
-    const id = (result.outBinds as { id: number[] }).id[0];
+    const id = result.outBinds.id[0];
 
     const row = await getSql(connection, selectSql, { id })[0];
 
@@ -287,17 +299,18 @@ const runSql = async () => {
   try {
     const value = 'test';
 
-    const result = await mutateSql(
+    const result = await mutateSql<{ id: number[] }>(
       connection,
       sql`INSERT INTO TABLE (ID, NAME)
         VALUES (ID_SEQ.NEXT_VAL,${value})
         returning ID into ${{
           dir: BIND_OUT,
           type: NUMBER,
+          name: 'id',
         }}`
     );
 
-    const id = (result.outBinds as { 2: number[] })[2][0];
+    const id = result.outBinds.id[0];
 
     const selectSql = sql`SELECT * FROM TABLE where ID=${id}`;
 
@@ -319,15 +332,20 @@ const runSql = async () => {
     const insertMultipleSql = sql`INSERT INTO TABLE_TERM
            (TABLE_ID, TERM_ID, TERM)
     VALUES (${id}, ID_SEQ.NEXT_VAL, ${terms}) returning TERM_ID into :termId`;
-    const { values: params, sql: querySql } = insertMultipleSql;
-    const results = await mutateManySql(connection, sql, params, {
-      autoCommit: true, // Make it commit upon success.
-      bindDefs: toBindDefs(values, { termId: { dir: BIND_OUT, type: NUMBER } }),
-    });
+    const results = await mutateManySql<{ termId: [number] }>(
+      connection,
+      insertMultipleSql,
+      {
+        autoCommit: true, // Make it commit upon success.
+        bindDefs: toBindDefs(values, {
+          termId: { dir: BIND_OUT, type: NUMBER },
+        }),
+      }
+    );
     const termIds = results.outBinds.map(({ termId }) => termId[0]);
     return termIds;
   } finally {
-    // Close the connection. This should only be necessary on success, as if there's an error it'll automatically rollback/close the connection before propagating the error
+    // Close the connection - Very important!
     connection.close();
   }
 };
