@@ -27,6 +27,9 @@ type ConfigOrConnection = Connection | ConnectionAttributes;
 function isConnection(
   connection: ConfigOrConnection
 ): connection is Connection {
+  if (!connection) {
+    throw new TypeError('ConfigOrConnection must be defined');
+  }
   return (connection as Connection).execute !== undefined;
 }
 function doRelease(connection: oracledb.Connection): void {
