@@ -160,7 +160,7 @@ function getSql<T>(
         );
       } catch (error) {
         logger?.(error, text, params);
-        if (connection) {
+        if (isConfig && connection) {
           doRelease(connection);
         }
         reject(error);
@@ -389,7 +389,7 @@ async function mutateSql<T>(
     );
   } catch (error) {
     logger?.(error, text, params);
-    if (connection) {
+    if (isConfig && connection) {
       doRelease(connection);
     }
     throw error;
@@ -564,7 +564,7 @@ async function mutateManySql<T>(
     );
   } catch (error) {
     logger?.(error, text, params);
-    if (connection) {
+    if (isConfig && connection) {
       doRelease(connection);
     }
     throw error;
