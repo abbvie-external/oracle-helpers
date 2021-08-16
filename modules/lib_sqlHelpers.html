@@ -55,7 +55,7 @@
 					<a href="../modules.html">@abv/oracle-helpers</a>
 				</li>
 				<li>
-					<a href="lib_sqlhelpers.html">lib/sqlHelpers</a>
+					<a href="lib_sqlHelpers.html">lib/sqlHelpers</a>
 				</li>
 			</ul>
 			<h1>Module lib/sqlHelpers</h1>
@@ -72,13 +72,13 @@
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="lib_sqlhelpers.html#getsql" class="tsd-kind-icon">get<wbr>Sql</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="lib_sqlhelpers.html#getsqlpool" class="tsd-kind-icon">get<wbr>Sql<wbr>Pool</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="lib_sqlhelpers.html#mutatemanysql" class="tsd-kind-icon">mutate<wbr>Many<wbr>Sql</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="lib_sqlhelpers.html#mutatemanysqlpool" class="tsd-kind-icon">mutate<wbr>Many<wbr>Sql<wbr>Pool</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="lib_sqlhelpers.html#mutatesql" class="tsd-kind-icon">mutate<wbr>Sql</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="lib_sqlhelpers.html#mutatesqlpool" class="tsd-kind-icon">mutate<wbr>Sql<wbr>Pool</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-module"><a href="lib_sqlhelpers.html#tobinddefs" class="tsd-kind-icon">to<wbr>Bind<wbr>Defs</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="lib_sqlHelpers.html#getSql" class="tsd-kind-icon">get<wbr>Sql</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="lib_sqlHelpers.html#getSqlPool" class="tsd-kind-icon">get<wbr>Sql<wbr>Pool</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="lib_sqlHelpers.html#mutateManySql" class="tsd-kind-icon">mutate<wbr>Many<wbr>Sql</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="lib_sqlHelpers.html#mutateManySqlPool" class="tsd-kind-icon">mutate<wbr>Many<wbr>Sql<wbr>Pool</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="lib_sqlHelpers.html#mutateSql" class="tsd-kind-icon">mutate<wbr>Sql</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="lib_sqlHelpers.html#mutateSqlPool" class="tsd-kind-icon">mutate<wbr>Sql<wbr>Pool</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="lib_sqlHelpers.html#setSqlErrorLogger" class="tsd-kind-icon">set<wbr>Sql<wbr>Error<wbr>Logger</a></li>
 							</ul>
 						</section>
 					</div>
@@ -87,11 +87,11 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Functions</h2>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-					<a name="getsql" class="tsd-anchor"></a>
+					<a name="getSql" class="tsd-anchor"></a>
 					<h3>get<wbr>Sql</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Sql&lt;T&gt;<span class="tsd-signature-symbol">(</span>configOrConnection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConfigOrConnection</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Sql&lt;T&gt;<span class="tsd-signature-symbol">(</span>configOrConnection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConfigOrConnection</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ExecuteOptions</span>, cb<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>record<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Sql&lt;T&gt;<span class="tsd-signature-symbol">(</span>configOrConnection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConfigOrConnection</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Sql&lt;T&gt;<span class="tsd-signature-symbol">(</span>configOrConnection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConfigOrConnection</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ExecuteOptions</span>, cb<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>record<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 						<li class="tsd-signature tsd-kind-icon">get<wbr>Sql&lt;T&gt;<span class="tsd-signature-symbol">(</span>configOrConnection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConfigOrConnection</span>, sql<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, params<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BindParameters</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 						<li class="tsd-signature tsd-kind-icon">get<wbr>Sql&lt;T&gt;<span class="tsd-signature-symbol">(</span>configOrConnection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConfigOrConnection</span>, sql<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BindParameters</span>, options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ExecuteOptions</span>, cb<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>record<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
@@ -99,7 +99,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L43">lib/sqlHelpers.ts:43</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L52">lib/sqlHelpers.ts:52</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -122,7 +122,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>sql: <a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
+									<h5>sql: <a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The SQL to execute - the result of the sql template tag - Should be a SELECT type for this</p>
 									</div>
@@ -140,7 +140,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L58">lib/sqlHelpers.ts:58</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L67">lib/sqlHelpers.ts:67</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -163,7 +163,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>sql: <a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
+									<h5>sql: <a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The SQL to execute - the result of the sql template tag - Should be a SELECT type for this</p>
 									</div>
@@ -205,7 +205,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L75">lib/sqlHelpers.ts:75</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L84">lib/sqlHelpers.ts:84</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -252,7 +252,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L92">lib/sqlHelpers.ts:92</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L101">lib/sqlHelpers.ts:101</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -323,11 +323,11 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-					<a name="getsqlpool" class="tsd-anchor"></a>
+					<a name="getSqlPool" class="tsd-anchor"></a>
 					<h3>get<wbr>Sql<wbr>Pool</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Sql<wbr>Pool&lt;T&gt;<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConnectionAttributes</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Sql<wbr>Pool&lt;T&gt;<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConnectionAttributes</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ExecuteOptions</span>, cb<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>record<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Sql<wbr>Pool&lt;T&gt;<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConnectionAttributes</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Sql<wbr>Pool&lt;T&gt;<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConnectionAttributes</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ExecuteOptions</span>, cb<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>record<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 						<li class="tsd-signature tsd-kind-icon">get<wbr>Sql<wbr>Pool&lt;T&gt;<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConnectionAttributes</span>, sql<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, params<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BindParameters</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 						<li class="tsd-signature tsd-kind-icon">get<wbr>Sql<wbr>Pool&lt;T&gt;<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConnectionAttributes</span>, sql<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BindParameters</span>, options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ExecuteOptions</span>, cb<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>record<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
@@ -335,7 +335,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L188">lib/sqlHelpers.ts:188</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L198">lib/sqlHelpers.ts:198</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -358,7 +358,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>sql: <a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
+									<h5>sql: <a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The SQL to execute - the result of the sql template tag - Should be a SELECT type for this</p>
 									</div>
@@ -376,7 +376,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L203">lib/sqlHelpers.ts:203</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L213">lib/sqlHelpers.ts:213</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -399,7 +399,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>sql: <a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
+									<h5>sql: <a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The SQL to execute - the result of the sql template tag - Should be a SELECT type for this</p>
 									</div>
@@ -441,7 +441,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L220">lib/sqlHelpers.ts:220</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L230">lib/sqlHelpers.ts:230</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -488,7 +488,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L237">lib/sqlHelpers.ts:237</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L247">lib/sqlHelpers.ts:247</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -559,17 +559,17 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-					<a name="mutatemanysql" class="tsd-anchor"></a>
+					<a name="mutateManySql" class="tsd-anchor"></a>
 					<h3>mutate<wbr>Many<wbr>Sql</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">mutate<wbr>Many<wbr>Sql&lt;T&gt;<span class="tsd-signature-symbol">(</span>configOrConnection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConfigOrConnection</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteManyOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Results</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">mutate<wbr>Many<wbr>Sql&lt;T&gt;<span class="tsd-signature-symbol">(</span>configOrConnection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConfigOrConnection</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteManyOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Results</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 						<li class="tsd-signature tsd-kind-icon">mutate<wbr>Many<wbr>Sql&lt;T&gt;<span class="tsd-signature-symbol">(</span>configOrConnection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConfigOrConnection</span>, sql<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, params<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BindParameters</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteManyOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Results</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L479">lib/sqlHelpers.ts:479</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L492">lib/sqlHelpers.ts:492</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -593,7 +593,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>sql: <a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
+									<h5>sql: <a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The SQL to execute - the result of the sql template tag - Should be some sort of mutation</p>
 									</div>
@@ -611,7 +611,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L495">lib/sqlHelpers.ts:495</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L508">lib/sqlHelpers.ts:508</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -659,17 +659,17 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-					<a name="mutatemanysqlpool" class="tsd-anchor"></a>
+					<a name="mutateManySqlPool" class="tsd-anchor"></a>
 					<h3>mutate<wbr>Many<wbr>Sql<wbr>Pool</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">mutate<wbr>Many<wbr>Sql<wbr>Pool&lt;T&gt;<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConnectionAttributes</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteManyOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Results</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">mutate<wbr>Many<wbr>Sql<wbr>Pool&lt;T&gt;<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConnectionAttributes</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteManyOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Results</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 						<li class="tsd-signature tsd-kind-icon">mutate<wbr>Many<wbr>Sql<wbr>Pool&lt;T&gt;<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConnectionAttributes</span>, sql<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, params<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BindParameters</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteManyOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Results</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L574">lib/sqlHelpers.ts:574</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L588">lib/sqlHelpers.ts:588</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -694,7 +694,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>sql: <a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
+									<h5>sql: <a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The SQL to execute - the result of the sql template tag - Should be some sort of mutation</p>
 									</div>
@@ -712,7 +712,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L592">lib/sqlHelpers.ts:592</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L606">lib/sqlHelpers.ts:606</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -761,17 +761,17 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-					<a name="mutatesql" class="tsd-anchor"></a>
+					<a name="mutateSql" class="tsd-anchor"></a>
 					<h3>mutate<wbr>Sql</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">mutate<wbr>Sql&lt;T&gt;<span class="tsd-signature-symbol">(</span>configOrConnection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConfigOrConnection</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">mutate<wbr>Sql&lt;T&gt;<span class="tsd-signature-symbol">(</span>configOrConnection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConfigOrConnection</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 						<li class="tsd-signature tsd-kind-icon">mutate<wbr>Sql&lt;T&gt;<span class="tsd-signature-symbol">(</span>configOrConnection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConfigOrConnection</span>, sql<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, params<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BindParameters</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L316">lib/sqlHelpers.ts:316</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L327">lib/sqlHelpers.ts:327</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -794,7 +794,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>sql: <a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
+									<h5>sql: <a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The SQL to execute - the result of the sql template tag - Should be some sort of mutation</p>
 									</div>
@@ -812,7 +812,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L329">lib/sqlHelpers.ts:329</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L340">lib/sqlHelpers.ts:340</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -859,17 +859,17 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-					<a name="mutatesqlpool" class="tsd-anchor"></a>
+					<a name="mutateSqlPool" class="tsd-anchor"></a>
 					<h3>mutate<wbr>Sql<wbr>Pool</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">mutate<wbr>Sql<wbr>Pool&lt;T&gt;<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConnectionAttributes</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">mutate<wbr>Sql<wbr>Pool&lt;T&gt;<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConnectionAttributes</span>, sql<span class="tsd-signature-symbol">: </span><a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 						<li class="tsd-signature tsd-kind-icon">mutate<wbr>Sql<wbr>Pool&lt;T&gt;<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ConnectionAttributes</span>, sql<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, params<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BindParameters</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ExecuteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L399">lib/sqlHelpers.ts:399</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L411">lib/sqlHelpers.ts:411</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -893,7 +893,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>sql: <a href="../classes/lib_sql.sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
+									<h5>sql: <a href="../classes/lib_sql.Sql.html" class="tsd-signature-type" data-tsd-kind="Class">Sql</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The SQL to execute - the result of the sql template tag - Should be some sort of mutation</p>
 									</div>
@@ -911,7 +911,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L416">lib/sqlHelpers.ts:416</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L428">lib/sqlHelpers.ts:428</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -959,41 +959,25 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
-					<a name="tobinddefs" class="tsd-anchor"></a>
-					<h3>to<wbr>Bind<wbr>Defs</h3>
+					<a name="setSqlErrorLogger" class="tsd-anchor"></a>
+					<h3>set<wbr>Sql<wbr>Error<wbr>Logger</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">to<wbr>Bind<wbr>Defs<span class="tsd-signature-symbol">(</span>valueOrValues<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="lib_sql.html#value" class="tsd-signature-type" data-tsd-kind="Type alias">Value</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="lib_sql.html#value" class="tsd-signature-type" data-tsd-kind="Type alias">Value</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span>, overrides<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">BindDefinition</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">BindDefinition</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Sql<wbr>Error<wbr>Logger<span class="tsd-signature-symbol">(</span>newLoggerFn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Logger</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/43c3fb3/src/lib/sqlHelpers.ts#L691">lib/sqlHelpers.ts:691</a></li>
+									<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/5ba33bb/src/lib/sqlHelpers.ts#L22">lib/sqlHelpers.ts:22</a></li>
 								</ul>
 							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p> Convert Sql values to the relevant bind definitions.
-									This is important because inline BindDefs don&#39;t work in mutateMany</p>
-								</div>
-							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>valueOrValues: <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="lib_sql.html#value" class="tsd-signature-type" data-tsd-kind="Type alias">Value</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="lib_sql.html#value" class="tsd-signature-type" data-tsd-kind="Type alias">Value</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Sql.values property</p>
-									</div>
-								</li>
-								<li>
-									<h5>overrides: <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">BindDefinition</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = {}</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Overrides to add into the generated definitions</p>
-									</div>
+									<h5>newLoggerFn: <span class="tsd-signature-type">Logger</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">BindDefinition</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>Oracle Bind Definitions</p>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -1003,7 +987,7 @@
 			<nav class="tsd-navigation primary">
 				<ul>
 					<li class=" ">
-						<a href="../modules.html">Exports</a>
+						<a href="../modules.html">Modules</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="index.html">index</a>
@@ -1015,32 +999,35 @@
 						<a href="lib_sql.html">lib/sql</a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="lib_sqlhelpers.html">lib/sql<wbr>Helpers</a>
+						<a href="lib_sqlHelpers.html">lib/sql<wbr>Helpers</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="lib_toBindDefs.html">lib/to<wbr>Bind<wbr>Defs</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-						<a href="lib_sqlhelpers.html#getsql" class="tsd-kind-icon">get<wbr>Sql</a>
+						<a href="lib_sqlHelpers.html#getSql" class="tsd-kind-icon">get<wbr>Sql</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-						<a href="lib_sqlhelpers.html#getsqlpool" class="tsd-kind-icon">get<wbr>Sql<wbr>Pool</a>
+						<a href="lib_sqlHelpers.html#getSqlPool" class="tsd-kind-icon">get<wbr>Sql<wbr>Pool</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-						<a href="lib_sqlhelpers.html#mutatemanysql" class="tsd-kind-icon">mutate<wbr>Many<wbr>Sql</a>
+						<a href="lib_sqlHelpers.html#mutateManySql" class="tsd-kind-icon">mutate<wbr>Many<wbr>Sql</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-						<a href="lib_sqlhelpers.html#mutatemanysqlpool" class="tsd-kind-icon">mutate<wbr>Many<wbr>Sql<wbr>Pool</a>
+						<a href="lib_sqlHelpers.html#mutateManySqlPool" class="tsd-kind-icon">mutate<wbr>Many<wbr>Sql<wbr>Pool</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-						<a href="lib_sqlhelpers.html#mutatesql" class="tsd-kind-icon">mutate<wbr>Sql</a>
+						<a href="lib_sqlHelpers.html#mutateSql" class="tsd-kind-icon">mutate<wbr>Sql</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-						<a href="lib_sqlhelpers.html#mutatesqlpool" class="tsd-kind-icon">mutate<wbr>Sql<wbr>Pool</a>
+						<a href="lib_sqlHelpers.html#mutateSqlPool" class="tsd-kind-icon">mutate<wbr>Sql<wbr>Pool</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="lib_sqlhelpers.html#tobinddefs" class="tsd-kind-icon">to<wbr>Bind<wbr>Defs</a>
+						<a href="lib_sqlHelpers.html#setSqlErrorLogger" class="tsd-kind-icon">set<wbr>Sql<wbr>Error<wbr>Logger</a>
 					</li>
 				</ul>
 			</nav>
