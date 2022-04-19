@@ -52,7 +52,7 @@ export async function createPool(
     return await poolPromises[connectString];
   }
   const promise = oracledb.createPool({
-    poolMin: 3,
+    poolMin: 0,
     poolMax: 12,
     ...options,
     ...(poolOptions[connectString] ?? {}),
