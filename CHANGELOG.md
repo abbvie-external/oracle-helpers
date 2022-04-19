@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.2.1](https://github.com/abbvie-external/oracle-helpers/compare/v3.2.0...v3.2.1) (2022-04-19)
+
+
+### Bug Fixes
+
+* **sqlHelpers:** make default poolMin 0 for resource savings ([2c40637](https://github.com/abbvie-external/oracle-helpers/commit/2c40637fc70ad37d87b16a2b13ff5223ebe73cae))
+
 ## [3.2.0](https://github.com/abbvie-external/oracle-helpers/compare/v3.1.0...v3.2.0) (2021-08-16)
 
 
