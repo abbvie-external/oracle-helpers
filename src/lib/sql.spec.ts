@@ -146,15 +146,39 @@ describe('sql', () => {
     expect(query.sql).toBe("UPDATE user SET `name` = 'Taylor'");
   });
 
-  test('should join list', () => {
-    const query = join([1, 2, 3]);
+  describe('join', () => {
+    test('should join a list', () => {
+      const query = join([1, 2, 3]);
 
-    expect(query.sql).toBe(':1,:2,:3');
-    expect(query.values).toEqual({ 1: 1, 2: 2, 3: 3 });
-  });
+      expect(query.sql).toBe(':1,:2,:3');
+      expect(query.values).toEqual({ 1: 1, 2: 2, 3: 3 });
+    });
 
-  test('should error joining an empty list', () => {
-    expect(() => join([])).toThrow(TypeError);
+    test('should equal empty when joining an empty array', () => {
+      expect(join([])).toEqual(empty);
+    });
+
+    test('should allow joining multiple sql queries together', () => {
+      const queries = [
+        `select * from table_1;`,
+        `select * from table_2;`,
+        `select * from table_3;`,
+      ];
+      const result = join(
+        queries.map((query) => raw(query)),
+        '\n'
+      );
+      expect(result.sql).toBe(queries.join('\n'));
+    });
+
+    test('should join multiple sql strings together with variables', () => {
+      const query = join(
+        [sql`one = ${1}`, sql`two = ${2}`, sql`three = ${3}`],
+        ', '
+      );
+      expect(query.sql).toBe('one = :1, two = :2, three = :3');
+      expect(query.values).toEqual({ 1: 1, 2: 2, 3: 3 });
+    });
   });
 
   describe('raw', () => {

@@ -8,9 +8,6 @@
   "repository": "https://github.com/abbvie-external/oracle-helpers",
   "license": "MIT",
   "keywords": [],
-  "publishConfig": {
-    "registry": "https://abbvie.jfrog.io/abbvie/api/npm/npm/"
-  },
   "scripts": {
     "build": "run-p build:*",
     "build:main": "tsc -p tsconfig.json",

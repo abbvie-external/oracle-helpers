@@ -191,9 +191,7 @@ Object.defineProperty(Sql.prototype, 'sql', { enumerable: true });
  */
 export function join(values: RawValue[], separator = ',') {
   if (values.length === 0) {
-    throw new TypeError(
-      'Expected `join([])` to be called with an array of multiple elements, but got an empty array'
-    );
+    return empty;
   }
 
   return new Sql(['', ...Array(values.length - 1).fill(separator), ''], values);
