@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.2.2](https://github.com/abbvie-external/oracle-helpers/compare/v3.2.1...v3.2.2) (2022-04-22)
+
+
+### Bug Fixes
+
+* make `join` not throw on empty arrays ([e11a78e](https://github.com/abbvie-external/oracle-helpers/commit/e11a78ed2c62c310a05f845db4889a0dfe478e8b))
+
 ### [3.2.1](https://github.com/abbvie-external/oracle-helpers/compare/v3.2.0...v3.2.1) (2022-04-19)
 
 
