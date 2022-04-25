@@ -190,7 +190,7 @@ Object.defineProperty(Sql.prototype, 'sql', { enumerable: true });
  * Create a SQL query for a list of values.
  */
 export function join(values: RawValue[], separator = ',') {
-  if (values.length === 0) {
+  if (!Array.isArray(values) || !values.length) {
     return empty;
   }
 
