@@ -1,4 +1,5 @@
-import { inspect } from 'util';
+import { inspect } from 'node:util';
+import { BIND_OUT, NUMBER } from 'oracledb';
 import { empty, join, raw, sql, Sql } from './sql';
 
 describe('sql', () => {
@@ -21,19 +22,37 @@ describe('sql', () => {
     const query = sql`SELECT * FROM books WHERE author_id IN (${subquery})`;
 
     expect(query.sql).toBe(
-      'SELECT * FROM books WHERE author_id IN (SELECT id FROM authors WHERE name = :1)'
+      'SELECT * FROM books WHERE author_id IN (SELECT id FROM authors WHERE name = :1)',
     );
     expect(query.values).toEqual({ 1: 'Blake' });
+  });
+
+  test('should support binding with a name', () => {
+    const title = 'Good Omens';
+    const author = 'Terry Pratchett & Neil Gaiman';
+    const pages = 288;
+    const bind = {
+      name: 'id',
+      dir: BIND_OUT,
+      type: NUMBER,
+    };
+    const query = sql`INSERT INTO books (TITLE, AUTHOR, PAGES)
+                                 VALUES (${title}, ${author}, ${pages})
+                      RETURNING ID into (${bind})`;
+    expect(query.sql).toBe(
+      `INSERT INTO books (TITLE, AUTHOR, PAGES)\nVALUES (:1, :2, :3)\nRETURNING ID into (:id)`,
+    );
+    expect(query.values).toEqual({ 1: title, 2: author, 3: pages, id: bind });
   });
 
   test('should cache values because oracle supports it', () => {
     const ids = [1, 2, 3];
     const query = sql`SELECT * FROM books WHERE id IN (${join(
-      ids
+      ids,
     )}) OR author_id IN (${join(ids)})`;
 
     expect(query.sql).toBe(
-      'SELECT * FROM books WHERE id IN (:1,:2,:3) OR author_id IN (:1,:2,:3)'
+      'SELECT * FROM books WHERE id IN (:1,:2,:3) OR author_id IN (:1,:2,:3)',
     );
 
     expect(query.values).toEqual({ 1: 1, 2: 2, 3: 3 });
@@ -46,7 +65,7 @@ describe('sql', () => {
         TYPE = ${1},
         IS_UPDATABLE = ${3}`;
     expect(query.sql).toBe(
-      'update ARS_FIELDS\nset GROUP = :1,\nLABEL = :2,\nTYPE = :1,\nIS_UPDATABLE = :4'
+      'update ARS_FIELDS\nset GROUP = :1,\nLABEL = :2,\nTYPE = :1,\nIS_UPDATABLE = :4',
     );
 
     expect(query.values).toEqual({ 1: 1, 2: 2, 4: 3 });
@@ -88,7 +107,7 @@ describe('sql', () => {
         'COLUMN_ID = :7,\n' +
         'GROUP_ORDER = :6,\n' +
         'FIELD_ORDER = :10\n' +
-        'where FIELD_ID = :11'
+        'where FIELD_ID = :11',
     );
 
     expect(query.values).toEqual({
@@ -107,11 +126,11 @@ describe('sql', () => {
   test('should separate strings from numbers when caching', () => {
     const ids = [1, '1'];
     const query = sql`SELECT * FROM books WHERE id IN (${join(
-      ids
+      ids,
     )}) OR author_id IN (${join(ids)})`;
 
     expect(query.sql).toBe(
-      'SELECT * FROM books WHERE id IN (:1,:2) OR author_id IN (:1,:2)'
+      'SELECT * FROM books WHERE id IN (:1,:2) OR author_id IN (:1,:2)',
     );
     expect(query.values).toEqual({ 1: 1, 2: '1' });
   });
@@ -122,7 +141,7 @@ describe('sql', () => {
 
   test('should throw when values is less than expected', () => {
     expect(() => new Sql(['', ''], [])).toThrow(
-      'Expected 2 strings to have 1 values'
+      'Expected 2 strings to have 1 values',
     );
   });
 
@@ -166,7 +185,7 @@ describe('sql', () => {
       ];
       const result = join(
         queries.map((query) => raw(query)),
-        '\n'
+        '\n',
       );
       expect(result.sql).toBe(queries.join('\n'));
     });
@@ -174,7 +193,7 @@ describe('sql', () => {
     test('should join multiple sql strings together with variables', () => {
       const query = join(
         [sql`one = ${1}`, sql`two = ${2}`, sql`three = ${3}`],
-        ', '
+        ', ',
       );
       expect(query.sql).toBe('one = :1, two = :2, three = :3');
       expect(query.values).toEqual({ 1: 1, 2: 2, 3: 3 });
@@ -258,7 +277,7 @@ describe('sql', () => {
                       `;
 
     expect(query.sql).toBe(
-      `Hi\nI'm\nA\nLong string\nAnd\nI have\nlot's of spaces and new lines!\n`
+      `Hi\nI'm\nA\nLong string\nAnd\nI have\nlot's of spaces and new lines!\n`,
     );
     expect(query.values).toEqual({});
   });

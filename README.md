@@ -80,7 +80,7 @@ const sqlText = `SELECT * FROM TABLE where ID=:id`;
 getSql<{ ID: number; NAME: string }[]>(dbConfig, sqlText, { id: 5 }).then(
   (rows) => {
     console.log(rows);
-  }
+  },
 );
 
 // sql tagged template with params (for syntax highlighting only):
@@ -89,7 +89,7 @@ const query2 = sql`SELECT * FROM TABLE where ID=:id`;
 getSql<{ ID: number; NAME: string }[]>(dbConfig, query2.sql, { id: 5 }).then(
   (rows) => {
     console.log(rows);
-  }
+  },
 );
 ```
 
@@ -196,7 +196,7 @@ const runSql = async () => {
           type: OracleDB.NUMBER,
         },
       }),
-    }
+    },
   );
   const ids = results.outBinds.map(({ id }) => id[0]);
   console.log('newIds:', ids);
@@ -233,7 +233,7 @@ const runSql = async () => {
           name: { type: STRING, dir: BIND_IN },
           id: { type: NUMBER, dir: BIND_OUT },
         },
-      }
+      },
     );
 
     const id = result.outBinds.id[0];
@@ -261,7 +261,7 @@ const runSql = async () => {
       terms.map((term) => ({ tableId: id, term })),
       {
         autoCommit: true, // Make it commit upon success.
-      }
+      },
     );
   } finally {
     // Close the connection. This should only be necessary on success, as if there's an error it'll automatically rollback/close the connection before propagating the error
@@ -301,7 +301,7 @@ const runSql = async () => {
           dir: BIND_OUT,
           type: NUMBER,
           name: 'id',
-        }}`
+        }}`,
     );
 
     const id = result.outBinds.id[0];
@@ -334,7 +334,7 @@ const runSql = async () => {
         bindDefs: toBindDefs(values, {
           termId: { dir: BIND_OUT, type: NUMBER },
         }),
-      }
+      },
     );
     const termIds = results.outBinds.map(({ termId }) => termId[0]);
     return termIds;
@@ -411,7 +411,7 @@ const result = sql`select * from table ${
   filters === empty ? empty : sql`WHERE ${filters}`
 } ORDER BY two`;
 result.sql; //=> "select * from table WHERE one = :1 AND two = :2 AND three = :3 ORDER BY two"
-resutl.values; //=> {1: 1, 2: 2, 3: 3}
+result.values; //=> {1: 1, 2: 2, 3: 3}
 ```
 
 By making a quick helper, you can simplify this use case:

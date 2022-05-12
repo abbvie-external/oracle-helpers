@@ -9,8 +9,7 @@
     "eslint:recommended",
     "plugin:eslint-comments/recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:import/typescript",
-    "prettier"
+    "plugin:import/typescript"
   ],
   "globals": { "BigInt": true, "console": true, "WebAssembly": true },
   "rules": {
@@ -26,10 +25,6 @@
         "newlines-between": "ignore",
         "alphabetize": { "order": "asc" }
       }
-    ],
-    "sort-imports": [
-      "error",
-      { "ignoreDeclarationSort": true, "ignoreCase": true }
     ]
   }
 }

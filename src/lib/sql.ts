@@ -1,7 +1,26 @@
-import { inspect } from 'util';
-
+import { inspect } from 'node:util';
 import { BindParameter } from 'oracledb';
-type BindWithName = BindParameter & { name: string };
+
+/**
+ * Provides the ability to Bind a parameter with a name that will be used
+ *
+ * This is very useful for the output values
+ * @example
+ * ```js
+ * const title = 'Good Omens';
+ * const author = 'Terry Pratchett & Neil Gaiman';
+ * const pages = 288;
+ * const bind = {
+ *   name: 'id',
+ *   dir: BIND_OUT,
+ *   type: NUMBER,
+ * };
+ * const query = sql`INSERT INTO books (TITLE, AUTHOR, PAGES)
+ *                              VALUES (${title}, ${author}, ${pages})
+ *                   RETURNING ID into (${bind})`;
+ * ```
+ */
+export type BindWithName = BindParameter & { name: string };
 export type Value =
   // | Record<string, unknown>
   BindParameter | BindWithName | string | number | Date | Buffer | null;
@@ -22,7 +41,7 @@ export class Sql {
   strings: string[];
   constructor(
     rawStrings: ReadonlyArray<string>,
-    rawValues: ReadonlyArray<RawValue>
+    rawValues: ReadonlyArray<RawValue>,
   ) {
     let valuesLength = rawValues.length;
     let stringsLength = rawStrings.length;
@@ -33,7 +52,7 @@ export class Sql {
 
     if (stringsLength - 1 !== valuesLength) {
       throw new TypeError(
-        `Expected ${stringsLength} strings to have ${stringsLength - 1} values`
+        `Expected ${stringsLength} strings to have ${stringsLength - 1} values`,
       );
     }
 
@@ -153,7 +172,7 @@ export class Sql {
           }
           return rows;
         },
-        new Array(numRows).fill(null).map(() => ({}))
+        new Array(numRows).fill(null).map(() => ({})),
       );
     } else {
       return uniqueValues.reduce<Record<number | string, Value>>(
@@ -165,7 +184,7 @@ export class Sql {
           row[position] = value;
           return row;
         },
-        {}
+        {},
       );
     }
   }

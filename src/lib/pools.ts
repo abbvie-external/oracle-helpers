@@ -4,7 +4,11 @@ import oracledb, {
   Pool,
   PoolAttributes,
 } from 'oracledb';
-interface Configuration {
+
+/**
+ * Customize the way the pools works.
+ */
+export interface Configuration {
   /** Amount of time (in ms) between pings to check on connection behavior. */
   pingTime: number;
   /** Amount of time to wait (in ms) for getting a connection before deciding that there's a problem with the pool */
@@ -39,7 +43,7 @@ const pings: Record<string, Date> = {};
  */
 export async function createPool(
   dbConfig: ConnectionAttributes,
-  options: PoolAttributes = {}
+  options: PoolAttributes = {},
 ): Promise<Pool> {
   const connectString = dbConfig.connectString || dbConfig.connectionString;
   if (!connectString) {
@@ -84,7 +88,7 @@ export async function createPool(
  * @returns an oracle connection object
  */
 export async function getPoolConnection(
-  dbConfig: ConnectionAttributes
+  dbConfig: ConnectionAttributes,
 ): Promise<Connection> {
   const connectString = dbConfig.connectString || dbConfig.connectionString;
   if (!connectString) {
@@ -95,7 +99,7 @@ export async function getPoolConnection(
   try {
     const connection = await promiseOrTimeout(
       pool.getConnection(),
-      configuration.connectionTimeout
+      configuration.connectionTimeout,
     );
     if (
       new Date().valueOf() >
@@ -113,7 +117,7 @@ export async function getPoolConnection(
 
 async function promiseOrTimeout<T>(
   promise: Promise<T>,
-  timeout = 3000
+  timeout = 3000,
 ): Promise<T> {
   return await Promise.race([
     promise,
@@ -127,7 +131,7 @@ async function promiseOrTimeout<T>(
 
 async function recreatePool(
   dbConfig: ConnectionAttributes,
-  pool: Pool
+  pool: Pool,
 ): Promise<Pool> {
   const connectString = dbConfig.connectString || dbConfig.connectionString;
   if (!connectString) {

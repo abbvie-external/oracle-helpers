@@ -37,20 +37,20 @@ function getTypeFromValue(key: string, values: Values): number {
 function getMaxSize(
   key: string,
   type: number,
-  values: Record<string, Value>[]
+  values: Record<string, Value>[],
 ): number | undefined {
   switch (type) {
     case BUFFER:
       return Math.max(
         ...values.map((valueObj) => {
           return (valueObj[key] as Buffer)?.byteLength ?? null;
-        })
+        }),
       );
     case STRING:
       return Math.max(
         ...values.map((valueObj) => {
           return Buffer.byteLength((valueObj[key] as string) ?? '', 'utf-8');
-        })
+        }),
       );
     default:
       return undefined;
@@ -66,7 +66,7 @@ function getMaxSize(
  */
 export function toBindDefs(
   valueOrValues: Record<string, Value> | Record<string, Value>[],
-  overrides: Record<string, BindDefinition> = {}
+  overrides: Record<string, BindDefinition> = {},
 ): Record<string, BindDefinition> {
   if (
     Array.isArray(valueOrValues)

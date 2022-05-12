@@ -4,41 +4,36 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [3.2.3](https://github.com/abbvie-external/oracle-helpers/compare/v3.2.2...v3.2.3) (2022-04-25)
 
-
 ### Bug Fixes
 
-* make `join` be empty for undefined values, and it will ignore non array values ([7561f2a](https://github.com/abbvie-external/oracle-helpers/commit/7561f2a6915b777a5ed005d0a024e279c5246122))
+- make `join` be empty for undefined values, and it will ignore non array values ([7561f2a](https://github.com/abbvie-external/oracle-helpers/commit/7561f2a6915b777a5ed005d0a024e279c5246122))
 
 ### [3.2.2](https://github.com/abbvie-external/oracle-helpers/compare/v3.2.1...v3.2.2) (2022-04-22)
 
-
 ### Bug Fixes
 
-* make `join` not throw on empty arrays ([5fc06e2](https://github.com/abbvie-external/oracle-helpers/commit/5fc06e283e45b90a846849bab9ab74281e783029))
+- make `join` not throw on empty arrays ([5fc06e2](https://github.com/abbvie-external/oracle-helpers/commit/5fc06e283e45b90a846849bab9ab74281e783029))
 
 ### [3.2.1](https://github.com/abbvie-external/oracle-helpers/compare/v3.2.0...v3.2.1) (2022-04-19)
 
-
 ### Bug Fixes
 
-* **sqlHelpers:** make default poolMin 0 for resource savings ([f8e5b3c](https://github.com/abbvie-external/oracle-helpers/commit/f8e5b3cee6993c8c78ffa1d68cd37298c3b643e2))
+- **sqlHelpers:** make default poolMin 0 for resource savings ([f8e5b3c](https://github.com/abbvie-external/oracle-helpers/commit/f8e5b3cee6993c8c78ffa1d68cd37298c3b643e2))
 
 ## [3.2.0](https://github.com/abbvie-external/oracle-helpers/compare/v3.1.0...v3.2.0) (2021-08-16)
 
-
 ### Features
 
-* **Logging:** Add ability to set up logging ([f252b23](https://github.com/abbvie-external/oracle-helpers/commit/f252b23a267ff32a1fa54343c48fcd98962621d8))
-* make `raw` able to work with Sql instances ([e38c3aa](https://github.com/abbvie-external/oracle-helpers/commit/e38c3aa78a7e77d1d6dba9c7ad1132ddb8e90c9b))
-
+- **Logging:** Add ability to set up logging ([f252b23](https://github.com/abbvie-external/oracle-helpers/commit/f252b23a267ff32a1fa54343c48fcd98962621d8))
+- make `raw` able to work with Sql instances ([e38c3aa](https://github.com/abbvie-external/oracle-helpers/commit/e38c3aa78a7e77d1d6dba9c7ad1132ddb8e90c9b))
 
 ### Bug Fixes
 
-* `toBindDefs` failed on non-array entry ([1f0c8bc](https://github.com/abbvie-external/oracle-helpers/commit/1f0c8bc6337ac83b7764f61c18a8d419a5271a54))
-* `toBindDefs` to work with unicode inputs ([6dced61](https://github.com/abbvie-external/oracle-helpers/commit/6dced61ea00fee398cabadba47f553acf7a40482))
-* `toBindDefs` will now look through all rows for the type ([a8b8e8f](https://github.com/abbvie-external/oracle-helpers/commit/a8b8e8fbbb6ebb929ae28fd8ce7eb56078dc6145))
-* **sqlHelpers:** Don't automatically release passed in connections ([d93f7cf](https://github.com/abbvie-external/oracle-helpers/commit/d93f7cff81476729032678a9a4619d0b30d198ff))
-* **sqlHelpers:** Improve error message when config is undefined ([cb36957](https://github.com/abbvie-external/oracle-helpers/commit/cb369579cb4feb30840eb76df1a46c033b0a55e9))
+- `toBindDefs` failed on non-array entry ([1f0c8bc](https://github.com/abbvie-external/oracle-helpers/commit/1f0c8bc6337ac83b7764f61c18a8d419a5271a54))
+- `toBindDefs` to work with unicode inputs ([6dced61](https://github.com/abbvie-external/oracle-helpers/commit/6dced61ea00fee398cabadba47f553acf7a40482))
+- `toBindDefs` will now look through all rows for the type ([a8b8e8f](https://github.com/abbvie-external/oracle-helpers/commit/a8b8e8fbbb6ebb929ae28fd8ce7eb56078dc6145))
+- **sqlHelpers:** Don't automatically release passed in connections ([d93f7cf](https://github.com/abbvie-external/oracle-helpers/commit/d93f7cff81476729032678a9a4619d0b30d198ff))
+- **sqlHelpers:** Improve error message when config is undefined ([cb36957](https://github.com/abbvie-external/oracle-helpers/commit/cb369579cb4feb30840eb76df1a46c033b0a55e9))
 
 ## [3.1.0](https://github.com/abbvie-external/oracle-helpers/compare/v3.0.1...v3.1.0) (2021-02-17)
 

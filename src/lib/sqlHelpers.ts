@@ -15,17 +15,31 @@ import { Sql } from './sql';
 oracledb.fetchAsBuffer = [oracledb.BLOB];
 oracledb.fetchAsString = [oracledb.CLOB];
 
-type Logger = (error: Error, sql: string, params: BindParameters) => void;
+/**
+ * A function called when an error occurs
+ */
+export type Logger = (
+  error: Error,
+  sql: string,
+  params: BindParameters,
+) => void;
 
 let logger: Logger;
-
+/**
+ * In order to help combat how bad Oracle's actual Error messages are, this will let you make your own output messages when there's an error
+ *
+ * @param newLoggerFn The new function to run when an error occurs in a oracle-helper function
+ *
+ */
 export function setSqlErrorLogger(newLoggerFn: Logger) {
   logger = newLoggerFn;
 }
-
-type ConfigOrConnection = Connection | ConnectionAttributes;
+/**
+ * Either a Connection or the attributes to create one
+ */
+export type ConfigOrConnection = Connection | ConnectionAttributes;
 function isConnection(
-  connection: ConfigOrConnection
+  connection: ConfigOrConnection,
 ): connection is Connection {
   if (!connection) {
     throw new TypeError('ConfigOrConnection must be defined');
@@ -47,12 +61,12 @@ function doRelease(connection: oracledb.Connection): void {
  * @param sql The SQL to execute - the result of the sql template tag - Should be a SELECT type for this
  * @param options The oracle options for the SQL execution
  *
- * @returns The values as an array by default or nothing if there is a callback instead
+ * @returns The response data as an array
  */
 function getSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: Sql,
-  options?: ExecuteOptions
+  options?: ExecuteOptions,
 ): Promise<T[]>;
 /**
  * Runs SQL to get values
@@ -62,13 +76,13 @@ function getSql<T>(
  * @param options The oracle options for the SQL execution
  * @param cb A callback method to allow you to take the return from the sql and transform the object. This is in lieu of returning an array of data.
  *
- * @returns The values as an array by default or nothing if there is a callback instead
+ * @returns Nothing if there is a callback
  */
 function getSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: Sql,
   options: ExecuteOptions,
-  cb: (record: T) => void
+  cb: (record: T) => void,
 ): Promise<void>;
 /**
  * Runs SQL to get values
@@ -77,15 +91,14 @@ function getSql<T>(
  * @param sql The SQL to execute - Should be a SELECT type for this
  * @param params The Parameters to pass into the SQL execution
  * @param options The oracle options for the SQL execution
- * @param cb A callback method to allow you to take the return from the sql and transform the object. This is in lieu of returning an array of data.
  *
- * @returns The values as an array by default or nothing if there is a callback instead
+ * @returns The response data as an array
  */
 function getSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string,
   params?: BindParameters,
-  options?: ExecuteOptions
+  options?: ExecuteOptions,
 ): Promise<T[]>;
 /**
  * Runs SQL to get values
@@ -96,14 +109,14 @@ function getSql<T>(
  * @param options The oracle options for the SQL execution
  * @param cb A callback method to allow you to take the return from the sql and transform the object. This is in lieu of returning an array of data.
  *
- * @returns The values as an array by default or nothing if there is a callback instead
+ * @returns Nothing if there is a callback
  */
 function getSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string,
   params: BindParameters,
   options: ExecuteOptions,
-  cb: (record: T) => void
+  cb: (record: T) => void,
 ): Promise<void>;
 function getSql<T>(
   configOrConnection: ConfigOrConnection,
@@ -112,7 +125,7 @@ function getSql<T>(
   optionsOrCb: ExecuteOptions | ((record: T) => void) = sql instanceof Sql
     ? undefined
     : {},
-  cb?: (record: T) => void
+  cb?: (record: T) => void,
 ): Promise<void | T[]> {
   return new Promise(async (resolve, reject) => {
     try {
@@ -156,7 +169,7 @@ function getSql<T>(
             outFormat: oracledb.OUT_FORMAT_OBJECT, // return as json object
             extendedMetaData: false, // return additional metadata
             resultSet: true,
-          }
+          },
         );
       } catch (error) {
         logger?.(error, text, params);
@@ -191,14 +204,13 @@ function getSql<T>(
  * @param config The DBConfig object to get the connection from
  * @param sql The SQL to execute - the result of the sql template tag - Should be a SELECT type for this
  * @param options The oracle options for the SQL execution
- * @param cb A callback method to allow you to take the return from the sql and transform the object. This is in lieu of returning an array of data.
  *
- * @returns The values as an array by default or nothing if there is a callback instead
+ * @returns The response data as an array
  */
 function getSqlPool<T>(
   config: ConnectionAttributes,
   sql: Sql,
-  options?: ExecuteOptions
+  options?: ExecuteOptions,
 ): Promise<T[]>;
 /**
  * Uses a connection from a connection pool to run SQL to get values
@@ -208,13 +220,13 @@ function getSqlPool<T>(
  * @param options The oracle options for the SQL execution
  * @param cb A callback method to allow you to take the return from the sql and transform the object. This is in lieu of returning an array of data.
  *
- * @returns The values as an array by default or nothing if there is a callback instead
+ * @returns Nothing if there is a callback
  */
 function getSqlPool<T>(
   config: ConnectionAttributes,
   sql: Sql,
   options: ExecuteOptions,
-  cb: (record: T) => void
+  cb: (record: T) => void,
 ): Promise<void>;
 /**
  * Uses a connection from a connection pool to run SQL to get values
@@ -223,15 +235,14 @@ function getSqlPool<T>(
  * @param sql The SQL to execute - Should be a SELECT type for this
  * @param params The Parameters to pass into the SQL execution
  * @param options The oracle options for the SQL execution
- * @param cb A callback method to allow you to take the return from the sql and transform the object. This is in lieu of returning an array of data.
  *
- * @returns The values as an array by default or nothing if there is a callback instead
+ * @returns The response data as an array
  */
 function getSqlPool<T>(
   config: ConnectionAttributes,
   sql: string,
   params?: BindParameters,
-  options?: ExecuteOptions
+  options?: ExecuteOptions,
 ): Promise<T[]>;
 /**
  * Uses a connection from a connection pool to run SQL to get values
@@ -242,14 +253,14 @@ function getSqlPool<T>(
  * @param options The oracle options for the SQL execution
  * @param cb A callback method to allow you to take the return from the sql and transform the object. This is in lieu of returning an array of data.
  *
- * @returns The values as an array by default or nothing if there is a callback instead
+ * @returns Nothing if there is a callback instead
  */
 function getSqlPool<T>(
   config: ConnectionAttributes,
   sql: string,
   params: BindParameters,
   options: ExecuteOptions,
-  cb: (record: T) => void
+  cb: (record: T) => void,
 ): Promise<void>;
 function getSqlPool<T>(
   config: ConnectionAttributes,
@@ -258,7 +269,7 @@ function getSqlPool<T>(
   optionsOrCb: ExecuteOptions | ((record: T) => void) = sql instanceof Sql
     ? undefined
     : {},
-  cb?: (record: T) => void
+  cb?: (record: T) => void,
 ): Promise<void | T[]> {
   return new Promise(async (resolve, reject) => {
     try {
@@ -327,7 +338,7 @@ function getSqlPool<T>(
 function mutateSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: Sql,
-  options?: ExecuteOptions
+  options?: ExecuteOptions,
 ): Promise<Result<T>>;
 /**
  * Executes SQL mutate the database
@@ -341,13 +352,13 @@ function mutateSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string,
   params?: BindParameters,
-  options?: ExecuteOptions
+  options?: ExecuteOptions,
 ): Promise<Result<T>>;
 async function mutateSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string | Sql,
   paramsOrOptions: BindParameters | ExecuteOptions = {},
-  options: ExecuteOptions = {}
+  options: ExecuteOptions = {},
 ): Promise<Result<T>> {
   const isConfig = !isConnection(configOrConnection);
   const connection: Connection = isConnection(configOrConnection)
@@ -385,7 +396,7 @@ async function mutateSql<T>(
         outFormat: oracledb.OUT_FORMAT_OBJECT, // return as json object
         extendedMetaData: false, // return additional metadata
         // resultSet: true,
-      }
+      },
     );
   } catch (error) {
     logger?.(error, text, params);
@@ -411,7 +422,7 @@ async function mutateSql<T>(
 function mutateSqlPool<T>(
   config: ConnectionAttributes,
   sql: Sql,
-  options?: ExecuteOptions
+  options?: ExecuteOptions,
 ): Promise<Result<T>>;
 /**
  * Uses a connection from a connection pool to execute SQL to mutate the database
@@ -429,13 +440,13 @@ function mutateSqlPool<T>(
   config: ConnectionAttributes,
   sql: string,
   params?: BindParameters,
-  options?: ExecuteOptions
+  options?: ExecuteOptions,
 ): Promise<Result<T>>;
 async function mutateSqlPool<T>(
   config: ConnectionAttributes,
   sql: string | Sql,
   paramsOrOptions: BindParameters | ExecuteOptions = {},
-  options: ExecuteOptions = {}
+  options: ExecuteOptions = {},
 ): Promise<Result<T>> {
   const connection: Connection = await getPoolConnection(config);
   let sqlResult: Result<T>;
@@ -466,7 +477,7 @@ async function mutateSqlPool<T>(
         extendedMetaData: false, // return additional metadata
         autoCommit: true,
         // resultSet: true,
-      }
+      },
     );
   } catch (error) {
     logger?.(error, text, params);
@@ -492,7 +503,7 @@ async function mutateSqlPool<T>(
 function mutateManySql<T>(
   configOrConnection: ConfigOrConnection,
   sql: Sql,
-  options?: ExecuteManyOptions
+  options?: ExecuteManyOptions,
 ): Promise<Results<T>>;
 /**
  * Executes SQL mutate the database via the `executeMany` command.
@@ -509,7 +520,7 @@ function mutateManySql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string,
   params?: BindParameters[],
-  options?: ExecuteManyOptions
+  options?: ExecuteManyOptions,
 ): Promise<Results<T>>;
 async function mutateManySql<T>(
   configOrConnection: ConfigOrConnection,
@@ -517,7 +528,7 @@ async function mutateManySql<T>(
   paramsOrOptions: BindParameters[] | ExecuteManyOptions = sql instanceof Sql
     ? {}
     : [],
-  options: ExecuteManyOptions = {}
+  options: ExecuteManyOptions = {},
 ): Promise<Results<T>> {
   const isConfig = !isConnection(configOrConnection);
   const connection: Connection = isConnection(configOrConnection)
@@ -560,7 +571,7 @@ async function mutateManySql<T>(
       {
         autoCommit: isConfig,
         ...options,
-      }
+      },
     );
   } catch (error) {
     logger?.(error, text, params);
@@ -588,7 +599,7 @@ async function mutateManySql<T>(
 function mutateManySqlPool<T>(
   config: ConnectionAttributes,
   sql: Sql,
-  options?: ExecuteManyOptions
+  options?: ExecuteManyOptions,
 ): Promise<Results<T>>;
 /**
  * Uses a connection from a connection pool to execute SQL to mutate the database via the `executeMany` command.
@@ -607,7 +618,7 @@ function mutateManySqlPool<T>(
   config: ConnectionAttributes,
   sql: string,
   params?: BindParameters[],
-  options?: ExecuteManyOptions
+  options?: ExecuteManyOptions,
 ): Promise<Results<T>>;
 async function mutateManySqlPool<T>(
   config: ConnectionAttributes,
@@ -615,7 +626,7 @@ async function mutateManySqlPool<T>(
   paramsOrOptions: BindParameters[] | ExecuteOptions = sql instanceof Sql
     ? {}
     : [],
-  options: ExecuteManyOptions = {}
+  options: ExecuteManyOptions = {},
 ): Promise<Results<T>> {
   const connection: Connection = await getPoolConnection(config);
   let sqlResult: Results<T>;
@@ -643,7 +654,7 @@ async function mutateManySqlPool<T>(
       {
         ...options,
         autoCommit: true,
-      }
+      },
     );
   } catch (error) {
     logger?.(error, text, params);
