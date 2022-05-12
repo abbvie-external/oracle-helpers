@@ -398,8 +398,35 @@ Accepts an array of values and returns a SQL instance with the values joined by 
 ```js
 const query = join([1, 2, 3]);
 
-query.sql; //=> "$1, $2, $3"
-query.values; //=> {1: $1, 2: $2, 3: $3}
+query.sql; //=> ":1, :2, :3"
+query.values; //=> {1: 1, 2: 2, 3: 3}
+```
+
+It can also be used to create dynamic SQL by joining multiple values together.
+
+```js
+const queries = [sql`one = ${1}`, sql`two = ${2}`, sql`three = ${3}`];
+const filters = join(queries, ' AND ');
+const result = sql`select * from table ${
+  filters === empty ? empty : sql`WHERE ${filters}`
+} ORDER BY two`;
+result.sql; //=> "select * from table WHERE one = :1 AND two = :2 AND three = :3 ORDER BY two"
+resutl.values; //=> {1: 1, 2: 2, 3: 3}
+```
+
+By making a quick helper, you can simplify this use case:
+
+```js
+function joinWhere(filters, useAndAfter = false) {
+  if (useAndAfter) {
+    filters = filters.concat(empty);
+  }
+  if (filters.length) {
+    return `WHERE ${join(filters.concat(empty), ' AND ')}`;
+  }
+}
+const queries = [sql`one = ${1}`, sql`two = ${2}`, sql`three = ${3}`];
+const result = sql`select * from table ${joinWhere(queries)} ORDER BY two`;
 ```
 
 ### Raw
@@ -410,11 +437,36 @@ Accepts a string and returns a SQL instance, useful if you want some part of the
 raw('SELECT'); // == sql`SELECT`
 ```
 
-**Do not** accept user input to `raw`, this will create a SQL injection vulnerability.
+```js
+const input = 'devUsers';
+const TABLES = new Map([
+  ['users', 'ENV.USERS'],
+  ['devUsers', 'DEV_ENV.USERS'],
+]);
+sql`SELECT * FROM ${raw(TABLES.get(input))}`; // == sql`SELECT * FROM DEV_ENV.USERS`
+```
+
+**Do not** accept raw user input to `raw`, this will create a SQL injection vulnerability.
 
 ### Empty
 
 Simple placeholder value for an empty SQL string. Equivalent to `raw("")`.
+
+You can use this to great effect when creating dynamic SQL.
+
+```ts
+/**
+ * if the value passed in is a boolean, treat it as empty
+ *
+ * great for ensuring short-circuiting behavior while still being more readable than nested ternaries directly
+ */
+function sqlBool(sql: boolean | RawValue) {
+  return typeof sql === 'boolean' ? empty : sql;
+}
+
+const isUpdate = false;
+sql`${sqlBool(isUpdate && sql`UPDATE Test WHERE ...`)}`;
+```
 
 ## Related
 
@@ -423,17 +475,3 @@ Some other modules exist that do something similar but for the wrong form of sql
 - [`sql-template-tag`](https://github.com/blakeembrey/sql-template-tag): The origin for this part of the module. - supports postgres and mysql
 - [`node-sql-template-strings`](https://github.com/felixfbecker/node-sql-template-strings): promotes mutation via chained methods and lacks nesting SQL statements. - supports postgres and mysql
 - [`pg-template-tag`](https://github.com/XeCycle/pg-template-tag): missing TypeScript and MySQL support. By supporting `pg` only it has the ability to [dedupe `values`](https://github.com/XeCycle/pg-template-tag/issues/5#issuecomment-386875336). - That's where I got the idea to dedupe values in this fork.
-
-<!--
-## License
-
-MIT
-
-[npm-image]: https://img.shields.io/npm/v/sql-template-tag.svg?style=flat
-[npm-url]: https://npmjs.org/package/sql-template-tag
-[downloads-image]: https://img.shields.io/npm/dm/sql-template-tag.svg?style=flat
-[downloads-url]: https://npmjs.org/package/sql-template-tag
-[travis-image]: https://img.shields.io/travis/blakeembrey/sql-template-tag.svg?style=flat
-[travis-url]: https://travis-ci.org/blakeembrey/sql-template-tag
-[coveralls-image]: https://img.shields.io/coveralls/blakeembrey/sql-template-tag.svg?style=flat
-[coveralls-url]: https://coveralls.io/r/blakeembrey/sql-template-tag?branch=master -->
