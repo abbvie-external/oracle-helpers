@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>@abv/oracle-helpers</title>
-	<meta name="description" content="Documentation for @abv/oracle-helpers">
+	<title>oracle-helpers</title>
+	<meta name="description" content="Documentation for oracle-helpers">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
 	<script async src="assets/js/search.js" id="search-script"></script>
@@ -23,7 +23,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">@abv/oracle-helpers</a>
+					<a href="index.html" class="title">oracle-helpers</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -50,7 +50,7 @@
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<h1>@abv/oracle-helpers</h1>
+			<h1>oracle-helpers</h1>
 		</div>
 	</div>
 </header>
@@ -66,11 +66,8 @@
 				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
 					<h1>Installation</h1>
 				</a>
-				<p>Create <code>.npmrc</code> file in the project with this in order to install from the @abv internal nexus</p>
-				<pre><code><span style="color: #000000">@</span><span style="color: #001080">abv</span><span style="color: #000000">:</span><span style="color: #001080">registry</span><span style="color: #000000">=</span><span style="color: #001080">https</span><span style="color: #000000">:</span><span style="color: #008000">//nexus3.abbvienet.com/repository/npm-internal/</span>
-</code></pre>
 				<p>Install using</p>
-				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">install</span><span style="color: #000000"> @</span><span style="color: #001080">abv</span><span style="color: #000000">/</span><span style="color: #001080">oracle</span><span style="color: #000000">-</span><span style="color: #001080">helpers</span>
+				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">install</span><span style="color: #000000"> </span><span style="color: #001080">oracle</span><span style="color: #000000">-</span><span style="color: #001080">helpers</span>
 </code></pre>
 				<a href="#api-page" id="api-page" style="color: inherit; text-decoration: none;">
 					<h3>API Page</h3>
@@ -80,7 +77,7 @@
 					<h1>Options</h1>
 				</a>
 				<p>Configuration lets you set up certain behaviors to customize how the pools work outside of oracle</p>
-				<pre><code class="language-js"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">configuration</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@abv/oracle-helpers&#039;</span><span style="color: #000000">;</span>
+				<pre><code class="language-js"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">configuration</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;oracle-helpers&#039;</span><span style="color: #000000">;</span>
 <span style="color: #008000">/** Amount of time (in ms) between pings to check on connection behavior. */</span>
 <span style="color: #001080">configuration</span><span style="color: #000000">.</span><span style="color: #001080">pingTime</span><span style="color: #000000"> = </span><span style="color: #098658">60000</span><span style="color: #000000">; </span><span style="color: #008000">// 1 minute</span>
 <span style="color: #008000">/** Amount of time to wait (in ms) for getting a connection before deciding that there&#039;s a problem with the pool */</span>
@@ -89,7 +86,7 @@
 <span style="color: #001080">configuration</span><span style="color: #000000">.</span><span style="color: #001080">pingTimeout</span><span style="color: #000000"> = </span><span style="color: #098658">3000</span><span style="color: #000000">; </span><span style="color: #008000">// 3 seconds</span>
 </code></pre>
 				<p>poolOptions lets you set the behavior of the pools within oracle</p>
-				<pre><code class="language-js"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">poolOptions</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@abv/oracle-helpers&#039;</span><span style="color: #000000">;</span>
+				<pre><code class="language-js"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">poolOptions</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;oracle-helpers&#039;</span><span style="color: #000000">;</span>
 
 <span style="color: #001080">poolOptions</span><span style="color: #000000">[</span><span style="color: #A31515">&#039;oracle db connection string&#039;</span><span style="color: #000000">] = {</span>
 <span style="color: #000000">  </span><span style="color: #001080">poolMin:</span><span style="color: #000000"> </span><span style="color: #098658">12</span><span style="color: #000000">,</span>
@@ -98,7 +95,7 @@
 <span style="color: #000000">};</span>
 </code></pre>
 				<p>For improved debugging, you can set up a function to log the errors from oracle with the sql and parameters</p>
-				<pre><code class="language-js"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">setSqlErrorLogger</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@abv/oracle-helpers&#039;</span><span style="color: #000000">;</span>
+				<pre><code class="language-js"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">setSqlErrorLogger</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;oracle-helpers&#039;</span><span style="color: #000000">;</span>
 
 <span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">process</span><span style="color: #000000">.</span><span style="color: #001080">env</span><span style="color: #000000">.</span><span style="color: #0070C1">NODE_ENV</span><span style="color: #000000"> === </span><span style="color: #A31515">&#039;development&#039;</span><span style="color: #000000">) {</span>
 <span style="color: #000000">  </span><span style="color: #795E26">setSqlErrorLogger</span><span style="color: #000000">((</span><span style="color: #001080">error</span><span style="color: #000000">, </span><span style="color: #001080">sql</span><span style="color: #000000">, </span><span style="color: #001080">params</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
@@ -112,7 +109,7 @@
 				<a href="#sql-tagged-template-vs-sql-text--params" id="sql-tagged-template-vs-sql-text--params" style="color: inherit; text-decoration: none;">
 					<h2>sql tagged template vs sql text + params:</h2>
 				</a>
-				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">sql</span><span style="color: #000000">, </span><span style="color: #001080">getSql</span><span style="color: #000000">, </span><span style="color: #001080">getSqlPool</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@abv/oracle-helpers&#039;</span><span style="color: #000000">;</span>
+				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">sql</span><span style="color: #000000">, </span><span style="color: #001080">getSql</span><span style="color: #000000">, </span><span style="color: #001080">getSqlPool</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;oracle-helpers&#039;</span><span style="color: #000000">;</span>
 
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">dbConfig</span><span style="color: #000000"> = {</span>
 <span style="color: #000000">  </span><span style="color: #001080">user:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;username&#039;</span><span style="color: #000000">,</span>
@@ -148,7 +145,7 @@
 				<a href="#getters" id="getters" style="color: inherit; text-decoration: none;">
 					<h2>Getters</h2>
 				</a>
-				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">sql</span><span style="color: #000000">, </span><span style="color: #001080">getSql</span><span style="color: #000000">, </span><span style="color: #001080">getSqlPool</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@abv/oracle-helpers&#039;</span><span style="color: #000000">;</span>
+				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">sql</span><span style="color: #000000">, </span><span style="color: #001080">getSql</span><span style="color: #000000">, </span><span style="color: #001080">getSqlPool</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;oracle-helpers&#039;</span><span style="color: #000000">;</span>
 
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">dbConfig</span><span style="color: #000000"> = {</span>
 <span style="color: #000000">  </span><span style="color: #001080">user:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;username&#039;</span><span style="color: #000000">,</span>
@@ -174,7 +171,7 @@
 <span style="color: #000000">  </span><span style="color: #001080">mutateSqlPool</span><span style="color: #000000">,</span>
 <span style="color: #000000">  </span><span style="color: #001080">mutateManySql</span><span style="color: #000000">,</span>
 <span style="color: #000000">  </span><span style="color: #001080">mutateManySqlPool</span><span style="color: #000000">,</span>
-<span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@abv/oracle-helpers&#039;</span><span style="color: #000000">;</span>
+<span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;oracle-helpers&#039;</span><span style="color: #000000">;</span>
 
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">dbConfig</span><span style="color: #000000"> = {</span>
 <span style="color: #000000">  </span><span style="color: #001080">user:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;username&#039;</span><span style="color: #000000">,</span>
@@ -217,7 +214,7 @@
 				<p>This is especially important in <code>mutateMany</code> in which you can&#39;t include the bind definitions as part of the parameters (due to how Node Oracledb works).</p>
 				<p>This means that if you want to use <code>returning</code> in mutateMany, you need to set up the whole bind definitions object yourself. And that&#39;s what <code>toBindDefs</code> helps solve.</p>
 				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">OracleDB</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;oracledb&#039;</span><span style="color: #000000">;</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">mutateManySqlPool</span><span style="color: #000000">, </span><span style="color: #001080">toBindDefs</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@abv/oracle-helpers&#039;</span><span style="color: #000000">;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">mutateManySqlPool</span><span style="color: #000000">, </span><span style="color: #001080">toBindDefs</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;oracle-helpers&#039;</span><span style="color: #000000">;</span>
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">dbConfig</span><span style="color: #000000"> = {</span>
 <span style="color: #000000">  </span><span style="color: #001080">user:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;username&#039;</span><span style="color: #000000">,</span>
 <span style="color: #000000">  </span><span style="color: #001080">password:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;password&#039;</span><span style="color: #000000">,</span>
@@ -254,7 +251,7 @@
 				</a>
 				<p>Run multiple mutations with a get inbetween in a single all-or-nothing transaction including returning a value from an insert.</p>
 				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">STRING</span><span style="color: #000000">, </span><span style="color: #001080">NUMBER</span><span style="color: #000000">, </span><span style="color: #001080">BIND_OUT</span><span style="color: #000000">, </span><span style="color: #001080">BIND_IN</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;oracledb&#039;</span><span style="color: #000000">;</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">getPoolConnection</span><span style="color: #000000">, </span><span style="color: #001080">getSql</span><span style="color: #000000">, </span><span style="color: #001080">mutateSql</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@abv/oracle-helpers&#039;</span><span style="color: #000000">;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">getPoolConnection</span><span style="color: #000000">, </span><span style="color: #001080">getSql</span><span style="color: #000000">, </span><span style="color: #001080">mutateSql</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;oracle-helpers&#039;</span><span style="color: #000000">;</span>
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">dbConfig</span><span style="color: #000000"> = {</span>
 <span style="color: #000000">  </span><span style="color: #001080">user:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;username&#039;</span><span style="color: #000000">,</span>
 <span style="color: #000000">  </span><span style="color: #001080">password:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;password&#039;</span><span style="color: #000000">,</span>
@@ -324,7 +321,7 @@
 <span style="color: #000000">  </span><span style="color: #001080">getSql</span><span style="color: #000000">,</span>
 <span style="color: #000000">  </span><span style="color: #001080">mutateSql</span><span style="color: #000000">,</span>
 <span style="color: #000000">  </span><span style="color: #001080">toBindDefs</span><span style="color: #000000">,</span>
-<span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@abv/oracle-helpers&#039;</span><span style="color: #000000">;</span>
+<span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;oracle-helpers&#039;</span><span style="color: #000000">;</span>
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">dbConfig</span><span style="color: #000000"> = {</span>
 <span style="color: #000000">  </span><span style="color: #001080">user:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;username&#039;</span><span style="color: #000000">,</span>
 <span style="color: #000000">  </span><span style="color: #001080">password:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;password&#039;</span><span style="color: #000000">,</span>
@@ -440,8 +437,29 @@
 				<p>Accepts an array of values and returns a SQL instance with the values joined by the separator. E.g.</p>
 				<pre><code class="language-js"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">query</span><span style="color: #000000"> = </span><span style="color: #795E26">join</span><span style="color: #000000">([</span><span style="color: #098658">1</span><span style="color: #000000">, </span><span style="color: #098658">2</span><span style="color: #000000">, </span><span style="color: #098658">3</span><span style="color: #000000">]);</span>
 
-<span style="color: #001080">query</span><span style="color: #000000">.</span><span style="color: #001080">sql</span><span style="color: #000000">; </span><span style="color: #008000">//=&gt; &quot;$1, $2, $3&quot;</span>
-<span style="color: #001080">query</span><span style="color: #000000">.</span><span style="color: #001080">values</span><span style="color: #000000">; </span><span style="color: #008000">//=&gt; {1: $1, 2: $2, 3: $3}</span>
+<span style="color: #001080">query</span><span style="color: #000000">.</span><span style="color: #001080">sql</span><span style="color: #000000">; </span><span style="color: #008000">//=&gt; &quot;:1, :2, :3&quot;</span>
+<span style="color: #001080">query</span><span style="color: #000000">.</span><span style="color: #001080">values</span><span style="color: #000000">; </span><span style="color: #008000">//=&gt; {1: 1, 2: 2, 3: 3}</span>
+</code></pre>
+				<p>It can also be used to create dynamic SQL by joining multiple values together.</p>
+				<pre><code class="language-js"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">queries</span><span style="color: #000000"> = [</span><span style="color: #795E26">sql</span><span style="color: #A31515">`one = </span><span style="color: #0000FF">${</span><span style="color: #098658">1</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">, </span><span style="color: #795E26">sql</span><span style="color: #A31515">`two = </span><span style="color: #0000FF">${</span><span style="color: #098658">2</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">, </span><span style="color: #795E26">sql</span><span style="color: #A31515">`three = </span><span style="color: #0000FF">${</span><span style="color: #098658">3</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">];</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">filters</span><span style="color: #000000"> = </span><span style="color: #795E26">join</span><span style="color: #000000">(</span><span style="color: #001080">queries</span><span style="color: #000000">, </span><span style="color: #A31515">&#039; AND &#039;</span><span style="color: #000000">);</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">result</span><span style="color: #000000"> = </span><span style="color: #795E26">sql</span><span style="color: #A31515">`select * from table </span><span style="color: #0000FF">${</span>
+<span style="color: #000000FF">  </span><span style="color: #001080">filters</span><span style="color: #000000FF"> </span><span style="color: #000000">===</span><span style="color: #000000FF"> </span><span style="color: #001080">empty</span><span style="color: #000000FF"> </span><span style="color: #000000">?</span><span style="color: #000000FF"> </span><span style="color: #001080">empty</span><span style="color: #000000FF"> </span><span style="color: #000000">:</span><span style="color: #000000FF"> </span><span style="color: #795E26">sql</span><span style="color: #A31515">`WHERE </span><span style="color: #0000FF">${</span><span style="color: #001080">filters</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span>
+<span style="color: #0000FF">}</span><span style="color: #A31515"> ORDER BY two`</span><span style="color: #000000">;</span>
+<span style="color: #001080">result</span><span style="color: #000000">.</span><span style="color: #001080">sql</span><span style="color: #000000">; </span><span style="color: #008000">//=&gt; &quot;select * from table WHERE one = :1 AND two = :2 AND three = :3 ORDER BY two&quot;</span>
+<span style="color: #001080">resutl</span><span style="color: #000000">.</span><span style="color: #001080">values</span><span style="color: #000000">; </span><span style="color: #008000">//=&gt; {1: 1, 2: 2, 3: 3}</span>
+</code></pre>
+				<p>By making a quick helper, you can simplify this use case:</p>
+				<pre><code class="language-js"><span style="color: #0000FF">function</span><span style="color: #000000"> </span><span style="color: #795E26">joinWhere</span><span style="color: #000000">(</span><span style="color: #001080">filters</span><span style="color: #000000">, </span><span style="color: #001080">useAndAfter</span><span style="color: #000000"> = </span><span style="color: #0000FF">false</span><span style="color: #000000">) {</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">useAndAfter</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #001080">filters</span><span style="color: #000000"> = </span><span style="color: #001080">filters</span><span style="color: #000000">.</span><span style="color: #795E26">concat</span><span style="color: #000000">(</span><span style="color: #001080">empty</span><span style="color: #000000">);</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">filters</span><span style="color: #000000">.</span><span style="color: #001080">length</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #A31515">`WHERE </span><span style="color: #0000FF">${</span><span style="color: #795E26">join</span><span style="color: #000000FF">(</span><span style="color: #001080">filters</span><span style="color: #000000FF">.</span><span style="color: #795E26">concat</span><span style="color: #000000FF">(</span><span style="color: #001080">empty</span><span style="color: #000000FF">), </span><span style="color: #A31515">&#039; AND &#039;</span><span style="color: #000000FF">)</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">;</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">}</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">queries</span><span style="color: #000000"> = [</span><span style="color: #795E26">sql</span><span style="color: #A31515">`one = </span><span style="color: #0000FF">${</span><span style="color: #098658">1</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">, </span><span style="color: #795E26">sql</span><span style="color: #A31515">`two = </span><span style="color: #0000FF">${</span><span style="color: #098658">2</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">, </span><span style="color: #795E26">sql</span><span style="color: #A31515">`three = </span><span style="color: #0000FF">${</span><span style="color: #098658">3</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">];</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">result</span><span style="color: #000000"> = </span><span style="color: #795E26">sql</span><span style="color: #A31515">`select * from table </span><span style="color: #0000FF">${</span><span style="color: #795E26">joinWhere</span><span style="color: #000000FF">(</span><span style="color: #001080">queries</span><span style="color: #000000FF">)</span><span style="color: #0000FF">}</span><span style="color: #A31515"> ORDER BY two`</span><span style="color: #000000">;</span>
 </code></pre>
 				<a href="#raw" id="raw" style="color: inherit; text-decoration: none;">
 					<h3>Raw</h3>
@@ -449,11 +467,31 @@
 				<p>Accepts a string and returns a SQL instance, useful if you want some part of the SQL to be dynamic.</p>
 				<pre><code class="language-js"><span style="color: #795E26">raw</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;SELECT&#039;</span><span style="color: #000000">); </span><span style="color: #008000">// == sql`SELECT`</span>
 </code></pre>
-				<p><strong>Do not</strong> accept user input to <code>raw</code>, this will create a SQL injection vulnerability.</p>
+				<pre><code class="language-js"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">input</span><span style="color: #000000"> = </span><span style="color: #A31515">&#039;devUsers&#039;</span><span style="color: #000000">;</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">TABLES</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Map</span><span style="color: #000000">([</span>
+<span style="color: #000000">  [</span><span style="color: #A31515">&#039;users&#039;</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;ENV.USERS&#039;</span><span style="color: #000000">],</span>
+<span style="color: #000000">  [</span><span style="color: #A31515">&#039;devUsers&#039;</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;DEV_ENV.USERS&#039;</span><span style="color: #000000">],</span>
+<span style="color: #000000">]);</span>
+<span style="color: #795E26">sql</span><span style="color: #A31515">`SELECT * FROM </span><span style="color: #0000FF">${</span><span style="color: #795E26">raw</span><span style="color: #000000FF">(</span><span style="color: #0070C1">TABLES</span><span style="color: #000000FF">.</span><span style="color: #795E26">get</span><span style="color: #000000FF">(</span><span style="color: #001080">input</span><span style="color: #000000FF">))</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">; </span><span style="color: #008000">// == sql`SELECT * FROM DEV_ENV.USERS`</span>
+</code></pre>
+				<p><strong>Do not</strong> accept raw user input to <code>raw</code>, this will create a SQL injection vulnerability.</p>
 				<a href="#empty" id="empty" style="color: inherit; text-decoration: none;">
 					<h3>Empty</h3>
 				</a>
 				<p>Simple placeholder value for an empty SQL string. Equivalent to <code>raw(&quot;&quot;)</code>.</p>
+				<p>You can use this to great effect when creating dynamic SQL.</p>
+				<pre><code class="language-ts"><span style="color: #008000">/**</span>
+<span style="color: #008000"> * if the value passed in is a boolean, treat it as empty</span>
+<span style="color: #008000"> *</span>
+<span style="color: #008000"> * great for ensuring short-circuiting behavior while still being more readable than nested ternaries directly</span>
+<span style="color: #008000"> */</span>
+<span style="color: #0000FF">function</span><span style="color: #000000"> </span><span style="color: #795E26">sqlBool</span><span style="color: #000000">(</span><span style="color: #001080">sql</span><span style="color: #000000">: </span><span style="color: #267F99">boolean</span><span style="color: #000000"> | </span><span style="color: #267F99">RawValue</span><span style="color: #000000">) {</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #0000FF">typeof</span><span style="color: #000000"> </span><span style="color: #001080">sql</span><span style="color: #000000"> === </span><span style="color: #A31515">&#039;boolean&#039;</span><span style="color: #000000"> ? </span><span style="color: #001080">empty</span><span style="color: #000000"> : </span><span style="color: #001080">sql</span><span style="color: #000000">;</span>
+<span style="color: #000000">}</span>
+
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">isUpdate</span><span style="color: #000000"> = </span><span style="color: #0000FF">false</span><span style="color: #000000">;</span>
+<span style="color: #795E26">sql</span><span style="color: #A31515">`</span><span style="color: #0000FF">${</span><span style="color: #795E26">sqlBool</span><span style="color: #000000FF">(</span><span style="color: #001080">isUpdate</span><span style="color: #000000FF"> </span><span style="color: #000000">&amp;&amp;</span><span style="color: #000000FF"> </span><span style="color: #795E26">sql</span><span style="color: #A31515">`UPDATE Test WHERE ...`</span><span style="color: #000000FF">)</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">;</span>
+</code></pre>
 				<a href="#related" id="related" style="color: inherit; text-decoration: none;">
 					<h2>Related</h2>
 				</a>
@@ -463,19 +501,6 @@
 					<li><a href="https://github.com/felixfbecker/node-sql-template-strings"><code>node-sql-template-strings</code></a>: promotes mutation via chained methods and lacks nesting SQL statements. - supports postgres and mysql</li>
 					<li><a href="https://github.com/XeCycle/pg-template-tag"><code>pg-template-tag</code></a>: missing TypeScript and MySQL support. By supporting <code>pg</code> only it has the ability to <a href="https://github.com/XeCycle/pg-template-tag/issues/5#issuecomment-386875336">dedupe <code>values</code></a>. - That&#39;s where I got the idea to dedupe values in this fork.</li>
 				</ul>
-				<!--
-## License
-
-MIT
-
-[npm-image]: https://img.shields.io/npm/v/sql-template-tag.svg?style=flat
-[npm-url]: https://npmjs.org/package/sql-template-tag
-[downloads-image]: https://img.shields.io/npm/dm/sql-template-tag.svg?style=flat
-[downloads-url]: https://npmjs.org/package/sql-template-tag
-[travis-image]: https://img.shields.io/travis/blakeembrey/sql-template-tag.svg?style=flat
-[travis-url]: https://travis-ci.org/blakeembrey/sql-template-tag
-[coveralls-image]: https://img.shields.io/coveralls/blakeembrey/sql-template-tag.svg?style=flat
-[coveralls-url]: https://coveralls.io/r/blakeembrey/sql-template-tag?branch=master -->
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
