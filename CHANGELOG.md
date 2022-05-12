@@ -7,58 +7,58 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* make `join` be empty for undefined values, and it will ignore non array values ([559916b](https://github.com/abbvie-external/oracle-helpers/commit/559916b7b0d94a44345ee2408175d20c67806d70))
+* make `join` be empty for undefined values, and it will ignore non array values ([7561f2a](https://github.com/abbvie-external/oracle-helpers/commit/7561f2a6915b777a5ed005d0a024e279c5246122))
 
 ### [3.2.2](https://github.com/abbvie-external/oracle-helpers/compare/v3.2.1...v3.2.2) (2022-04-22)
 
 
 ### Bug Fixes
 
-* make `join` not throw on empty arrays ([e11a78e](https://github.com/abbvie-external/oracle-helpers/commit/e11a78ed2c62c310a05f845db4889a0dfe478e8b))
+* make `join` not throw on empty arrays ([5fc06e2](https://github.com/abbvie-external/oracle-helpers/commit/5fc06e283e45b90a846849bab9ab74281e783029))
 
 ### [3.2.1](https://github.com/abbvie-external/oracle-helpers/compare/v3.2.0...v3.2.1) (2022-04-19)
 
 
 ### Bug Fixes
 
-* **sqlHelpers:** make default poolMin 0 for resource savings ([2c40637](https://github.com/abbvie-external/oracle-helpers/commit/2c40637fc70ad37d87b16a2b13ff5223ebe73cae))
+* **sqlHelpers:** make default poolMin 0 for resource savings ([f8e5b3c](https://github.com/abbvie-external/oracle-helpers/commit/f8e5b3cee6993c8c78ffa1d68cd37298c3b643e2))
 
 ## [3.2.0](https://github.com/abbvie-external/oracle-helpers/compare/v3.1.0...v3.2.0) (2021-08-16)
 
 
 ### Features
 
-* **Logging:** Add ability to set up logging ([5f1d18f](https://github.com/abbvie-external/oracle-helpers/commit/5f1d18faafeade0a6880ef62999722a3a0856ca3))
-* make `raw` able to work with Sql instances ([7b970c7](https://github.com/abbvie-external/oracle-helpers/commit/7b970c701e23d24f7903189f004201b5ca449600)), closes [#1](https://github.com/abbvie-external/oracle-helpers/issues/1)
+* **Logging:** Add ability to set up logging ([f252b23](https://github.com/abbvie-external/oracle-helpers/commit/f252b23a267ff32a1fa54343c48fcd98962621d8))
+* make `raw` able to work with Sql instances ([e38c3aa](https://github.com/abbvie-external/oracle-helpers/commit/e38c3aa78a7e77d1d6dba9c7ad1132ddb8e90c9b))
 
 
 ### Bug Fixes
 
-* `toBindDefs` failed on non-array entry ([b46f4d7](https://github.com/abbvie-external/oracle-helpers/commit/b46f4d7f1e33954eb49cf59225cbc5777156b864))
-* `toBindDefs` to work with unicode inputs ([2d52151](https://github.com/abbvie-external/oracle-helpers/commit/2d521517ab4c28f770029e1e9919df3075ab33a4))
-* `toBindDefs` will now look through all rows for the type ([5b9e74d](https://github.com/abbvie-external/oracle-helpers/commit/5b9e74d58d2f028b4bbe4275f166865f9d131976)), closes [#4](https://github.com/abbvie-external/oracle-helpers/issues/4)
-* **sqlHelpers:** Don't automatically release passed in connections ([5ba33bb](https://github.com/abbvie-external/oracle-helpers/commit/5ba33bb820db1d99145adb455ae0597df024f671))
-* **sqlHelpers:** Improve error message when config is undefined ([b8debfc](https://github.com/abbvie-external/oracle-helpers/commit/b8debfc10636228876f431319b9011006c4d2433))
+* `toBindDefs` failed on non-array entry ([1f0c8bc](https://github.com/abbvie-external/oracle-helpers/commit/1f0c8bc6337ac83b7764f61c18a8d419a5271a54))
+* `toBindDefs` to work with unicode inputs ([6dced61](https://github.com/abbvie-external/oracle-helpers/commit/6dced61ea00fee398cabadba47f553acf7a40482))
+* `toBindDefs` will now look through all rows for the type ([a8b8e8f](https://github.com/abbvie-external/oracle-helpers/commit/a8b8e8fbbb6ebb929ae28fd8ce7eb56078dc6145))
+* **sqlHelpers:** Don't automatically release passed in connections ([d93f7cf](https://github.com/abbvie-external/oracle-helpers/commit/d93f7cff81476729032678a9a4619d0b30d198ff))
+* **sqlHelpers:** Improve error message when config is undefined ([cb36957](https://github.com/abbvie-external/oracle-helpers/commit/cb369579cb4feb30840eb76df1a46c033b0a55e9))
 
 ## [3.1.0](https://github.com/abbvie-external/oracle-helpers/compare/v3.0.1...v3.1.0) (2021-02-17)
 
 ### Features
 
-- Add ability to bind values with a name to be used ([b943883](https://github.com/abbvie-external/oracle-helpers/commit/b943883454c3f8b5667eb5edfb17acd18f8cb82f))
+- Add ability to bind values with a name to be used ([c88ce86](https://github.com/abbvie-external/oracle-helpers/commit/c88ce861463254beea6a3b8c266c34cbe9c71f82))
 
-- Add toBindDefs ([1e13b5b](https://github.com/abbvie-external/oracle-helpers/commit/09eca01e54af132f734e8de98679b6b24b711a3f))
+- Add toBindDefs ([b377e9c](https://github.com/abbvie-external/oracle-helpers/commit/b377e9c905df812393f64946abb1948aa902627e))
 
   This will assist with using `returning` in mutateManySql
 
 ### Bug Fixes
 
-- possible failure in deduping ([0a0a2f0](https://github.com/abbvie-external/oracle-helpers/commit/0a0a2f05cf5853aa30747a476e0769fb7f6f7bcb))
+- possible failure in deduping ([5479b13](https://github.com/abbvie-external/oracle-helpers/commit/5479b1390b1b557fc560a44450c83a64082e267a))
 
 ### [3.0.1](https://github.com/abbvie-external/oracle-helpers/compare/v3.0.0...v3.0.1) (2020-11-16)
 
 ### Bug Fixes
 
-- **tag:** deduping now works correctly in more complicated cases ([2132789](https://github.com/abbvie-external/oracle-helpers/commit/2132789614363a41ddf052ece69c3b63625139db))
+- **tag:** deduping now works correctly in more complicated cases ([f128be0](https://github.com/abbvie-external/oracle-helpers/commit/f128be07ea596754054ad7ce2c3a21c6268b41cb))
 
 ## [3.0.0](https://github.com/abbvie-external/oracle-helpers/compare/v2.1.1...v3.0.0) (2020-11-06)
 
@@ -66,29 +66,29 @@ All notable changes to this project will be documented in this file. See [standa
 
 - Requires newer versions of Node and OracleDb. Won't support older versions due to changes in constants
 
-- move support to OracleDb 5 ([f5f3973](https://github.com/abbvie-external/oracle-helpers/commit/f5f39732d25a143aeff319a66370ddb5b8946ed2))
+- move support to OracleDb 5 ([bd3d6a1](https://github.com/abbvie-external/oracle-helpers/commit/bd3d6a1414f089844411cc1c3bd7df2fe9b8537b))
 
 ### [2.1.1](https://github.com/abbvie-external/oracle-helpers/compare/v2.1.0...v2.1.1) (2020-10-20)
 
 ### Bug Fixes
 
-- **tag:** Make tags work using named parameters ([c4e61af](https://github.com/abbvie-external/oracle-helpers/commit/c4e61afcff5b75d4c9bcb64c8b553c0a9bd53bcd))
+- **tag:** Make tags work using named parameters ([6c7c85f](https://github.com/abbvie-external/oracle-helpers/commit/6c7c85fa37a419cc5813ebd7a91bf88e7aa59ce6))
 
 ## [2.1.0](https://github.com/abbvie-external/oracle-helpers/compare/v2.0.1...v2.1.0) (2020-10-19)
 
 ### Features
 
-- **helpers:** Add support for the sql tagged templates in the sql helpers ([2d104bc](https://github.com/abbvie-external/oracle-helpers/commit/2d104bc51dc73c7df9cb6ef3f1e1524432c1085b))
+- **helpers:** Add support for the sql tagged templates in the sql helpers ([46e68c6](https://github.com/abbvie-external/oracle-helpers/commit/46e68c6bbb3524f451ca34d9f9f67b161501eabb))
 
 ### Bug Fixes
 
-- **docs:** Add words to the tests so that they are recognized in the docs ([995c159](https://github.com/abbvie-external/oracle-helpers/commit/995c15926e680daffb7a35413af5f313ff7756db))
+- **docs:** Add words to the tests so that they are recognized in the docs ([6bd3639](https://github.com/abbvie-external/oracle-helpers/commit/6bd363907b12e08556324aa19e483c9cd086bf3d))
 
 ### [2.0.1](https://github.com/abbvie-external/oracle-helpers/compare/v2.0.0...v2.0.1) (2020-09-22)
 
 ### Bug Fixes
 
-- **pools:** Prevents lockdown when there are a lot of errors all at once (e.g. internet down) ([97f9df0](https://github.com/abbvie-external/oracle-helpers/commit/97f9df04c64be99d8633b0382bafe8dafcc3a218))
+- **pools:** Prevents lockdown when there are a lot of errors all at once (e.g. internet down) ([13c37ec](https://github.com/abbvie-external/oracle-helpers/commit/13c37ec638ea909f5414928584d2aba9f93db262))
 
 ## [2.0.0](https://github.com/abbvie-external/oracle-helpers/compare/v1.1.1...v2.0.0) (2020-09-21)
 
@@ -97,7 +97,7 @@ All notable changes to this project will be documented in this file. See [standa
 - Rename all helper functions `SQL`/`SQLPool` variants to `Sql`/`SqlPool`. E.g. `getSQL` to `getSql`
   fix(pools): Make `connectionTimeout` default to 10s from 3s. As 3s is a bit too quick for heavy usage
 
-- Rename a bunch of properties ([9c1c40a](https://github.com/abbvie-external/oracle-helpers/commit/9c1c40ae5047b93d97c507af64504fb7ccb992e4))
+- Rename a bunch of properties ([7df8a99](https://github.com/abbvie-external/oracle-helpers/commit/7df8a99a9b0af0c50da075c2bbea05fb434c01ab))
 
 ### [1.1.1](https://github.com/abbvie-external/oracle-helpers/compare/v1.1.0...v1.1.1) (2020-09-21)
 
@@ -105,6 +105,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-- **pools:** Add pingTime and connectionTimeout ([d5e3fcd](https://github.com/abbvie-external/oracle-helpers/commit/d5e3fcde05e1cc2fe5bed8fa583b906916cd8b9b))
+- **pools:** Add pingTime and connectionTimeout ([44d0f71](https://github.com/abbvie-external/oracle-helpers/commit/44d0f71981ad233d255507ae389dd86c6cecbc23))
 
 ### 1.0.1 (2020-09-21)
