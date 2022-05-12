@@ -1,5 +1,5 @@
 {
-  "name": "@abv/oracle-helpers",
+  "name": "oracle-helpers",
   "version": "3.2.3",
   "description": "A collection of helpers for alleviating boilerplate in OracleDB projects",
   "main": "build/main/index.js",

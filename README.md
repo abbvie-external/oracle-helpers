@@ -6,16 +6,10 @@ A collection of helpers for alleviating boilerplate in OracleDB projects
 
 # Installation
 
-Create `.npmrc` file in the project with this in order to install from the @abv internal nexus
-
-```
-@abv:registry=***REMOVED***/repository/npm-internal/
-```
-
 Install using
 
 ```
-npm install @abv/oracle-helpers
+npm install oracle-helpers
 ```
 
 ### API Page
@@ -27,7 +21,7 @@ https://abbvie-external.github.io/oracle-helpers/
 Configuration lets you set up certain behaviors to customize how the pools work outside of oracle
 
 ```js
-import { configuration } from '@abv/oracle-helpers';
+import { configuration } from 'oracle-helpers';
 /** Amount of time (in ms) between pings to check on connection behavior. */
 configuration.pingTime = 60000; // 1 minute
 /** Amount of time to wait (in ms) for getting a connection before deciding that there's a problem with the pool */
@@ -39,7 +33,7 @@ configuration.pingTimeout = 3000; // 3 seconds
 poolOptions lets you set the behavior of the pools within oracle
 
 ```js
-import { poolOptions } from '@abv/oracle-helpers';
+import { poolOptions } from 'oracle-helpers';
 
 poolOptions['oracle db connection string'] = {
   poolMin: 12,
@@ -51,7 +45,7 @@ poolOptions['oracle db connection string'] = {
 For improved debugging, you can set up a function to log the errors from oracle with the sql and parameters
 
 ```js
-import { setSqlErrorLogger } from '@abv/oracle-helpers';
+import { setSqlErrorLogger } from 'oracle-helpers';
 
 if (process.env.NODE_ENV === 'development') {
   setSqlErrorLogger((error, sql, params) => {
@@ -65,7 +59,7 @@ if (process.env.NODE_ENV === 'development') {
 ## sql tagged template vs sql text + params:
 
 ```ts
-import { sql, getSql, getSqlPool } from '@abv/oracle-helpers';
+import { sql, getSql, getSqlPool } from 'oracle-helpers';
 
 const dbConfig = {
   user: 'username',
@@ -102,7 +96,7 @@ getSql<{ ID: number; NAME: string }[]>(dbConfig, query2.sql, { id: 5 }).then(
 ## Getters
 
 ```ts
-import { sql, getSql, getSqlPool } from '@abv/oracle-helpers';
+import { sql, getSql, getSqlPool } from 'oracle-helpers';
 
 const dbConfig = {
   user: 'username',
@@ -129,7 +123,7 @@ import {
   mutateSqlPool,
   mutateManySql,
   mutateManySqlPool,
-} from '@abv/oracle-helpers';
+} from 'oracle-helpers';
 
 const dbConfig = {
   user: 'username',
@@ -176,7 +170,7 @@ This means that if you want to use `returning` in mutateMany, you need to set up
 
 ```ts
 import OracleDB from 'oracledb';
-import { mutateManySqlPool, toBindDefs } from '@abv/oracle-helpers';
+import { mutateManySqlPool, toBindDefs } from 'oracle-helpers';
 const dbConfig = {
   user: 'username',
   password: 'password',
@@ -215,7 +209,7 @@ Run multiple mutations with a get inbetween in a single all-or-nothing transacti
 
 ```ts
 import { STRING, NUMBER, BIND_OUT, BIND_IN } from 'oracledb';
-import { getPoolConnection, getSql, mutateSql } from '@abv/oracle-helpers';
+import { getPoolConnection, getSql, mutateSql } from 'oracle-helpers';
 const dbConfig = {
   user: 'username',
   password: 'password',
@@ -286,7 +280,7 @@ import {
   getSql,
   mutateSql,
   toBindDefs,
-} from '@abv/oracle-helpers';
+} from 'oracle-helpers';
 const dbConfig = {
   user: 'username',
   password: 'password',
