@@ -41,15 +41,12 @@ function getMaxSize(
 ): number | undefined {
   switch (type) {
     case BUFFER:
-      return Math.max(
-        ...values.map((valueObj) => {
-          return (valueObj[key] as Buffer)?.byteLength ?? null;
-        }),
-      );
     case STRING:
       return Math.max(
         ...values.map((valueObj) => {
-          return Buffer.byteLength((valueObj[key] as string) ?? '', 'utf-8');
+          return valueObj[key] != null
+            ? Buffer.byteLength(valueObj[key] as string | Buffer, 'utf-8')
+            : 0;
         }),
       );
     default:
@@ -71,7 +68,7 @@ export function toBindDefs(
   if (
     Array.isArray(valueOrValues)
       ? !valueOrValues.length
-      : !Object.keys(valueOrValues)?.length
+      : !Object.keys(valueOrValues).length
   ) {
     return overrides;
   }
