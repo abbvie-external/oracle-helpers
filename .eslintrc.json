@@ -25,6 +25,10 @@
         "newlines-between": "ignore",
         "alphabetize": { "order": "asc" }
       }
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "ignoreRestSiblings": true }
     ]
   }
 }
