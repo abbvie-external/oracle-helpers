@@ -21,7 +21,7 @@ import {
   getTable,
   getTableCreation,
   seedBooks,
-} from './dbconfig';
+} from './dbConfig';
 
 const table = getTable('pools');
 const insertBook = getInsertBook(table);

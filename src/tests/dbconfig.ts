@@ -8,7 +8,7 @@ const myEnv = dotenv.config();
 dotenvExpand.expand(myEnv);
 
 export const dbConfig: ConnectionAttributes = {
-  connectString: process.env.NODE_ORACLEDB_CONNECTIONSTRING,
+  connectString: process.env.NODE_ORACLEDB_CONNECTION_STRING,
   user: process.env.NODE_ORACLEDB_USER,
   password: process.env.NODE_ORACLEDB_PASSWORD,
 };
@@ -31,6 +31,7 @@ export interface Book {
   ID: number;
 }
 let id = 1;
+// spell-checker:disable
 export const seedBooks: Book[] = [
   {
     ID: ++id,
@@ -77,6 +78,8 @@ export const extraBooks: Book[] = [
     PAGES: 784,
   },
 ];
+// spell-checker:enable
+
 export const allBooks = seedBooks.concat(extraBooks);
 export const getSelectBooks = (table: Sql) => sql`SELECT * FROM ${table}`;
 export const getInsertBook = (table: Sql) =>

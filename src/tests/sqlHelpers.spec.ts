@@ -20,7 +20,7 @@ import {
   getTable,
   getTableCreation,
   seedBooks,
-} from './dbconfig';
+} from './dbConfig';
 
 const table = getTable('main');
 const insertBook = getInsertBook(table);
@@ -146,7 +146,7 @@ describe('sqlHelpers', () => {
     });
     test("Should release the connection on error if there's an error", async () => {
       // Note: It's nearly impossible to actually determine if the connection that was created in
-      // the function was *infact* released, it'll show in the code coverage...
+      // the function was *in fact* released, it'll show in the code coverage...
       await expect(getSql(dbConfig, '')).rejects.toThrow(
         'ORA-24373: invalid length specified for statement',
       );
@@ -266,7 +266,7 @@ describe('sqlHelpers', () => {
     });
     test("Should release the connection on error if there's an error", async () => {
       // Note: It's nearly impossible to actually determine if the connection that was created in
-      // the function was *infact* released, it'll show in the code coverage...
+      // the function was *in fact* released, it'll show in the code coverage...
       await expect(getSql(dbConfig, '')).rejects.toThrow(
         'ORA-24373: invalid length specified for statement',
       );
