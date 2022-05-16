@@ -132,11 +132,7 @@ function getSql<T>(
       const isConfig = !isConnection(configOrConnection);
       const connection: Connection = isConnection(configOrConnection)
         ? configOrConnection
-        : await oracledb.getConnection({
-            user: configOrConnection.user,
-            password: configOrConnection.password,
-            connectString: configOrConnection.connectString,
-          });
+        : await oracledb.getConnection(configOrConnection);
       let sqlResult: Result<T>;
       let text = '';
       let params: BindParameters = {};
@@ -363,11 +359,7 @@ async function mutateSql<T>(
   const isConfig = !isConnection(configOrConnection);
   const connection: Connection = isConnection(configOrConnection)
     ? configOrConnection
-    : await oracledb.getConnection({
-        user: configOrConnection.user,
-        password: configOrConnection.password,
-        connectString: configOrConnection.connectString,
-      });
+    : await oracledb.getConnection(configOrConnection);
   let sqlResult: Result<T>;
   let text = '';
   let params: BindParameters = {};
@@ -533,11 +525,7 @@ async function mutateManySql<T>(
   const isConfig = !isConnection(configOrConnection);
   const connection: Connection = isConnection(configOrConnection)
     ? configOrConnection
-    : await oracledb.getConnection({
-        user: configOrConnection.user,
-        password: configOrConnection.password,
-        connectString: configOrConnection.connectString,
-      });
+    : await oracledb.getConnection(configOrConnection);
   // if (!isConfig) connection = configOrConnection;
   let sqlResult: Results<T>;
   let text = '';
