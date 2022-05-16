@@ -162,13 +162,7 @@ export class Sql {
             values.forEach((value, index) => (rows[index][position] = value));
             // rows.forEach((row,index))
           } else {
-            if (values && typeof values === 'object' && 'name' in values) {
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              const { name, ...bindParams } = values;
-              rows.forEach((row) => (row[position] = bindParams));
-            } else {
-              rows.forEach((row) => (row[position] = values));
-            }
+            rows.forEach((row) => (row[position] = values));
           }
           return rows;
         },
