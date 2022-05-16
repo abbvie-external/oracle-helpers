@@ -119,14 +119,15 @@ async function promiseOrTimeout<T>(
   promise: Promise<T>,
   timeout = 3000,
 ): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout>;
   return await Promise.race([
     promise,
     new Promise<never>((_resolve, reject) => {
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         reject('Timeout');
       }, timeout);
     }),
-  ]);
+  ]).finally(() => clearTimeout(timeoutId));
 }
 
 async function recreatePool(
