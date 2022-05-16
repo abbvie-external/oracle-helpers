@@ -1,5 +1,3 @@
-/* eslint-disable no-async-promise-executor */
-
 import oracledb, {
   BindParameters,
   Connection,
@@ -34,6 +32,11 @@ let logger: Logger;
 export function setSqlErrorLogger(newLoggerFn: Logger) {
   logger = newLoggerFn;
 }
+
+const log: Logger = (error, sql, params) => {
+  logger?.(error, sql, params);
+};
+
 /**
  * Either a Connection or the attributes to create one
  */
@@ -45,13 +48,6 @@ function isConnection(
     throw new TypeError('ConfigOrConnection must be defined');
   }
   return (connection as Connection).execute !== undefined;
-}
-function doRelease(connection: oracledb.Connection): void {
-  connection.close(function (err) {
-    if (err) {
-      console.error(err.message);
-    }
-  });
 }
 
 /**
@@ -118,7 +114,7 @@ function getSql<T>(
   options: ExecuteOptions,
   cb: (record: T) => void,
 ): Promise<void>;
-function getSql<T>(
+async function getSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string | Sql,
   paramsOrOptions: BindParameters | ExecuteOptions = {},
@@ -127,73 +123,78 @@ function getSql<T>(
     : {},
   cb?: (record: T) => void,
 ): Promise<void | T[]> {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const isConfig = !isConnection(configOrConnection);
-      const connection: Connection = isConnection(configOrConnection)
-        ? configOrConnection
-        : await oracledb.getConnection(configOrConnection);
-      let sqlResult: Result<T>;
-      let text = '';
-      let params: BindParameters = {};
-      let options: ExecuteOptions = {};
-      try {
-        if (sql instanceof Sql) {
-          text = sql.sql;
-          const values = sql.values;
-          if (Array.isArray(values)) {
-            throw new TypeError('Cannot bind array values in getSql');
-          }
-          params = values;
-          options = paramsOrOptions as ExecuteOptions;
-          if (typeof optionsOrCb === 'function') {
-            cb = optionsOrCb;
-          }
-        } else {
-          text = sql;
-          params = paramsOrOptions as BindParameters;
-          options = optionsOrCb as ExecuteOptions;
-        }
-        sqlResult = await connection.execute(
-          // The statement to execute
-          text,
-          // ex: The "bind value" 180 for the "bind variable" :id
-          params,
-          // query options
-          {
-            ...options,
-            outFormat: oracledb.OUT_FORMAT_OBJECT, // return as json object
-            extendedMetaData: false, // return additional metadata
-            resultSet: true,
-          },
-        );
-      } catch (error) {
-        logger?.(error, text, params);
-        if (isConfig && connection) {
-          doRelease(connection);
-        }
-        reject(error);
-        return;
-      }
-      const stream = sqlResult.resultSet.toQueryStream();
-      const result: T[] = [];
-      const dataCallback = cb || result.push.bind(result);
-      stream.on('data', dataCallback);
-      stream.on('error', function (err) {
-        // handle any error...
-        doRelease(connection);
-        console.error(err);
-        return reject(err);
-      });
-      stream.on('close', function () {
-        if (isConfig) doRelease(connection);
-        resolve(cb ? undefined : result);
-      });
-    } catch (error) {
-      reject(error);
+  const args = getSqlParameters(sql, paramsOrOptions, optionsOrCb, cb);
+  const isConfig = !isConnection(configOrConnection);
+  const connection: Connection = !isConfig
+    ? configOrConnection
+    : await oracledb.getConnection(configOrConnection);
+
+  try {
+    return await getSqlInner(connection, ...args);
+  } finally {
+    if (isConfig) {
+      await connection.close();
     }
-  });
+  }
 }
+function getSqlParameters<T>(
+  sql: string | Sql,
+  paramsOrOptions: BindParameters | ExecuteOptions = {},
+  optionsOrCb?: ExecuteOptions | ((record: T) => void),
+  cb?: (record: T) => void,
+): [
+  string,
+  oracledb.BindParameters,
+  oracledb.ExecuteOptions,
+  (record: T) => void,
+] {
+  let text = '';
+  let params: BindParameters;
+  let options: ExecuteOptions;
+  if (sql instanceof Sql) {
+    text = sql.sql;
+    params = sql.values;
+    if (Array.isArray(params)) {
+      throw new TypeError('Cannot bind array values outside mutateManySql');
+    }
+    options = paramsOrOptions as ExecuteOptions;
+    cb = optionsOrCb as (record: T) => void;
+  } else {
+    text = sql;
+    params = paramsOrOptions as BindParameters;
+    options = optionsOrCb as ExecuteOptions;
+  }
+  return [text, params, options, cb];
+}
+async function getSqlInner<T>(
+  connection: Connection,
+  sql: string,
+  params: BindParameters,
+  options: ExecuteOptions,
+  cb: (record: T) => void,
+): Promise<void | T[]> {
+  let sqlResult: Result<T>;
+  try {
+    sqlResult = await connection.execute(sql, params, {
+      ...options,
+      outFormat: oracledb.OUT_FORMAT_OBJECT, // return as json object
+      extendedMetaData: false, // return additional metadata
+      resultSet: cb ? true : false,
+    });
+  } catch (error) {
+    log(error, sql, params);
+    throw error;
+  }
+  if (!cb) {
+    return sqlResult.rows;
+  }
+  let row: T;
+  while ((row = await sqlResult.resultSet.getRow())) {
+    cb(row);
+  }
+  sqlResult.resultSet.close();
+}
+
 /**
  * Uses a connection from a connection pool to run SQL to get values
  *
@@ -258,72 +259,86 @@ function getSqlPool<T>(
   options: ExecuteOptions,
   cb: (record: T) => void,
 ): Promise<void>;
-function getSqlPool<T>(
+async function getSqlPool<T>(
   config: ConnectionAttributes,
   sql: string | Sql,
-  paramsOrOptions: BindParameters | ExecuteOptions = {},
-  optionsOrCb: ExecuteOptions | ((record: T) => void) = sql instanceof Sql
-    ? undefined
-    : {},
+  paramsOrOptions?: BindParameters | ExecuteOptions,
+  optionsOrCb?: ExecuteOptions | ((record: T) => void),
   cb?: (record: T) => void,
 ): Promise<void | T[]> {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const connection: Connection = await getPoolConnection(config);
-      let sqlResult: Result<T>;
-      let text = '';
-      let params: BindParameters = {};
-      let options: ExecuteOptions = {};
-      try {
-        if (sql instanceof Sql) {
-          text = sql.sql;
-          const values = sql.values;
-          if (Array.isArray(values)) {
-            throw new TypeError('Cannot bind array values in getSql');
-          }
-          params = values;
-          options = paramsOrOptions as ExecuteOptions;
-          if (typeof optionsOrCb === 'function') {
-            cb = optionsOrCb;
-          }
-        } else {
-          text = sql;
-          params = paramsOrOptions as BindParameters;
-          options = optionsOrCb as ExecuteOptions;
-        }
-        sqlResult = await connection.execute(text, params, {
-          ...options,
-          outFormat: oracledb.OUT_FORMAT_OBJECT, // return as json object
-          extendedMetaData: false, // return additional metadata
-          resultSet: true,
-        });
-      } catch (error) {
-        logger?.(error, text, params);
-        if (connection) {
-          doRelease(connection);
-        }
-        reject(error);
-        return;
-      }
-      const stream = sqlResult.resultSet.toQueryStream();
-      const result: T[] = [];
-      const dataCallback = cb || result.push.bind(result);
-      stream.on('data', dataCallback);
-      stream.on('error', function (err) {
-        // handle any error...
-        doRelease(connection);
-        console.error(err);
-        return reject(err);
-      });
-      stream.on('close', function () {
-        doRelease(connection);
-        resolve(cb ? undefined : result);
-      });
-    } catch (error) {
-      reject(error);
-    }
-  });
+  const args = getSqlParameters(sql, paramsOrOptions, optionsOrCb, cb);
+  const connection: Connection = await getPoolConnection(config);
+  try {
+    return await getSqlInner(connection, ...args);
+  } finally {
+    await connection.close();
+  }
 }
+
+function mutateSqlParameters(
+  sql: string | Sql,
+  paramsOrOptions?: BindParameters | ExecuteOptions,
+  options?: ExecuteOptions,
+  isMany?: false,
+): [string, BindParameters, ExecuteOptions];
+function mutateSqlParameters(
+  sql: string | Sql,
+  paramsOrOptions?: BindParameters[] | ExecuteManyOptions,
+  options?: ExecuteManyOptions,
+  isMany?: true,
+): [string, BindParameters[], ExecuteManyOptions];
+function mutateSqlParameters(
+  sql: string | Sql,
+  paramsOrOptions?: BindParameters | ExecuteOptions,
+  options?: ExecuteOptions,
+  isMany = false,
+): [
+  string,
+  BindParameters | BindParameters[],
+  ExecuteOptions | ExecuteManyOptions,
+] {
+  let text = '';
+  let params: BindParameters;
+  if (sql instanceof Sql) {
+    text = sql.sql;
+    params = sql.values;
+    options = paramsOrOptions as ExecuteOptions;
+  } else {
+    text = sql;
+    params = paramsOrOptions as BindParameters;
+  }
+  if (isMany && !Array.isArray(params)) {
+    throw new TypeError('Must bind array values in mutateManySql');
+  } else if (!isMany && Array.isArray(params)) {
+    throw new TypeError('Cannot bind array values outside mutateManySql');
+  }
+  return [text, params, options];
+}
+
+async function mutateSqlInner<T>(
+  connection: Connection,
+  sql: string,
+  params: BindParameters,
+  options: ExecuteOptions,
+  isConfig: boolean,
+): Promise<Result<T>> {
+  try {
+    return await connection.execute(sql, params, {
+      autoCommit: isConfig,
+      outFormat: oracledb.OUT_FORMAT_OBJECT,
+      extendedMetaData: false,
+      ...options,
+    });
+  } catch (error) {
+    log(error, sql, params);
+    throw error;
+  } finally {
+    if (isConfig) {
+      await connection?.close();
+    }
+  }
+}
+
 /**
  * Executes SQL mutate the database
  * @param configOrConnection Either a dbConfig object or the connection to execute with
@@ -356,49 +371,12 @@ async function mutateSql<T>(
   paramsOrOptions: BindParameters | ExecuteOptions = {},
   options: ExecuteOptions = {},
 ): Promise<Result<T>> {
+  const args = mutateSqlParameters(sql, paramsOrOptions, options);
   const isConfig = !isConnection(configOrConnection);
   const connection: Connection = isConnection(configOrConnection)
     ? configOrConnection
     : await oracledb.getConnection(configOrConnection);
-  let sqlResult: Result<T>;
-  let text = '';
-  let params: BindParameters = {};
-  try {
-    if (sql instanceof Sql) {
-      text = sql.sql;
-      const values = sql.values;
-      if (Array.isArray(values)) {
-        throw new TypeError('Cannot bind array values in mutateSql');
-      }
-      params = values;
-      options = paramsOrOptions as ExecuteOptions;
-    } else {
-      text = sql;
-      params = paramsOrOptions as BindParameters;
-    }
-    sqlResult = await connection.execute(
-      // The statement to execute
-      text,
-      // ex: The "bind value" 180 for the "bind variable" :id
-      params,
-      // query options
-      {
-        autoCommit: isConfig,
-        ...options,
-        outFormat: oracledb.OUT_FORMAT_OBJECT, // return as json object
-        extendedMetaData: false, // return additional metadata
-        // resultSet: true,
-      },
-    );
-  } catch (error) {
-    logger?.(error, text, params);
-    if (isConfig && connection) {
-      doRelease(connection);
-    }
-    throw error;
-  }
-  if (connection && isConfig) doRelease(connection);
-  return sqlResult;
+  return await mutateSqlInner<T>(connection, ...args, isConfig);
 }
 
 /**
@@ -440,46 +418,31 @@ async function mutateSqlPool<T>(
   paramsOrOptions: BindParameters | ExecuteOptions = {},
   options: ExecuteOptions = {},
 ): Promise<Result<T>> {
+  const args = mutateSqlParameters(sql, paramsOrOptions, options);
   const connection: Connection = await getPoolConnection(config);
-  let sqlResult: Result<T>;
-  let text = '';
-  let params: BindParameters = {};
+  return await mutateSqlInner(connection, ...args, true);
+}
+
+async function mutateManySqlInner<T>(
+  connection: Connection,
+  sql: string,
+  binds: BindParameters[],
+  options: ExecuteManyOptions,
+  isConfig: boolean,
+): Promise<Results<T>> {
   try {
-    if (sql instanceof Sql) {
-      text = sql.sql;
-      const values = sql.values;
-      if (Array.isArray(values)) {
-        throw new TypeError('Cannot bind array values in mutateSql');
-      }
-      params = values;
-      options = paramsOrOptions as ExecuteOptions;
-    } else {
-      text = sql;
-      params = paramsOrOptions as BindParameters;
-    }
-    sqlResult = await connection.execute(
-      // The statement to execute
-      text,
-      // ex: The "bind value" 180 for the "bind variable" :id
-      params,
-      // query options
-      {
-        ...options,
-        outFormat: oracledb.OUT_FORMAT_OBJECT, // return as json object
-        extendedMetaData: false, // return additional metadata
-        autoCommit: true,
-        // resultSet: true,
-      },
-    );
+    return await connection.executeMany(sql, binds, {
+      autoCommit: isConfig,
+      ...options,
+    });
   } catch (error) {
-    logger?.(error, text, params);
-    if (connection) {
-      doRelease(connection);
-    }
+    log(error, sql, binds);
     throw error;
+  } finally {
+    if (isConfig) {
+      await connection.close();
+    }
   }
-  if (connection) doRelease(connection);
-  return sqlResult;
 }
 
 /**
@@ -511,65 +474,21 @@ function mutateManySql<T>(
 function mutateManySql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string,
-  params?: BindParameters[],
+  params: BindParameters[],
   options?: ExecuteManyOptions,
 ): Promise<Results<T>>;
 async function mutateManySql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string | Sql,
-  paramsOrOptions: BindParameters[] | ExecuteManyOptions = sql instanceof Sql
-    ? {}
-    : [],
-  options: ExecuteManyOptions = {},
+  paramsOrOptions: BindParameters[] | ExecuteManyOptions,
+  options?: ExecuteManyOptions,
 ): Promise<Results<T>> {
+  const args = mutateSqlParameters(sql, paramsOrOptions, options, true);
   const isConfig = !isConnection(configOrConnection);
   const connection: Connection = isConnection(configOrConnection)
     ? configOrConnection
     : await oracledb.getConnection(configOrConnection);
-  // if (!isConfig) connection = configOrConnection;
-  let sqlResult: Results<T>;
-  let text = '';
-  let params: BindParameters[] = [];
-  try {
-    if (sql instanceof Sql) {
-      text = sql.sql;
-      const values = sql.values;
-      if (!Array.isArray(values)) {
-        throw new TypeError('Sql must be using array values for mutateMany');
-      }
-      params = values; // as Value[][];
-      options = paramsOrOptions as ExecuteManyOptions;
-    } else {
-      text = sql;
-      params = paramsOrOptions as BindParameters[];
-    }
-    // if (isConfig) {
-    //   connection = await oracledb.getConnection({
-    //     user: configOrConnection.user,
-    //     password: configOrConnection.password,
-    //     connectString: configOrConnection.connectString,
-    //   });
-    // }
-    sqlResult = await connection.executeMany(
-      // The statement to execute
-      text,
-      // ex: The "bind value" 180 for the "bind variable" :id
-      params,
-      // query options
-      {
-        autoCommit: isConfig,
-        ...options,
-      },
-    );
-  } catch (error) {
-    logger?.(error, text, params);
-    if (isConfig && connection) {
-      doRelease(connection);
-    }
-    throw error;
-  }
-  if (connection && isConfig) doRelease(connection);
-  return sqlResult;
+  return await mutateManySqlInner(connection, ...args, isConfig);
 }
 
 /**
@@ -605,54 +524,18 @@ function mutateManySqlPool<T>(
 function mutateManySqlPool<T>(
   config: ConnectionAttributes,
   sql: string,
-  params?: BindParameters[],
+  params: BindParameters[],
   options?: ExecuteManyOptions,
 ): Promise<Results<T>>;
 async function mutateManySqlPool<T>(
   config: ConnectionAttributes,
   sql: string | Sql,
-  paramsOrOptions: BindParameters[] | ExecuteOptions = sql instanceof Sql
-    ? {}
-    : [],
-  options: ExecuteManyOptions = {},
+  paramsOrOptions: BindParameters[] | ExecuteOptions,
+  options?: ExecuteManyOptions,
 ): Promise<Results<T>> {
+  const args = mutateSqlParameters(sql, paramsOrOptions, options, true);
   const connection: Connection = await getPoolConnection(config);
-  let sqlResult: Results<T>;
-  let text = '';
-  let params: BindParameters[] = [];
-  try {
-    if (sql instanceof Sql) {
-      text = sql.sql;
-      const values = sql.values;
-      if (!Array.isArray(values)) {
-        throw new TypeError('Sql must be using array values for mutateMany');
-      }
-      params = values;
-      options = paramsOrOptions as ExecuteManyOptions;
-    } else {
-      text = sql;
-      params = paramsOrOptions as BindParameters[];
-    }
-    sqlResult = await connection.executeMany(
-      // The statement to execute
-      text,
-      // ex: The "bind value" 180 for the "bind variable" :id
-      params,
-      // query options
-      {
-        ...options,
-        autoCommit: true,
-      },
-    );
-  } catch (error) {
-    logger?.(error, text, params);
-    if (connection) {
-      doRelease(connection);
-    }
-    throw error;
-  }
-  if (connection) doRelease(connection);
-  return sqlResult;
+  return await mutateManySqlInner(connection, ...args, true);
 }
 
 export {
