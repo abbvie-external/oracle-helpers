@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
 import { ConnectionAttributes } from 'oracledb';
 import { sql } from '..';
+import { raw, Sql } from '../lib/sql';
 
 const myEnv = dotenv.config();
 dotenvExpand.expand(myEnv);
@@ -12,9 +13,17 @@ export const dbConfig: ConnectionAttributes = {
   password: process.env.NODE_ORACLEDB_PASSWORD,
 };
 
-export const table = sql`OH_TEST_BOOKS`;
+export const getTable = (add: string) => sql`OH_TEST_BOOKS_${raw(add)}`;
+
+export const getTableCreation = (table: Sql) => `CREATE TABLE ${table.sql}
+(
+  ID      NUMBER           NOT NULL,
+  title   VARCHAR2(400)    NOT NULL,
+  author  VARCHAR2(400)    NOT NULL,
+  pages   INTEGER          NOT NULL
+)`;
 // No point in keeping a test table around... PURGE IT
-export const dropTable = `DROP TABLE ${table.sql} PURGE`;
+export const getDropTable = (table: Sql) => `DROP TABLE ${table.sql} PURGE`;
 export interface Book {
   AUTHOR: string;
   TITLE: string;
@@ -69,5 +78,6 @@ export const extraBooks: Book[] = [
   },
 ];
 export const allBooks = seedBooks.concat(extraBooks);
-export const selectBooks = sql`SELECT * FROM ${table}`;
-export const insertBook = sql`INSERT INTO ${table} (ID, TITLE, AUTHOR, PAGES) VALUES`;
+export const getSelectBooks = (table: Sql) => sql`SELECT * FROM ${table}`;
+export const getInsertBook = (table: Sql) =>
+  sql`INSERT INTO ${table} (ID, TITLE, AUTHOR, PAGES) VALUES`;

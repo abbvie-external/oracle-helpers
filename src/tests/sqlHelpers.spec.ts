@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import {
   BindParameters,
   BIND_OUT,
@@ -7,62 +8,86 @@ import {
   STRING,
 } from 'oracledb';
 import { getSql, join, mutateManySql, mutateSql, sql, toBindDefs } from '../';
+import { Value } from '../lib/sql';
+import { Logger, setSqlErrorLogger } from '../lib/sqlHelpers';
 import {
   Book,
   dbConfig,
-  dropTable,
   extraBooks,
-  insertBook,
+  getDropTable,
+  getInsertBook,
+  getSelectBooks,
+  getTable,
+  getTableCreation,
   seedBooks,
-  selectBooks,
-  table,
 } from './dbconfig';
 
+const table = getTable('main');
+const insertBook = getInsertBook(table);
+const selectBooks = getSelectBooks(table);
+const dropTable = getDropTable(table);
 // setSqlErrorLogger((error, sql, params) => {
 //   console.error(error, sql, params);
 // });
 let connection: Connection;
 describe('sqlHelpers', () => {
   beforeAll(async () => {
-    connection = await getConnection(dbConfig);
+    try {
+      connection = await getConnection(dbConfig);
+      try {
+        await connection.execute(dropTable);
+      } catch (error) {
+        // Ignore does not exist errors
+        if (error.errorNum !== 942) {
+          throw error;
+        }
+      }
+      await connection.execute(getTableCreation(table));
+      await connection.executeMany(
+        `${insertBook.sql} (:ID, :TITLE, :AUTHOR, :PAGES)`,
+        seedBooks as unknown as BindParameters[],
+        { autoCommit: true },
+      );
+    } catch (error) {
+      console.error(`Failed Creating/Seeding ${table.sql}`);
+      throw error;
+    }
+  });
+  afterAll(async () => {
     try {
       await connection.execute(dropTable);
     } catch (error) {
-      // Ignore does not exist errors
       if (error.errorNum !== 942) {
         throw error;
       }
+    } finally {
+      await connection.close();
     }
-    await connection.execute(`CREATE TABLE ${table.sql}
-      (
-        ID      NUMBER           NOT NULL,
-        title   VARCHAR2(400)    NOT NULL,
-        author  VARCHAR2(400)    NOT NULL,
-        pages   INTEGER          NOT NULL
-      )`);
-    await connection.executeMany(
-      `INSERT INTO ${table.sql} (ID, TITLE, AUTHOR, PAGES)
-                                                 VALUES (:ID, :TITLE, :AUTHOR, :PAGES)`,
-      seedBooks as unknown as BindParameters[],
-      { autoCommit: true },
-    );
-  });
-  afterAll(async () => {
-    // try {
-    //   await connection.execute(dropTable);
-    // } catch (error) {
-    //   if (error.errorNum !== 942) {
-    //     throw error;
-    //   }
-    // } finally {
-    // }
-    await connection.close();
   });
   describe('getSql', () => {
     test('Should throw an error when config is undefined', async () => {
       await expect(getSql(undefined as Connection, '')).rejects.toThrow(
         new TypeError('ConfigOrConnection must be defined'),
       );
+    });
+    test("Should log when there's an error", async () => {
+      const logger = jest.fn<Logger>();
+      setSqlErrorLogger(logger);
+      const query = sql`select '5' from dual where fish = ${0}`;
+      let errorObj: Error;
+      await expect(async () => {
+        try {
+          await getSql(connection, query);
+        } catch (error) {
+          errorObj = error;
+          throw error;
+        }
+      }).rejects.toThrow();
+
+      expect(logger).toBeCalledTimes(1);
+      expect(logger).toBeCalledWith(errorObj, query.sql, query.values);
+
+      setSqlErrorLogger(undefined);
     });
     test('Should retrieve an array', async () => {
       const result = await getSql<Book>(connection, selectBooks);
@@ -115,7 +140,9 @@ describe('sqlHelpers', () => {
           connection,
           sql`${selectBooks} WHERE ID = ${seedBooks.map(({ ID }) => ID)}`,
         ),
-      ).rejects.toThrow(new TypeError('Cannot bind array values in getSql'));
+      ).rejects.toThrow(
+        new TypeError('Cannot bind array values outside mutateManySql'),
+      );
     });
     test("Should release the connection on error if there's an error", async () => {
       // Note: It's nearly impossible to actually determine if the connection that was created in
@@ -126,6 +153,32 @@ describe('sqlHelpers', () => {
     });
   });
   describe('mutateSql', () => {
+    test('Should throw when sending an array binding parameter', async () => {
+      await expect(
+        mutateSql(connection, '', [] as BindParameters[]),
+      ).rejects.toThrow(
+        new TypeError('Cannot bind array values outside mutateManySql'),
+      );
+    });
+    test("Should log when there's an error", async () => {
+      const logger = jest.fn<Logger>();
+      setSqlErrorLogger(logger);
+      const query = sql`select '5' from dual where fish = ${0}`;
+      let errorObj: Error;
+      await expect(async () => {
+        try {
+          await mutateSql(connection, query);
+        } catch (error) {
+          errorObj = error;
+          throw error;
+        }
+      }).rejects.toThrow();
+
+      expect(logger).toBeCalledTimes(1);
+      expect(logger).toBeCalledWith(errorObj, query.sql, query.values);
+
+      setSqlErrorLogger(undefined);
+    });
     test('Should allow updating a row', async () => {
       const book = { ...seedBooks[3] };
       book.TITLE = 'Sequel Cookbook';
@@ -207,7 +260,9 @@ describe('sqlHelpers', () => {
           connection,
           sql`${selectBooks} WHERE ID = ${seedBooks.map(({ ID }) => ID)}`,
         ),
-      ).rejects.toThrow(new TypeError('Cannot bind array values in getSql'));
+      ).rejects.toThrow(
+        new TypeError('Cannot bind array values outside mutateManySql'),
+      );
     });
     test("Should release the connection on error if there's an error", async () => {
       // Note: It's nearly impossible to actually determine if the connection that was created in
@@ -218,6 +273,32 @@ describe('sqlHelpers', () => {
     });
   });
   describe('mutateManySql', () => {
+    test('Should throw when sending a non-array parameter', async () => {
+      await expect(
+        mutateManySql(connection, '', {} as BindParameters[]),
+      ).rejects.toThrow(
+        new TypeError('Must bind array values in mutateManySql'),
+      );
+    });
+    test("Should log when there's an error", async () => {
+      const logger = jest.fn<Logger>();
+      setSqlErrorLogger(logger);
+      const query = sql`select '5' from dual where fish = ${[0]}`;
+      let errorObj: Error;
+      await expect(async () => {
+        try {
+          await mutateManySql(connection, query);
+        } catch (error) {
+          errorObj = error;
+          throw error;
+        }
+      }).rejects.toThrow();
+
+      expect(logger).toBeCalledTimes(1);
+      expect(logger).toBeCalledWith(errorObj, query.sql, query.values);
+
+      setSqlErrorLogger(undefined);
+    });
     test('Should insert many rows and retrieve the IDs', async () => {
       const query = sql`${insertBook}
       (${extraBooks.map(({ ID }) => ID)},
@@ -240,6 +321,36 @@ describe('sqlHelpers', () => {
       expect(result.outBinds).toHaveLength(extraBooks.length);
       expect(result.outBinds).toEqual(
         extraBooks.map(({ ID, TITLE }) => ({ id: [ID], title: [TITLE] })),
+      );
+      const deletion = await mutateSql(
+        connection,
+        sql`DELETE FROM ${table} WHERE ID in (${join(
+          extraBooks.map(({ ID }) => ID),
+        )})`,
+      );
+      expect(deletion.rowsAffected).toBe(extraBooks.length);
+    });
+    test('Should insert many rows and retrieve the IDs without the template tag', async () => {
+      const result = await mutateManySql<{ id: [number]; title: [string] }>(
+        dbConfig,
+        `${insertBook.sql} (:ID, :TITLE, :AUTHOR, :PAGES)
+              RETURNING ID, TITLE into :idOut, :titleOut`,
+        extraBooks as unknown as BindParameters[],
+        {
+          bindDefs: toBindDefs(
+            extraBooks as unknown as Record<string, Value>[],
+            {
+              // Oracle bind parameters aren't case sensitive
+              idOut: { type: NUMBER, dir: BIND_OUT },
+              titleOut: { type: STRING, dir: BIND_OUT, maxSize: 400 },
+            },
+          ),
+        },
+      );
+      expect(result.rowsAffected).toBe(extraBooks.length);
+      expect(result.outBinds).toHaveLength(extraBooks.length);
+      expect(result.outBinds).toEqual(
+        extraBooks.map(({ ID, TITLE }) => ({ idOut: [ID], titleOut: [TITLE] })),
       );
       const deletion = await mutateSql(
         connection,
