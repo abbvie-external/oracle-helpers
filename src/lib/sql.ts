@@ -1,4 +1,3 @@
-import { inspect } from 'node:util';
 import { BindParameter } from 'oracledb';
 
 /**
@@ -169,21 +168,16 @@ export class Sql {
         new Array(numRows).fill(null).map(() => ({})),
       );
     } else {
-      return uniqueValues.reduce<Record<number | string, Value>>(
-        (row, [value, position]) => {
-          // This isn't an array - checked earlier!
-          if (Array.isArray(value)) {
-            throw new TypeError("value shouldn't be array here");
-          }
-          row[position] = value;
-          return row;
-        },
-        {},
-      );
+      return (uniqueValues as [Value, string | number][]).reduce<
+        Record<number | string, Value>
+      >((row, [value, position]) => {
+        row[position] = value;
+        return row;
+      }, {});
     }
   }
 
-  [inspect.custom]() {
+  [Symbol.for('nodejs.util.inspect.custom')]() {
     return {
       sql: this.sql,
       values: this.values,
