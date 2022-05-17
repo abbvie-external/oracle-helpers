@@ -1,9 +1,9 @@
 {
   "extends": "./tsconfig",
   "compilerOptions": {
-    "target": "esnext",
-    "outDir": "build/module",
-    "module": "esnext"
+    "target": "es2017",
+    "outDir": "build/test",
+    "module": "commonjs"
   },
   "include": ["jest.config.ts", "src/**/*.ts"],
   "exclude": []
