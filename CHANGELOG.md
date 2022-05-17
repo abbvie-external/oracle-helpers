@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.2.5](https://github.com/abbvie-external/oracle-helpers/compare/v3.2.3...v3.2.5) (2022-05-17)
+
+
+### Bug Fixes
+
+* **docs:** remove references to AbbVie internals ([964796f](https://github.com/abbvie-external/oracle-helpers/commit/964796fa61e8a7065ab8c486cb0c460cf88abf49))
+* **pools:** clear timeouts when the promise finishes ([3384166](https://github.com/abbvie-external/oracle-helpers/commit/33841663aaaf2ddcba474d96e1abed3bb1d81428))
+* **sqlHelpers:** Pass entire connection argument through ([9cc7f74](https://github.com/abbvie-external/oracle-helpers/commit/9cc7f74e6a51e7244cbfd599891fd0172829cbf2))
+* **sql:** make sql's inspect setup use a symbol ([87922aa](https://github.com/abbvie-external/oracle-helpers/commit/87922aa72fcab926f873ea00e30e425ce7cfe0da))
+* **sql:** Remove extra useless handling for arrays with bind names ([2ada9f4](https://github.com/abbvie-external/oracle-helpers/commit/2ada9f4dd8c0491efd14bf63dc7f7762b179031b))
+* **toBindDefs:** consolidate Buffer/String handling and remove an uneeded `?.` ([cf8293f](https://github.com/abbvie-external/oracle-helpers/commit/cf8293f9533d4a668fa3f475b2881ffad1ced6b3))
+
 ### [3.2.4](https://github.com/abbvie-external/oracle-helpers/compare/v3.2.3...v3.2.4) (2022-05-12)
 
 
