@@ -1,6 +1,7 @@
 import oracledb, {
   Connection,
   ConnectionAttributes,
+  POOL_STATUS_CLOSED,
   Pool,
   PoolAttributes,
 } from 'oracledb';
@@ -70,6 +71,21 @@ export async function createPool(
     pools.delete(configKey);
     throw error;
   }
+}
+
+/**
+ * Get a connection pool if it exists
+ * @param dbConfig database connection configuration
+ * @returns A connection pool or null
+ */
+export async function getPool(
+  dbConfig: ConnectionAttributes,
+): Promise<Pool | null> {
+  const pool = await pools.get(getConfigKey(dbConfig));
+  if (pool && pool.status === POOL_STATUS_CLOSED) {
+    return null;
+  }
+  return pool;
 }
 
 /**

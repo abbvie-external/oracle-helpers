@@ -4,7 +4,7 @@ import {
   Pool,
   POOL_STATUS_OPEN,
 } from 'oracledb';
-import { createPool, getPoolConnection } from '../lib/pools';
+import { createPool, getPoolConnection, getPool } from '../lib/pools';
 import { join, sql } from '../lib/sql';
 import {
   getSqlPool,
@@ -136,6 +136,12 @@ describe('pools', () => {
         )})`,
       );
       expect(deletion.rowsAffected).toBe(extraBooks.length);
+    });
+  });
+  describe('getPool', () => {
+    test('should return a pool', async () => {
+      const pool = await createPool(dbConfig);
+      expect(pool).toBe(await getPool(dbConfig));
     });
   });
 });
