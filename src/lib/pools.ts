@@ -31,13 +31,10 @@ export const configuration: Configuration = {
  */
 export const poolOptions: Record<string, PoolAttributes> = {};
 
-const pools: Record<string, Pool> = {};
-const poolPromises: Record<string, Promise<Pool>> = {};
-const pings: Record<string, Date> = {};
+const pools = new Map<string, Pool | Promise<Pool>>();
+const pings = new Map<string, Date>();
 /**
  * Create/Get a connection pool
- *
- * Will be synchronous if the pool was already created
  *
  * @returns A connection pool.
  */
@@ -49,11 +46,9 @@ export async function createPool(
   if (!connectString) {
     throw Error('Invalid Connection');
   }
-  if (pools[connectString]) {
-    return pools[connectString];
-  }
-  if (poolPromises[connectString] !== undefined) {
-    return await poolPromises[connectString];
+  const extantPool = pools.get(connectString);
+  if (extantPool) {
+    return extantPool;
   }
   const promise = oracledb.createPool({
     poolMin: 0,
@@ -64,18 +59,18 @@ export async function createPool(
     password: dbConfig.password,
     connectString: connectString,
   });
-  poolPromises[connectString] = promise;
+  pools.set(connectString, promise);
   try {
-    pools[connectString] = await promise;
+    const pool = await promise;
+    pools.set(connectString, pool);
+    pings.set(connectString, new Date());
+    return pool;
   } catch (error) {
-    delete poolPromises[connectString];
-    delete pools[connectString];
+    pools.delete(connectString);
     throw error;
   }
-  pings[connectString] = new Date();
-  delete poolPromises[connectString];
-  return pools[connectString];
 }
+
 /**
  * Gets a connection from a pool. Will run createPool automatically
  *
@@ -94,7 +89,6 @@ export async function getPoolConnection(
   if (!connectString) {
     throw Error('Invalid Connection');
   }
-  // let pool = pools[connectString];
   let pool = await createPool(dbConfig);
   try {
     const connection = await promiseOrTimeout(
@@ -103,9 +97,9 @@ export async function getPoolConnection(
     );
     if (
       new Date().valueOf() >
-      pings[connectString].valueOf() + configuration.pingTime
+      pings.get(connectString).valueOf() + configuration.pingTime
     ) {
-      pings[connectString] = new Date();
+      pings.set(connectString, new Date());
       await promiseOrTimeout(connection.ping(), configuration.pingTimeout);
     }
     return connection;
@@ -142,8 +136,7 @@ async function recreatePool(
     await pool.close(1000);
     // eslint-disable-next-line no-empty
   } catch {}
-  delete pools[connectString];
-  delete poolPromises[connectString];
+  pools.delete(connectString);
   pool = await createPool(dbConfig);
   return pool;
 }
