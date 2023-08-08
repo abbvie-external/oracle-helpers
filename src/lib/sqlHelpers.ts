@@ -22,14 +22,14 @@ export type Logger = (
   params: BindParameters,
 ) => void;
 
-let logger: Logger;
+let logger: Logger | undefined;
 /**
  * In order to help combat how bad Oracle's actual Error messages are, this will let you make your own output messages when there's an error
  *
  * @param newLoggerFn The new function to run when an error occurs in a oracle-helper function
  *
  */
-export function setSqlErrorLogger(newLoggerFn: Logger) {
+export function setSqlErrorLogger(newLoggerFn: Logger | undefined) {
   logger = newLoggerFn;
 }
 

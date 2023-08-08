@@ -66,15 +66,15 @@ describe('sqlHelpers', () => {
   });
   describe('getSql', () => {
     test('Should throw an error when config is undefined', async () => {
-      await expect(getSql(undefined as Connection, '')).rejects.toThrow(
-        new TypeError('ConfigOrConnection must be defined'),
-      );
+      await expect(
+        getSql(undefined as unknown as Connection, ''),
+      ).rejects.toThrow(new TypeError('ConfigOrConnection must be defined'));
     });
     test("Should log when there's an error", async () => {
       const logger = jest.fn<Logger>();
       setSqlErrorLogger(logger);
       const query = sql`select '5' from dual where fish = ${0}`;
-      let errorObj: Error;
+      let errorObj: Error | undefined;
       await expect(async () => {
         try {
           await getSql(connection, query);
@@ -164,7 +164,7 @@ describe('sqlHelpers', () => {
       const logger = jest.fn<Logger>();
       setSqlErrorLogger(logger);
       const query = sql`select '5' from dual where fish = ${0}`;
-      let errorObj: Error;
+      let errorObj: Error | undefined;
       await expect(async () => {
         try {
           await mutateSql(connection, query);
@@ -284,7 +284,7 @@ describe('sqlHelpers', () => {
       const logger = jest.fn<Logger>();
       setSqlErrorLogger(logger);
       const query = sql`select '5' from dual where fish = ${[0]}`;
-      let errorObj: Error;
+      let errorObj: Error | undefined;
       await expect(async () => {
         try {
           await mutateManySql(connection, query);
