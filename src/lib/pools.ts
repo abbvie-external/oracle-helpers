@@ -42,31 +42,32 @@ export async function createPool(
   dbConfig: ConnectionAttributes,
   options: PoolAttributes = {},
 ): Promise<Pool> {
-  const connectString = dbConfig.connectString || dbConfig.connectionString;
+  const connectString = getConnectString(dbConfig);
   if (!connectString) {
     throw Error('Invalid Connection');
   }
-  const extantPool = pools.get(connectString);
+  const configKey = getConfigKey(dbConfig);
+  const extantPool = pools.get(configKey);
   if (extantPool) {
     return extantPool;
   }
   const promise = oracledb.createPool({
     poolMin: 0,
     poolMax: 12,
+    ...poolOptions[connectString],
     ...options,
-    ...(poolOptions[connectString] ?? {}),
     user: dbConfig.user,
     password: dbConfig.password,
-    connectString: connectString,
+    connectString,
   });
-  pools.set(connectString, promise);
+  pools.set(configKey, promise);
   try {
     const pool = await promise;
-    pools.set(connectString, pool);
-    pings.set(connectString, new Date());
+    pools.set(configKey, pool);
+    pings.set(configKey, new Date());
     return pool;
   } catch (error) {
-    pools.delete(connectString);
+    pools.delete(configKey);
     throw error;
   }
 }
@@ -85,10 +86,7 @@ export async function createPool(
 export async function getPoolConnection(
   dbConfig: ConnectionAttributes,
 ): Promise<Connection> {
-  const connectString = dbConfig.connectString || dbConfig.connectionString;
-  if (!connectString) {
-    throw Error('Invalid Connection');
-  }
+  const configKey = getConfigKey(dbConfig);
   let pool = await createPool(dbConfig);
   try {
     const connection = await promiseOrTimeout(
@@ -96,10 +94,11 @@ export async function getPoolConnection(
       configuration.connectionTimeout,
     );
     if (
+      pings.has(configKey) &&
       new Date().valueOf() >
-      pings.get(connectString).valueOf() + configuration.pingTime
+        pings.get(configKey).valueOf() + configuration.pingTime
     ) {
-      pings.set(connectString, new Date());
+      pings.set(configKey, new Date());
       await promiseOrTimeout(connection.ping(), configuration.pingTimeout);
     }
     return connection;
@@ -128,15 +127,20 @@ async function recreatePool(
   dbConfig: ConnectionAttributes,
   pool: Pool,
 ): Promise<Pool> {
-  const connectString = dbConfig.connectString || dbConfig.connectionString;
-  if (!connectString) {
-    throw Error('Invalid Connection');
-  }
+  const configKey = getConfigKey(dbConfig);
   try {
     await pool.close(1000);
     // eslint-disable-next-line no-empty
   } catch {}
-  pools.delete(connectString);
+  pools.delete(configKey);
   pool = await createPool(dbConfig);
   return pool;
+}
+
+function getConnectString(dbConfig: ConnectionAttributes): string {
+  return dbConfig.connectString || dbConfig.connectionString;
+}
+
+function getConfigKey(dbConfig: ConnectionAttributes): string {
+  return `${getConnectString(dbConfig)}|${dbConfig.user}`;
 }
