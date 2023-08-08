@@ -9,6 +9,7 @@ import { join, sql } from '../lib/sql';
 import {
   getSqlPool,
   mutateManySqlPool,
+  mutateSql,
   mutateSqlPool,
 } from '../lib/sqlHelpers';
 import {
@@ -58,7 +59,7 @@ describe('pools', () => {
   });
   afterAll(async () => {
     try {
-      await mutateSqlPool(dbConfig, dropTable);
+      await mutateSql(dbConfig, dropTable);
     } finally {
       await pool.terminate();
     }
@@ -100,6 +101,22 @@ describe('pools', () => {
     } finally {
       await connection.close();
     }
+  });
+  test('should create a new pool after closing the old one', async () => {
+    if (!pool) {
+      // In-case this test is being run by itself
+      pool = await createPool(dbConfig);
+    }
+    await pool.close();
+    await new Promise<void>((res) =>
+      setTimeout(() => {
+        res();
+      }, 1000),
+    ); // Wait for the pool to close
+    const pool2 = await createPool(dbConfig);
+    expect(pool2.status).toBe(POOL_STATUS_OPEN);
+    expect(pool2).not.toBe(pool);
+    pool = pool2;
   });
   test('should throw on creating a pool without a connectString', async () => {
     expect(createPool({ connectString: '' })).rejects.toThrow(

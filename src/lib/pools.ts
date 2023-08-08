@@ -1,7 +1,6 @@
 import oracledb, {
   Connection,
   ConnectionAttributes,
-  POOL_STATUS_CLOSED,
   Pool,
   PoolAttributes,
 } from 'oracledb';
@@ -50,7 +49,12 @@ export async function createPool(
   const configKey = getConfigKey(dbConfig);
   const extantPool = pools.get(configKey);
   if (extantPool) {
-    return extantPool;
+    if (
+      extantPool instanceof Promise ||
+      extantPool.status !== oracledb.POOL_STATUS_CLOSED
+    ) {
+      return extantPool;
+    }
   }
   const promise = oracledb.createPool({
     poolMin: 0,
@@ -82,7 +86,7 @@ export async function getPool(
   dbConfig: ConnectionAttributes,
 ): Promise<Pool | null> {
   const pool = await pools.get(getConfigKey(dbConfig));
-  if (pool && pool.status === POOL_STATUS_CLOSED) {
+  if (pool && pool.status === oracledb.POOL_STATUS_CLOSED) {
     return null;
   }
   return pool;
