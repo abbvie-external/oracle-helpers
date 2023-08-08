@@ -27,9 +27,30 @@ export const configuration: Configuration = {
 
 /**
  * Use this to set the options for the pool based on the connect string
+ * @deprecated Use setPoolDefaults instead
  *
  */
 export const poolOptions: Record<string, PoolAttributes> = {};
+
+const internalPoolOptions = new Map<string, PoolAttributes>();
+
+export function setPoolDefaults(
+  dbConfig: ConnectionAttributes,
+  options: PoolAttributes | undefined,
+) {
+  if (!options) {
+    internalPoolOptions.delete(getConfigKey(dbConfig));
+  } else {
+    internalPoolOptions.set(getConfigKey(dbConfig), { ...options });
+  }
+}
+
+export function getPoolDefaults(dbConfig: ConnectionAttributes) {
+  return {
+    ...poolOptions[getConnectString(dbConfig)],
+    ...internalPoolOptions.get(getConfigKey(dbConfig)),
+  };
+}
 
 const pools = new Map<string, Pool | Promise<Pool>>();
 const pings = new Map<string, Date>();
@@ -59,8 +80,9 @@ export async function createPool(
   const promise = oracledb.createPool({
     poolMin: 0,
     poolMax: 12,
-    ...poolOptions[connectString],
+    ...getPoolDefaults(dbConfig),
     ...options,
+    poolAlias: dbConfig.poolAlias,
     user: dbConfig.user,
     password: dbConfig.password,
     connectString,
@@ -86,7 +108,7 @@ export async function getPool(
   dbConfig: ConnectionAttributes,
 ): Promise<Pool | null> {
   const pool = await pools.get(getConfigKey(dbConfig));
-  if (pool && pool.status === oracledb.POOL_STATUS_CLOSED) {
+  if (!pool || pool.status === oracledb.POOL_STATUS_CLOSED) {
     return null;
   }
   return pool;
@@ -116,7 +138,8 @@ export async function getPoolConnection(
     if (
       pings.has(configKey) &&
       new Date().valueOf() >
-        pings.get(configKey).valueOf() + configuration.pingTime
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        pings.get(configKey).valueOf()! + configuration.pingTime
     ) {
       pings.set(configKey, new Date());
       await promiseOrTimeout(connection.ping(), configuration.pingTimeout);
@@ -162,5 +185,5 @@ function getConnectString(dbConfig: ConnectionAttributes): string {
 }
 
 function getConfigKey(dbConfig: ConnectionAttributes): string {
-  return `${getConnectString(dbConfig)}|${dbConfig.user}`;
+  return `${getConnectString(dbConfig)}|${dbConfig.user}|${dbConfig.poolAlias}`;
 }

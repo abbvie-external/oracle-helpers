@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import {
   BindParameters,
+  ConnectionAttributes,
   getConnection,
-  Pool,
   POOL_STATUS_OPEN,
 } from 'oracledb';
-import { createPool, getPoolConnection, getPool } from '../lib/pools';
+import { createPool, getPool, getPoolConnection } from '../lib/pools';
 import { join, sql } from '../lib/sql';
 import {
   getSqlPool,
@@ -29,69 +30,89 @@ const insertBook = getInsertBook(table);
 const selectBooks = getSelectBooks(table);
 const dropTable = getDropTable(table);
 
-describe('pools', () => {
-  let pool: Pool;
-  beforeAll(async () => {
+async function seedDatabase() {
+  try {
+    const connection = await getConnection(dbConfig);
     try {
-      const connection = await getConnection(dbConfig);
       try {
-        try {
-          await connection.execute(dropTable);
-        } catch (error) {
-          // Ignore does not exist errors
-          if (error.errorNum !== 942) {
-            throw error;
-          }
+        await connection.execute(dropTable);
+      } catch (error) {
+        // Ignore does not exist errors
+        if (error.errorNum !== 942) {
+          throw error;
         }
-        await connection.execute(getTableCreation(table));
-        await connection.executeMany(
-          `${insertBook.sql} (:ID, :TITLE, :AUTHOR, :PAGES)`,
-          seedBooks as unknown as BindParameters[],
-          { autoCommit: true },
-        );
-      } finally {
-        await connection.close();
       }
-    } catch (error) {
-      console.error(`Failed Creating/Seeding ${table.sql}`);
-      throw error;
+      await connection.execute(getTableCreation(table));
+      await connection.executeMany(
+        `${insertBook.sql} (:ID, :TITLE, :AUTHOR, :PAGES)`,
+        seedBooks as unknown as BindParameters[],
+        { autoCommit: true },
+      );
+    } finally {
+      await connection.close();
     }
-  });
+  } catch (error) {
+    console.error(`Failed Creating/Seeding ${table.sql}`);
+    throw error;
+  }
+}
+
+describe('pools', () => {
   afterAll(async () => {
     try {
       await mutateSql(dbConfig, dropTable);
-    } finally {
-      await pool.terminate();
+    } catch (err) {
+      // Ignore does not exist errors
+      if (err.errorNum !== 942) {
+        throw err;
+      }
     }
   });
   test('should create and get the same pool via the same config', async () => {
+    const aliasedConfig: ConnectionAttributes = {
+      ...dbConfig,
+      poolAlias: 'sameConfig',
+    };
     const pools = await Promise.all([
-      createPool(dbConfig, { poolMax: 1 }),
-      createPool(dbConfig, { poolMax: 1 }),
+      createPool(aliasedConfig, { poolMax: 1 }),
+      createPool(aliasedConfig, { poolMax: 1 }),
     ]);
-    expect(pools[0]).toBe(pools[1]);
-    [pool] = pools;
-    expect(pool.status).toBe(POOL_STATUS_OPEN);
-
-    const pool2 = await createPool(dbConfig);
     try {
-      expect(pool2).toBe(pool);
-    } catch (error) {
-      await pool2.terminate();
-      throw error;
+      expect(pools[0]).toBe(pools[1]);
+      const [pool] = pools;
+      expect(pool.status).toBe(POOL_STATUS_OPEN);
+      expect(pool.poolMax).toBe(1);
+      expect(pool.poolAlias).toBe(aliasedConfig.poolAlias);
+
+      const pool2 = await createPool(aliasedConfig);
+      try {
+        expect(pool2).toBe(pool);
+      } catch (error) {
+        // If it's a different pool, we need to close it
+        // as the finally around the whole test won't close this one
+        await pool2.terminate();
+        throw error;
+      }
+    } finally {
+      pools.forEach((pool) => pool.close().catch(() => {}));
     }
   });
   test('should support connectionString as well as connectString', async () => {
     const { connectString, ...config } = dbConfig;
-    const pool2 = await createPool({
-      connectionString: connectString,
-      ...config,
-    });
+    const pool = await createPool(dbConfig);
     try {
-      expect(pool2).toBe(pool);
-    } catch (error) {
-      await pool2.terminate();
-      throw error;
+      const pool2 = await createPool({
+        connectionString: connectString,
+        ...config,
+      });
+      try {
+        expect(pool2).toBe(pool);
+      } catch (error) {
+        await pool2.terminate();
+        throw error;
+      }
+    } finally {
+      await pool.close();
     }
   });
   test('should allow creating a connection', async () => {
@@ -99,24 +120,25 @@ describe('pools', () => {
     try {
       await connection.ping();
     } finally {
-      await connection.close();
+      await connection.close().catch(() => {});
+      (await getPool(dbConfig))?.close().catch(() => {});
     }
   });
   test('should create a new pool after closing the old one', async () => {
-    if (!pool) {
-      // In-case this test is being run by itself
-      pool = await createPool(dbConfig);
+    const aliasedConfig: ConnectionAttributes = {
+      ...dbConfig,
+      poolAlias: 'poolClosing',
+    };
+    let pool = await createPool(aliasedConfig);
+    try {
+      await pool.close();
+      const pool2 = await createPool(dbConfig);
+      expect(pool2.status).toBe(POOL_STATUS_OPEN);
+      expect(pool2).not.toBe(pool);
+      pool = pool2;
+    } finally {
+      await pool.close().catch(() => {});
     }
-    await pool.close();
-    await new Promise<void>((res) =>
-      setTimeout(() => {
-        res();
-      }, 1000),
-    ); // Wait for the pool to close
-    const pool2 = await createPool(dbConfig);
-    expect(pool2.status).toBe(POOL_STATUS_OPEN);
-    expect(pool2).not.toBe(pool);
-    pool = pool2;
   });
   test('should throw on creating a pool without a connectString', async () => {
     expect(createPool({ connectString: '' })).rejects.toThrow(
@@ -126,39 +148,63 @@ describe('pools', () => {
       new Error('Invalid Connection'),
     );
   });
-  describe('getSqlPool', () => {
-    test('Should work through a pool', async () => {
-      await expect(getSqlPool(dbConfig, selectBooks)).resolves.toEqual(
-        seedBooks,
-      );
+  describe('sqlHelpers', () => {
+    const aliasedConfig: ConnectionAttributes = {
+      ...dbConfig,
+      poolAlias: 'sqlHelpers',
+    };
+    afterAll(async () => {
+      await (await getPool(aliasedConfig))?.close().catch(() => {});
     });
-  });
-  describe('mutateManySqlPool', () => {
-    test('Should work through a pool', async () => {
-      const query = sql`${insertBook}
-        (${extraBooks.map(({ ID }) => ID)},
-         ${extraBooks.map(({ TITLE }) => TITLE)},
-         ${extraBooks.map(({ AUTHOR }) => AUTHOR)},
-         ${extraBooks.map(({ PAGES }) => PAGES)})`;
-      const result = await mutateManySqlPool<{ id: [number]; title: [string] }>(
-        dbConfig,
-        query,
-      );
-      expect(result.rowsAffected).toBe(extraBooks.length);
-      expect(await getSqlPool(dbConfig, selectBooks)).toEqual(allBooks);
-      const deletion = await mutateSqlPool(
-        dbConfig,
-        sql`DELETE FROM ${table} WHERE ID in (${join(
-          extraBooks.map(({ ID }) => ID),
-        )})`,
-      );
-      expect(deletion.rowsAffected).toBe(extraBooks.length);
+    describe('getSqlPool', () => {
+      test('Should work through a pool', async () => {
+        await seedDatabase();
+        await expect(getSqlPool(aliasedConfig, selectBooks)).resolves.toEqual(
+          seedBooks,
+        );
+      });
+    });
+    describe('mutateManySqlPool', () => {
+      test('Should work through a pool', async () => {
+        await seedDatabase();
+        const query = sql`${insertBook}
+          (${extraBooks.map(({ ID }) => ID)},
+           ${extraBooks.map(({ TITLE }) => TITLE)},
+           ${extraBooks.map(({ AUTHOR }) => AUTHOR)},
+           ${extraBooks.map(({ PAGES }) => PAGES)})`;
+        const result = await mutateManySqlPool<{
+          id: [number];
+          title: [string];
+        }>(aliasedConfig, query);
+        expect(result.rowsAffected).toBe(extraBooks.length);
+        expect(
+          await getSqlPool(aliasedConfig, sql`${selectBooks} order by ID`),
+        ).toEqual(allBooks);
+        const deletion = await mutateSqlPool(
+          aliasedConfig,
+          sql`DELETE FROM ${table} WHERE ID in (${join(
+            extraBooks.map(({ ID }) => ID),
+          )})`,
+        );
+        expect(deletion.rowsAffected).toBe(extraBooks.length);
+      });
     });
   });
   describe('getPool', () => {
     test('should return a pool', async () => {
       const pool = await createPool(dbConfig);
-      expect(pool).toBe(await getPool(dbConfig));
+      try {
+        expect(pool).toBe(await getPool(dbConfig));
+      } finally {
+        await pool.close();
+      }
+    });
+    test('should return null if the pool is closed or does not exist', async () => {
+      const aliasedConfig: ConnectionAttributes = {
+        ...dbConfig,
+        poolAlias: 'getPoolNull',
+      };
+      expect(await getPool(aliasedConfig)).toBeNull();
     });
   });
 });
