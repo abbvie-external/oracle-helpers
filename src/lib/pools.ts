@@ -80,6 +80,10 @@ export async function createPool(
   const promise = oracledb.createPool({
     poolMin: 0,
     poolMax: 12,
+    edition: dbConfig.edition,
+    events: dbConfig.events,
+    externalAuth: dbConfig.externalAuth,
+    stmtCacheSize: dbConfig.stmtCacheSize,
     ...getPoolDefaults(dbConfig),
     ...options,
     poolAlias: dbConfig.poolAlias,
