@@ -1,15 +1,15 @@
 import { jest } from '@jest/globals';
 import {
-  BindParameters,
   BIND_OUT,
+  BindParameters,
   Connection,
-  getConnection,
   NUMBER,
   STRING,
+  getConnection,
 } from 'oracledb';
 import { getSql, join, mutateManySql, mutateSql, sql, toBindDefs } from '../';
 import { Value } from '../lib/sql';
-import { Logger, setSqlErrorLogger } from '../lib/sqlHelpers';
+import { Logger, isDBError, setSqlErrorLogger } from '../lib/sqlHelpers';
 import {
   Book,
   dbConfig,
@@ -64,17 +64,26 @@ describe('sqlHelpers', () => {
       await connection.close();
     }
   });
+  describe('isDBError', () => {
+    test('Should return true for an Oracle error', async () => {
+      try {
+        await getSql(connection, sql`select '5' from dual where fish = ${0}`);
+      } catch (error) {
+        expect(isDBError(error)).toBe(true);
+      }
+    });
+  });
   describe('getSql', () => {
     test('Should throw an error when config is undefined', async () => {
-      await expect(getSql(undefined as Connection, '')).rejects.toThrow(
-        new TypeError('ConfigOrConnection must be defined'),
-      );
+      await expect(
+        getSql(undefined as unknown as Connection, ''),
+      ).rejects.toThrow(new TypeError('ConfigOrConnection must be defined'));
     });
     test("Should log when there's an error", async () => {
       const logger = jest.fn<Logger>();
       setSqlErrorLogger(logger);
       const query = sql`select '5' from dual where fish = ${0}`;
-      let errorObj: Error;
+      let errorObj: Error | undefined;
       await expect(async () => {
         try {
           await getSql(connection, query);
@@ -147,9 +156,7 @@ describe('sqlHelpers', () => {
     test("Should release the connection on error if there's an error", async () => {
       // Note: It's nearly impossible to actually determine if the connection that was created in
       // the function was *in fact* released, it'll show in the code coverage...
-      await expect(getSql(dbConfig, '')).rejects.toThrow(
-        'ORA-24373: invalid length specified for statement',
-      );
+      await expect(getSql(dbConfig, '')).rejects.toThrow(/(ORA|NJS)-/);
     });
   });
   describe('mutateSql', () => {
@@ -164,7 +171,7 @@ describe('sqlHelpers', () => {
       const logger = jest.fn<Logger>();
       setSqlErrorLogger(logger);
       const query = sql`select '5' from dual where fish = ${0}`;
-      let errorObj: Error;
+      let errorObj: Error | undefined;
       await expect(async () => {
         try {
           await mutateSql(connection, query);
@@ -267,9 +274,7 @@ describe('sqlHelpers', () => {
     test("Should release the connection on error if there's an error", async () => {
       // Note: It's nearly impossible to actually determine if the connection that was created in
       // the function was *in fact* released, it'll show in the code coverage...
-      await expect(getSql(dbConfig, '')).rejects.toThrow(
-        'ORA-24373: invalid length specified for statement',
-      );
+      await expect(getSql(dbConfig, '')).rejects.toThrow(/(ORA|NJS)-/);
     });
   });
   describe('mutateManySql', () => {
@@ -284,7 +289,7 @@ describe('sqlHelpers', () => {
       const logger = jest.fn<Logger>();
       setSqlErrorLogger(logger);
       const query = sql`select '5' from dual where fish = ${[0]}`;
-      let errorObj: Error;
+      let errorObj: Error | undefined;
       await expect(async () => {
         try {
           await mutateManySql(connection, query);

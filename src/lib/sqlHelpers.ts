@@ -1,4 +1,5 @@
-import oracledb, {
+import oracledb from 'oracledb';
+import type {
   BindParameters,
   Connection,
   ConnectionAttributes,
@@ -6,12 +7,31 @@ import oracledb, {
   ExecuteOptions,
   Result,
   Results,
+  DBError,
 } from 'oracledb';
 import { getPoolConnection } from './pools';
 import { Sql } from './sql';
 
 oracledb.fetchAsBuffer = [oracledb.BLOB];
 oracledb.fetchAsString = [oracledb.CLOB];
+
+/**
+ * Convenience function for duck-typing if an error is an Oracle DBError as node-oracledb doesn't expose one
+ *
+ * Note: when using thick-client, the Error may be cross-realm, so `instanceof Error` won't work
+ * @param error
+ */
+export function isDBError(error: unknown): error is DBError {
+  if (
+    typeof error === 'object' &&
+    'errorNum' in error &&
+    'offset' in error &&
+    'message' in error
+  ) {
+    return true;
+  }
+  return false;
+}
 
 /**
  * A function called when an error occurs
@@ -22,14 +42,14 @@ export type Logger = (
   params: BindParameters,
 ) => void;
 
-let logger: Logger;
+let logger: Logger | undefined;
 /**
  * In order to help combat how bad Oracle's actual Error messages are, this will let you make your own output messages when there's an error
  *
  * @param newLoggerFn The new function to run when an error occurs in a oracle-helper function
  *
  */
-export function setSqlErrorLogger(newLoggerFn: Logger) {
+export function setSqlErrorLogger(newLoggerFn: Logger | undefined) {
   logger = newLoggerFn;
 }
 
