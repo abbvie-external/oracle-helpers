@@ -148,7 +148,6 @@ export async function getPoolConnection(
     if (
       pings.has(configKey) &&
       new Date().valueOf() >
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         pings.get(configKey).valueOf()! + configuration.pingTime
     ) {
       pings.set(configKey, new Date());
