@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.3.0](https://github.com/abbvie-external/oracle-helpers/compare/v3.2.5...v3.3.0) (2023-08-09)
+
+
+### Features
+
+* **pools:** add `closePools` to close all pools that oracle-helpers manages ([3dced36](https://github.com/abbvie-external/oracle-helpers/commit/3dced36040aaf7a4a7890a3c0b404b82d528cc31))
+* **pools:** add `getPool` to get the pool object created by the helpers ([99189e8](https://github.com/abbvie-external/oracle-helpers/commit/99189e8960328b89c941e5fc92627a2a1567dd22))
+* **pools:** add `setPoolDefaults` and `getPoolDefaults` ([198765e](https://github.com/abbvie-external/oracle-helpers/commit/198765e542eafed41629dd6318b5cc8317778b4f))
+* **pools:** if a pool is closed, a new pool will be created ([eb42540](https://github.com/abbvie-external/oracle-helpers/commit/eb425407e70442315ee55daf658cecb27062a4ea))
+* **sqlHelpers:** Add `isDBError` to typeguard DBError type from oracledb ([f827ec6](https://github.com/abbvie-external/oracle-helpers/commit/f827ec6356958ca5a31955daada5d3645ccbaf23))
+
+
+### Bug Fixes
+
+* **pools:** pool keys are connectString and user ([8a0ba25](https://github.com/abbvie-external/oracle-helpers/commit/8a0ba253a8b14a38c5d286b2f7135a8c4e62dd42))
+* **pools:** specify exclude unused pool attributes ([41bd671](https://github.com/abbvie-external/oracle-helpers/commit/41bd67156994e3c34c10b42cd522ae8b9dc65d71))
+* **pools:** use more of the dbConfig settings for the pool by default ([6b34ecf](https://github.com/abbvie-external/oracle-helpers/commit/6b34ecfc8972d6b2c5317af0f93eb447903724f1))
+* **raw:** allow number inputs to `raw` and convert to string ([42a5251](https://github.com/abbvie-external/oracle-helpers/commit/42a52515faa5eda6ad74162d37712782fe6db98e))
+* setSqlErrorLogger should accept undefined to unset it ([d571714](https://github.com/abbvie-external/oracle-helpers/commit/d57171419bcbc8a8158bd6a2234a410023510ae3))
+
 ### [3.2.5](https://github.com/abbvie-external/oracle-helpers/compare/v3.2.3...v3.2.5) (2022-05-17)
 
 
