@@ -9,7 +9,7 @@ import {
 } from 'oracledb';
 import { getSql, join, mutateManySql, mutateSql, sql, toBindDefs } from '../';
 import { Value } from '../lib/sql';
-import { Logger, setSqlErrorLogger } from '../lib/sqlHelpers';
+import { Logger, isDBError, setSqlErrorLogger } from '../lib/sqlHelpers';
 import {
   Book,
   dbConfig,
@@ -63,6 +63,15 @@ describe('sqlHelpers', () => {
     } finally {
       await connection.close();
     }
+  });
+  describe('isDBError', () => {
+    test('Should return true for an Oracle error', async () => {
+      try {
+        await getSql(connection, sql`select '5' from dual where fish = ${0}`);
+      } catch (error) {
+        expect(isDBError(error)).toBe(true);
+      }
+    });
   });
   describe('getSql', () => {
     test('Should throw an error when config is undefined', async () => {

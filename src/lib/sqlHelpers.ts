@@ -1,4 +1,5 @@
-import oracledb, {
+import oracledb from 'oracledb';
+import type {
   BindParameters,
   Connection,
   ConnectionAttributes,
@@ -6,12 +7,31 @@ import oracledb, {
   ExecuteOptions,
   Result,
   Results,
+  DBError,
 } from 'oracledb';
 import { getPoolConnection } from './pools';
 import { Sql } from './sql';
 
 oracledb.fetchAsBuffer = [oracledb.BLOB];
 oracledb.fetchAsString = [oracledb.CLOB];
+
+/**
+ * Convenience function for duck-typing if an error is an Oracle DBError as node-oracledb doesn't expose one
+ *
+ * Note: when using thick-client, the Error may be cross-realm, so `instanceof Error` won't work
+ * @param error
+ */
+export function isDBError(error: unknown): error is DBError {
+  if (
+    typeof error === 'object' &&
+    'errorNum' in error &&
+    'offset' in error &&
+    'message' in error
+  ) {
+    return true;
+  }
+  return false;
+}
 
 /**
  * A function called when an error occurs
