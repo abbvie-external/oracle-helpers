@@ -10,6 +10,9 @@ import {
   createPool,
   getPool,
   getPoolConnection,
+  getPoolDefaults,
+  setPoolDefaults,
+  PoolOptions,
 } from '../lib/pools';
 import { join, sql } from '../lib/sql';
 import {
@@ -105,6 +108,23 @@ describe('pools', () => {
         ...config,
       });
       expect(pool2).toBe(pool);
+    });
+    test('setPoolDefaults should work', async () => {
+      const options: PoolOptions = { poolMax: 1 };
+      setPoolDefaults(dbConfig, options);
+      expect(getPoolDefaults(dbConfig)).toEqual(options);
+      const aliasedConfig: ConnectionAttributes = {
+        ...dbConfig,
+        poolAlias: 'aliasedConfig',
+      };
+      const aliasedOptions: PoolOptions = { poolMax: 2 };
+      setPoolDefaults(aliasedConfig, aliasedOptions);
+      expect(getPoolDefaults(aliasedConfig)).toEqual(aliasedOptions);
+      expect(getPoolDefaults(dbConfig)).not.toEqual(aliasedOptions);
+      setPoolDefaults(dbConfig, undefined);
+      expect(getPoolDefaults(dbConfig)).toEqual({});
+      setPoolDefaults(aliasedConfig, undefined);
+      expect(getPoolDefaults(aliasedConfig)).toEqual({});
     });
     test('should allow creating a connection', async () => {
       const connection = await getPoolConnection(dbConfig);

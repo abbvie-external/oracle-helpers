@@ -26,18 +26,23 @@ export const configuration: Configuration = {
   pingTimeout: 3000,
 };
 
+export type PoolOptions = Omit<
+  PoolAttributes,
+  'poolAlias' | 'user' | 'password' | 'connectString' | 'connectionString'
+>;
+
 /**
  * Use this to set the options for the pool based on the connect string
  * @deprecated Use setPoolDefaults instead
  *
  */
-export const poolOptions: Record<string, PoolAttributes> = {};
+export const poolOptions: Record<string, PoolOptions> = {};
 
-const internalPoolOptions = new Map<string, PoolAttributes>();
+const internalPoolOptions = new Map<string, PoolOptions>();
 
 export function setPoolDefaults(
   dbConfig: ConnectionAttributes,
-  options: PoolAttributes | undefined,
+  options: PoolOptions | undefined,
 ) {
   if (!options) {
     internalPoolOptions.delete(getConfigKey(dbConfig));
@@ -62,7 +67,7 @@ const pings = new Map<string, Date>();
  */
 export async function createPool(
   dbConfig: ConnectionAttributes,
-  options: PoolAttributes = {},
+  options: PoolOptions = {},
 ): Promise<Pool> {
   const connectString = getConnectString(dbConfig);
   if (!connectString) {
