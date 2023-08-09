@@ -5,7 +5,12 @@ import {
   getConnection,
   POOL_STATUS_OPEN,
 } from 'oracledb';
-import { createPool, getPool, getPoolConnection } from '../lib/pools';
+import {
+  closePools,
+  createPool,
+  getPool,
+  getPoolConnection,
+} from '../lib/pools';
 import { join, sql } from '../lib/sql';
 import {
   getSqlPool,
@@ -66,18 +71,23 @@ describe('pools', () => {
       if (err.errorNum !== 942) {
         throw err;
       }
+    } finally {
+      await closePools(0);
     }
   });
-  test('should create and get the same pool via the same config', async () => {
-    const aliasedConfig: ConnectionAttributes = {
-      ...dbConfig,
-      poolAlias: 'sameConfig',
-    };
-    const pools = await Promise.all([
-      createPool(aliasedConfig, { poolMax: 1 }),
-      createPool(aliasedConfig, { poolMax: 1 }),
-    ]);
-    try {
+  describe('base', () => {
+    afterEach(async () => {
+      await closePools(0);
+    });
+    test('should create and get the same pool via the same config', async () => {
+      const aliasedConfig: ConnectionAttributes = {
+        ...dbConfig,
+        poolAlias: 'sameConfig',
+      };
+      const pools = await Promise.all([
+        createPool(aliasedConfig, { poolMax: 1 }),
+        createPool(aliasedConfig, { poolMax: 1 }),
+      ]);
       expect(pools[0]).toBe(pools[1]);
       const [pool] = pools;
       expect(pool.status).toBe(POOL_STATUS_OPEN);
@@ -85,68 +95,77 @@ describe('pools', () => {
       expect(pool.poolAlias).toBe(aliasedConfig.poolAlias);
 
       const pool2 = await createPool(aliasedConfig);
-      try {
-        expect(pool2).toBe(pool);
-      } catch (error) {
-        // If it's a different pool, we need to close it
-        // as the finally around the whole test won't close this one
-        await pool2.terminate();
-        throw error;
-      }
-    } finally {
-      pools.forEach((pool) => pool.close().catch(() => {}));
-    }
-  });
-  test('should support connectionString as well as connectString', async () => {
-    const { connectString, ...config } = dbConfig;
-    const pool = await createPool(dbConfig);
-    try {
+      expect(pool2).toBe(pool);
+    });
+    test('should support connectionString as well as connectString', async () => {
+      const { connectString, ...config } = dbConfig;
+      const pool = await createPool(dbConfig);
       const pool2 = await createPool({
         connectionString: connectString,
         ...config,
       });
+      expect(pool2).toBe(pool);
+    });
+    test('should allow creating a connection', async () => {
+      const connection = await getPoolConnection(dbConfig);
       try {
-        expect(pool2).toBe(pool);
-      } catch (error) {
-        await pool2.terminate();
-        throw error;
+        await connection.ping();
+      } finally {
+        await connection.close().catch(() => {});
       }
-    } finally {
-      await pool.close();
-    }
-  });
-  test('should allow creating a connection', async () => {
-    const connection = await getPoolConnection(dbConfig);
-    try {
-      await connection.ping();
-    } finally {
-      await connection.close().catch(() => {});
-      (await getPool(dbConfig))?.close().catch(() => {});
-    }
-  });
-  test('should create a new pool after closing the old one', async () => {
-    const aliasedConfig: ConnectionAttributes = {
-      ...dbConfig,
-      poolAlias: 'poolClosing',
-    };
-    let pool = await createPool(aliasedConfig);
-    try {
+    });
+    test('should create a new pool after closing the old one', async () => {
+      const aliasedConfig: ConnectionAttributes = {
+        ...dbConfig,
+        poolAlias: 'poolClosing',
+      };
+      const pool = await createPool(aliasedConfig);
       await pool.close();
       const pool2 = await createPool(dbConfig);
       expect(pool2.status).toBe(POOL_STATUS_OPEN);
       expect(pool2).not.toBe(pool);
-      pool = pool2;
-    } finally {
-      await pool.close().catch(() => {});
-    }
+    });
+    test('should throw on creating a pool without a connectString', async () => {
+      expect(createPool({ connectString: '' })).rejects.toThrow(
+        new Error('Invalid Connection'),
+      );
+      expect(createPool({ connectionString: '' })).rejects.toThrow(
+        new Error('Invalid Connection'),
+      );
+    });
   });
-  test('should throw on creating a pool without a connectString', async () => {
-    expect(createPool({ connectString: '' })).rejects.toThrow(
-      new Error('Invalid Connection'),
-    );
-    expect(createPool({ connectionString: '' })).rejects.toThrow(
-      new Error('Invalid Connection'),
-    );
+  describe('getPool', () => {
+    afterEach(async () => {
+      await closePools(0);
+    });
+    test('should return a pool', async () => {
+      const pool = await createPool(dbConfig);
+      expect(pool).toBe(await getPool(dbConfig));
+    });
+    test('should return null if the pool is closed or does not exist', async () => {
+      const aliasedConfig: ConnectionAttributes = {
+        ...dbConfig,
+        poolAlias: 'getPoolNull',
+      };
+      expect(await getPool(aliasedConfig)).toBeNull();
+    });
+  });
+  describe('closePools', () => {
+    afterEach(async () => {
+      await closePools(0);
+    });
+    test("should return pools that didn't close", async () => {
+      const pool = await createPool(dbConfig);
+      const connection = await getPoolConnection(dbConfig);
+      const results = await closePools();
+      expect(results?.[0]?.pool).toBe(pool);
+      await connection.close();
+    });
+    test('should return an empty array if all pools closed successfully', async () => {
+      await createPool(dbConfig);
+      const results = await closePools();
+      expect(results).toHaveLength(0);
+    });
   });
   describe('sqlHelpers', () => {
     const aliasedConfig: ConnectionAttributes = {
@@ -154,7 +173,7 @@ describe('pools', () => {
       poolAlias: 'sqlHelpers',
     };
     afterAll(async () => {
-      await (await getPool(aliasedConfig))?.close().catch(() => {});
+      await closePools(0);
     });
     describe('getSqlPool', () => {
       test('Should work through a pool', async () => {
@@ -188,23 +207,6 @@ describe('pools', () => {
         );
         expect(deletion.rowsAffected).toBe(extraBooks.length);
       });
-    });
-  });
-  describe('getPool', () => {
-    test('should return a pool', async () => {
-      const pool = await createPool(dbConfig);
-      try {
-        expect(pool).toBe(await getPool(dbConfig));
-      } finally {
-        await pool.close();
-      }
-    });
-    test('should return null if the pool is closed or does not exist', async () => {
-      const aliasedConfig: ConnectionAttributes = {
-        ...dbConfig,
-        poolAlias: 'getPoolNull',
-      };
-      expect(await getPool(aliasedConfig)).toBeNull();
     });
   });
 });

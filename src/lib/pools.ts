@@ -1,4 +1,5 @@
-import oracledb, {
+import oracledb from 'oracledb';
+import type {
   Connection,
   ConnectionAttributes,
   Pool,
@@ -153,6 +154,47 @@ export async function getPoolConnection(
     pool = await recreatePool(dbConfig, pool);
     return await pool.getConnection();
   }
+}
+
+/**
+ * Close all connection pools managed by the oracle-helpers
+ *
+ * @param drainTime The number of seconds before the pool and connections are force closed.
+ *
+ * If drainTime is 0, the pool and its connections are closed immediately.
+ *
+ * @returns An array of pools that failed to close with the error thrown.
+ */
+export async function closePools(
+  drainTime?: number,
+): Promise<{ error: unknown; pool: Pool }[]> {
+  return (
+    await Promise.all(
+      [...pools.entries()].map(async ([key, pool]) => {
+        if (pool instanceof Promise) {
+          try {
+            pool = await pool;
+          } catch (error) {
+            // at this point, don't bother with a pool that failed to start!
+            return undefined;
+          }
+        }
+        try {
+          if (pool.status === oracledb.POOL_STATUS_OPEN) {
+            if (drainTime == null) {
+              await pool.close();
+            } else {
+              await pool.close(drainTime);
+            }
+          }
+          pools.delete(key);
+          return undefined;
+        } catch (error) {
+          return { error, pool };
+        }
+      }),
+    )
+  ).filter((result): result is NonNullable<typeof result> => !!result);
 }
 
 async function promiseOrTimeout<T>(
