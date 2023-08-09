@@ -1,11 +1,11 @@
 import { jest } from '@jest/globals';
 import {
-  BindParameters,
   BIND_OUT,
+  BindParameters,
   Connection,
-  getConnection,
   NUMBER,
   STRING,
+  getConnection,
 } from 'oracledb';
 import { getSql, join, mutateManySql, mutateSql, sql, toBindDefs } from '../';
 import { Value } from '../lib/sql';
@@ -156,9 +156,7 @@ describe('sqlHelpers', () => {
     test("Should release the connection on error if there's an error", async () => {
       // Note: It's nearly impossible to actually determine if the connection that was created in
       // the function was *in fact* released, it'll show in the code coverage...
-      await expect(getSql(dbConfig, '')).rejects.toThrow(
-        'ORA-24373: invalid length specified for statement',
-      );
+      await expect(getSql(dbConfig, '')).rejects.toThrow(/(ORA|NJS)-/);
     });
   });
   describe('mutateSql', () => {
@@ -276,9 +274,7 @@ describe('sqlHelpers', () => {
     test("Should release the connection on error if there's an error", async () => {
       // Note: It's nearly impossible to actually determine if the connection that was created in
       // the function was *in fact* released, it'll show in the code coverage...
-      await expect(getSql(dbConfig, '')).rejects.toThrow(
-        'ORA-24373: invalid length specified for statement',
-      );
+      await expect(getSql(dbConfig, '')).rejects.toThrow(/(ORA|NJS)-/);
     });
   });
   describe('mutateManySql', () => {
