@@ -206,10 +206,14 @@ export function join(values: RawValue[], separator = ',') {
 
 /**
  * Create raw SQL statement.
+ *
+ * This allows you to turn a variable directly into sql without making it a bind parameter.
+ *
+ * **Warning** This is dangerous and should only be used with trusted input or escaped input.
  */
-export function raw(value: string | Sql) {
-  if (typeof value === 'string') {
-    return new Sql([value], []);
+export function raw(value: number | string | Sql) {
+  if (typeof value === 'string' || typeof value === 'number') {
+    return new Sql([`${value}`], []);
   }
   return value;
 }
