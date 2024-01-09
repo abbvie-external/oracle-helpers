@@ -1,6 +1,8 @@
 import { inspect } from 'util';
-import { BIND_OUT, NUMBER } from 'oracledb';
+import oracledb from 'oracledb';
 import { empty, join, raw, sql, Sql } from '../';
+
+const { BIND_OUT, NUMBER } = oracledb;
 
 describe('sql', () => {
   test.concurrent('should generate sql', () => {

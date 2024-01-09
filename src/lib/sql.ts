@@ -1,4 +1,4 @@
-import { BindParameter } from 'oracledb';
+import type { BindParameter } from 'oracledb';
 
 /**
  * Provides the ability to Bind a parameter with a name that will be used

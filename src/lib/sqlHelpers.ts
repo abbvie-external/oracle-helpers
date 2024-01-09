@@ -198,7 +198,6 @@ async function getSqlInner<T>(
     sqlResult = await connection.execute(sql, params, {
       ...options,
       outFormat: oracledb.OUT_FORMAT_OBJECT, // return as json object
-      extendedMetaData: false, // return additional metadata
       resultSet: cb ? true : false,
     });
   } catch (error) {
@@ -346,7 +345,6 @@ async function mutateSqlInner<T>(
     return await connection.execute(sql, params, {
       autoCommit: isConfig,
       outFormat: oracledb.OUT_FORMAT_OBJECT,
-      extendedMetaData: false,
       ...options,
     });
   } catch (error) {
