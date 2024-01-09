@@ -475,3 +475,23 @@ Some other modules exist that do something similar but for the wrong form of sql
 - [`sql-template-tag`](https://github.com/blakeembrey/sql-template-tag): The origin for this part of the module. - supports postgres and mysql
 - [`node-sql-template-strings`](https://github.com/felixfbecker/node-sql-template-strings): promotes mutation via chained methods and lacks nesting SQL statements. - supports postgres and mysql
 - [`pg-template-tag`](https://github.com/XeCycle/pg-template-tag): missing TypeScript and MySQL support. By supporting `pg` only it has the ability to [dedupe `values`](https://github.com/XeCycle/pg-template-tag/issues/5#issuecomment-386875336). - That's where I got the idea to dedupe values in this fork.
+
+# Development
+
+## Environment
+
+This package has tests (src/tests/sqlHelpers.spec.ts) which are reliant on a OracleDB instance existing. However, it doesn't create the instance, so in order to run the tests fully, there are 3 environment variables needed to connect to the DB for running the tests:
+
+```env
+NODE_ORACLEDB_CONNECTION_STRING
+NODE_ORACLEDB_USER
+NODE_ORACLEDB_PASSWORD
+```
+
+## Commits
+
+Commits need to be in the Conventional Commit form for automatic changelog generation
+
+## Publishing
+
+In order to publish, run `npm run prepare-release` then run `git push --follow-tags origin main && npm publish` to publish.
