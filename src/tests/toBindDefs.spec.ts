@@ -39,7 +39,7 @@ describe('toBindDefs', () => {
   test.concurrent('Should work with a null', () => {
     const bindDefs = toBindDefs([{ 1: null }]);
     expect(bindDefs).toEqual({
-      1: { dir: OracleDB.BIND_IN, type: OracleDB.DEFAULT, maxSize: undefined },
+      1: { dir: OracleDB.BIND_IN, type: OracleDB.STRING, maxSize: 1 },
     });
   });
   test.concurrent('Should work with a null in first row', () => {

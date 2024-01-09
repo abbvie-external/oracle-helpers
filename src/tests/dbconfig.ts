@@ -13,6 +13,8 @@ export const dbConfig: ConnectionAttributes = {
   password: process.env.NODE_ORACLEDB_PASSWORD,
 };
 
+export const ERR_NOT_EXIST = 942;
+
 export const getTable = (add: string) => sql`OH_TEST_BOOKS_${raw(add)}`;
 
 export const getTableCreation = (table: Sql) => `CREATE TABLE ${table.sql}
@@ -20,7 +22,8 @@ export const getTableCreation = (table: Sql) => `CREATE TABLE ${table.sql}
   ID      NUMBER           NOT NULL,
   title   VARCHAR2(400)    NOT NULL,
   author  VARCHAR2(400)    NOT NULL,
-  pages   INTEGER          NOT NULL
+  pages   INTEGER          NOT NULL,
+  nullable DATE
 )`;
 // No point in keeping a test table around... PURGE IT
 export const getDropTable = (table: Sql) => `DROP TABLE ${table.sql} PURGE`;
@@ -29,6 +32,7 @@ export interface Book {
   TITLE: string;
   PAGES: number;
   ID: number;
+  nullable?: string;
 }
 let id = 1;
 // spell-checker:disable
@@ -81,6 +85,7 @@ export const extraBooks: Book[] = [
 // spell-checker:enable
 
 export const allBooks = seedBooks.concat(extraBooks);
-export const getSelectBooks = (table: Sql) => sql`SELECT * FROM ${table}`;
+export const getSelectBooks = (table: Sql) =>
+  sql`SELECT ID, TITLE, AUTHOR, PAGES FROM ${table}`;
 export const getInsertBook = (table: Sql) =>
   sql`INSERT INTO ${table} (ID, TITLE, AUTHOR, PAGES) VALUES`;

@@ -1,17 +1,12 @@
 import { jest } from '@jest/globals';
-import {
-  BIND_OUT,
-  BindParameters,
-  Connection,
-  NUMBER,
-  STRING,
-  getConnection,
-} from 'oracledb';
+import OracleDB from 'oracledb';
+import type { Connection, BindParameters } from 'oracledb';
 import { getSql, join, mutateManySql, mutateSql, sql, toBindDefs } from '../';
 import { Value } from '../lib/sql';
 import { Logger, isDBError, setSqlErrorLogger } from '../lib/sqlHelpers';
 import {
   Book,
+  ERR_NOT_EXIST,
   dbConfig,
   extraBooks,
   getDropTable,
@@ -21,6 +16,8 @@ import {
   getTableCreation,
   seedBooks,
 } from './dbConfig';
+
+const { BIND_OUT, NUMBER, STRING, getConnection } = OracleDB;
 
 const table = getTable('main');
 const insertBook = getInsertBook(table);
@@ -38,7 +35,7 @@ describe('sqlHelpers', () => {
         await connection.execute(dropTable);
       } catch (error) {
         // Ignore does not exist errors
-        if (error.errorNum !== 942) {
+        if (error.errorNum !== ERR_NOT_EXIST) {
           throw error;
         }
       }
@@ -364,6 +361,29 @@ describe('sqlHelpers', () => {
         )})`,
       );
       expect(deletion.rowsAffected).toBe(extraBooks.length);
+    });
+    test('should insert row data when using toBindDefs with nulls', async () => {
+      const rows: Book[] = [
+        {
+          AUTHOR: 'test',
+          ID: 20,
+          PAGES: 5,
+          TITLE: 'test',
+          nullable: undefined,
+        },
+      ];
+      const mutation = sql`insert into ${table}
+      (ID, TITLE, AUTHOR, PAGES, NULLABLE) VALUES (${rows.map(
+        (book) => book.ID,
+      )}, ${rows.map((book) => book.TITLE)}, ${rows.map(
+        (book) => book.AUTHOR,
+      )}, ${rows.map((book) => book.PAGES)}, ${rows.map(
+        (book) => book.nullable ?? null,
+      )})`;
+      const bindDefs = toBindDefs(mutation.values);
+      const result = await mutateManySql(connection, mutation, { bindDefs });
+      expect(result.rowsAffected).toBe(rows.length);
+      await connection.rollback();
     });
   });
 });

@@ -1,17 +1,12 @@
-import {
-  BIND_IN,
-  BindDefinition,
-  BUFFER,
-  DATE,
-  DEFAULT,
-  NUMBER,
-  STRING,
-} from 'oracledb';
+import oracledb from 'oracledb';
+import type { BindDefinition } from 'oracledb';
 import { Value } from './sql';
+
+const { BIND_IN, BUFFER, DATE, NUMBER, STRING } = oracledb;
 
 type Values = Record<string, Value>[];
 
-function getTypeFromValue(key: string, values: Values): number {
+function getTypeFromValue(key: string, values: Values): number | undefined {
   for (let i = 0; i < values.length; ++i) {
     const value = values[i][key];
     if (value == null) {
@@ -31,7 +26,8 @@ function getTypeFromValue(key: string, values: Values): number {
       return BUFFER;
     }
   }
-  return DEFAULT;
+  // If it reached here, it's nulls throughout
+  return undefined;
 }
 
 function getMaxSize(
@@ -46,7 +42,7 @@ function getMaxSize(
         ...values.map((valueObj) => {
           return valueObj[key] != null
             ? Buffer.byteLength(valueObj[key] as string | Buffer, 'utf-8')
-            : 0;
+            : 1;
         }),
       );
     default:
@@ -65,17 +61,12 @@ export function toBindDefs(
   valueOrValues: Record<string, Value> | Record<string, Value>[],
   overrides: Record<string, BindDefinition> = {},
 ): Record<string, BindDefinition> {
-  if (
-    Array.isArray(valueOrValues)
-      ? !valueOrValues.length
-      : !Object.keys(valueOrValues).length
-  ) {
+  const isArray = Array.isArray(valueOrValues);
+  if (isArray ? !valueOrValues.length : !Object.keys(valueOrValues).length) {
     return overrides;
   }
   const defs: Record<string, BindDefinition> = overrides;
-  const valuesArr = Array.isArray(valueOrValues)
-    ? valueOrValues
-    : [valueOrValues];
+  const valuesArr = isArray ? valueOrValues : [valueOrValues];
   for (const key of Object.keys(valuesArr[0])) {
     const type = overrides[key]?.type ?? getTypeFromValue(key, valuesArr);
     defs[key] = {
@@ -84,6 +75,15 @@ export function toBindDefs(
       type,
       maxSize: overrides[key]?.maxSize ?? getMaxSize(key, type, valuesArr),
     };
+    if (type == null) {
+      // Oracle requires a type for all bind params
+      // if any bind params are included.
+      // If there's no sane type available,
+      // use STRING since it has the broadest compatibility
+      // oracle requires a maxSize>0 for STRING binds
+      defs[key].type = STRING;
+      defs[key].maxSize = defs[key].maxSize ?? 1;
+    }
   }
 
   return defs;
