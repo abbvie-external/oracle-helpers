@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.3.1](https://github.com/abbvie-external/oracle-helpers/compare/v3.3.0...v3.3.1) (2024-01-09)
+
+
+### Bug Fixes
+
+* **toBindDefs:** prevent confusing error when only nulls exist ([6f93997](https://github.com/abbvie-external/oracle-helpers/commit/6f93997a70223be4bf9dc1c4f5dbc7a07a764d80))
+
 ## [3.3.0](https://github.com/abbvie-external/oracle-helpers/compare/v3.2.5...v3.3.0) (2023-08-09)
 
 
