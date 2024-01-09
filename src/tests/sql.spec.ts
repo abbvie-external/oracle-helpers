@@ -183,7 +183,7 @@ describe('sql', () => {
 
   test.concurrent('should have enumerable keys', () => {
     const query = sql`SELECT COUNT(1)`;
-    const keys = [];
+    const keys: string[] = [];
 
     for (const key in query) keys.push(key);
 
