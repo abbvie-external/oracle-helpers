@@ -17,15 +17,39 @@
 <h1>Function getPoolDefaults</h1></div>
 <section class="tsd-panel">
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="getPoolDefaults"><span class="tsd-kind-call-signature">get<wbr/>Pool<wbr/>Defaults</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">dbConfig</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">edition</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">enableStatistics</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">events</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">externalAuth</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">homogeneous</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolIncrement</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolMax</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolMaxPerShard</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolMin</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolPingInterval</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolTimeout</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">queueMax</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">queueRequests</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">queueTimeout</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">sessionCallback</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">connection</span>, <span class="tsd-kind-parameter">requestedTag</span>, <span class="tsd-kind-parameter">callback</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">stmtCacheSize</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><a href="#getPoolDefaults" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><g stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" id="icon-anchor"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></g></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="getPoolDefaults"><span class="tsd-kind-call-signature">get<wbr/>Pool<wbr/>Defaults</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">dbConfig</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">configDir</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">connectTimeout</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">connectionIdPrefix</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">edition</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">enableStatistics</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">events</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">expireTime</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">externalAuth</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">homogeneous</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">httpsProxy</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">httpsProxyPort</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolIncrement</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolMax</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolMaxPerShard</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolMin</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolPingInterval</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolTimeout</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">queueMax</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">queueRequests</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">queueTimeout</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">retryCount</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">retryDelay</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">sdu</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">sessionCallback</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">connection</span>, <span class="tsd-kind-parameter">requestedTag</span>, <span class="tsd-kind-parameter">callback</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">sourceRoute</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">sslServerCertDN</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">sslServerDNMatch</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">stmtCacheSize</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">transportConnectTimeout</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><a href="#getPoolDefaults" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><g stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" id="icon-anchor"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></g></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
 <h5><span class="tsd-kind-parameter">dbConfig</span>: <span class="tsd-signature-type ">ConnectionAttributes</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">edition</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">enableStatistics</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">events</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">externalAuth</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">homogeneous</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolIncrement</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolMax</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolMaxPerShard</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolMin</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolPingInterval</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolTimeout</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">queueMax</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">queueRequests</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">queueTimeout</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">sessionCallback</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">connection</span>, <span class="tsd-kind-parameter">requestedTag</span>, <span class="tsd-kind-parameter">callback</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">stmtCacheSize</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span></h4>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">configDir</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">connectTimeout</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">connectionIdPrefix</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">edition</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">enableStatistics</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">events</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">expireTime</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">externalAuth</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">homogeneous</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">httpsProxy</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">httpsProxyPort</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolIncrement</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolMax</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolMaxPerShard</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolMin</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolPingInterval</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">poolTimeout</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">queueMax</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">queueRequests</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">queueTimeout</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">retryCount</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">retryDelay</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">sdu</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">sessionCallback</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">connection</span>, <span class="tsd-kind-parameter">requestedTag</span>, <span class="tsd-kind-parameter">callback</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">sourceRoute</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">sslServerCertDN</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">sslServerDNMatch</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">stmtCacheSize</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">transportConnectTimeout</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span></h4>
 <ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">config<wbr/>Dir</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>The directory in which the Optional Oracle Net Configuration Files are found.
+For node-oracledb Thick mode, use the oracledb.initOracleClient() option configDir.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Since</h4><p>6.0</p>
+</div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">connect<wbr/>Timeout</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>The timeout duration in seconds for an application to establish an Oracle Net connection.
+There is no timeout by default.
+For node-oracledb Thick mode, use an Easy Connect string or a Connect Descriptor string.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Since</h4><p>6.0</p>
+</div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">connection<wbr/>Id<wbr/>Prefix</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>The application specific prefix parameter that is added to the connection identifier.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Since</h4><p>6.0</p>
+</div></li>
 <li class="tsd-parameter">
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">edition</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
 <div class="tsd-comment tsd-typography"><p>Sets the name used for Edition-Based Redefinition by connections in the pool.
@@ -52,6 +76,18 @@ This optional property overrides the oracledb.events property.</p>
 <h4>Since</h4><p>2.2</p>
 </div></li>
 <li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">expire<wbr/>Time</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>The number of minutes between the sending of keepalive probes. If this property is set to a value greater than zero, it enables the keepalive probes.
+The default value is 0.
+For node-oracledb Thick mode, use an Easy Connect string or a Connect Descriptor string.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Default</h4><pre><code class="language-ts"><span class="hl-5">0</span>
+</code><button>Copy</button></pre>
+
+<h4>Since</h4><p>6.0</p>
+</div></li>
+<li class="tsd-parameter">
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">external<wbr/>Auth</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5>
 <div class="tsd-comment tsd-typography"><p>Indicate whether pooled connections should be established using External Authentication.
 This optional property overrides the oracledb.externalAuth property.
@@ -76,6 +112,24 @@ Heterogeneous pools cannot be used with the connection pool cache. Applications 
 </code><button>Copy</button></pre>
 
 <h4>Since</h4><p>2.3</p>
+</div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">https<wbr/>Proxy</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>The name or IP address of a proxy host to use for tunneling secure connections.
+For node-oracledb Thick mode, use an Easy Connect string or a Connect Descriptor string.</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">https<wbr/>Proxy<wbr/>Port</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>The port to be used to communicate with the proxy host.
+The default value is 0.
+For node-oracledb Thick mode, use an Easy Connect string or a Connect Descriptor string.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Since</h4><p>6.0</p>
+
+<h4>Default</h4><pre><code class="language-ts"><span class="hl-5">0</span>
+</code><button>Copy</button></pre>
 </div></li>
 <li class="tsd-parameter">
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">pool<wbr/>Increment</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span></h5>
@@ -164,6 +218,38 @@ This optional property overrides the oracledb.queueTimeout property.</p>
 </code><button>Copy</button></pre>
 </div></li>
 <li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">retry<wbr/>Count</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>The number of times that a connection attempt should be retried before the attempt is terminated.
+The default value is 0.
+For node-oracledb Thick mode, use an Easy Connect string or a Connect Descriptor string.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Since</h4><p>6.0</p>
+
+<h4>Default</h4><pre><code class="language-ts"><span class="hl-5">0</span>
+</code><button>Copy</button></pre>
+</div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">retry<wbr/>Delay</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>The number of seconds to wait before making a new connection attempt.
+The default value is 0.
+For node-oracledb Thick mode, use an Easy Connect string or a Connect Descriptor string.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Since</h4><p>6.0</p>
+
+<h4>Default</h4><pre><code class="language-ts"><span class="hl-5">0</span>
+</code><button>Copy</button></pre>
+</div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">sdu</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>The Oracle Net Session Data Unit (SDU) packet size in bytes. The database server configuration should also set this parameter.
+For node-oracledb Thick mode, use an Easy Connect string or a Connect Descriptor string.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Since</h4><p>6.0</p>
+</div></li>
+<li class="tsd-parameter">
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">session<wbr/>Callback</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">connection</span>, <span class="tsd-kind-parameter">requestedTag</span>, <span class="tsd-kind-parameter">callback</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></h5>
 <div class="tsd-comment tsd-typography"><p>When sessionCallback is a Node.js function, it will be invoked for each pool.getConnection() call that will return a newly created connection in the pool.
 It will also be called if pool.getConnection() requests a connection from the pool with a given tag, and that tag value does not match the connection’s current actual tag.
@@ -181,13 +267,53 @@ When the application uses DRCP connections, a PL/SQL callback can avoid the roun
 <h4>Since</h4><p>3.1</p>
 </div></li>
 <li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">source<wbr/>Route</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>Enables network routing through multiple protocol addresses. The value of this property can be ON or OFF.
+The default value is ON.
+For node-oracledb Thick mode, use an Easy Connect string or a Connect Descriptor string.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Since</h4><p>6.0</p>
+</div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">ssl<wbr/>Server<wbr/>CertDN</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>The distinguished name (DN) that should be matched with the server. If specified, this value is used for any verification. Otherwise, the hostname will be used.
+This value is ignored if the sslServerDNMatch property is not set to the value True.
+For node-oracledb Thick mode, use an Easy Connect string or a Connect Descriptor string.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Since</h4><p>6.0</p>
+</div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">ssl<wbr/>ServerDNMatch</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5>
+<div class="tsd-comment tsd-typography"><p>Determines whether the server certificate DN should be matched in addition to the regular certificate verification that is performed.
+If the sslServerCertDN parameter is not provided, host name matching is performed instead.
+The default value is True.
+For node-oracledb Thick mode, use an Easy Connect string or a Connect Descriptor string.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Since</h4><p>6.0</p>
+</div></li>
+<li class="tsd-parameter">
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">stmt<wbr/>Cache<wbr/>Size</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span></h5>
 <div class="tsd-comment tsd-typography"><p>The number of statements to be cached in the statement cache of each connection in the pool.
 This optional property overrides the oracledb.stmtCacheSize property.</p>
 </div>
-<div class="tsd-comment tsd-typography"></div></li></ul><aside class="tsd-sources">
+<div class="tsd-comment tsd-typography"></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">transport<wbr/>Connect<wbr/>Timeout</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>The maximum number of seconds to wait to establish a connection to the database host.
+The default value is 60.0.
+For node-oracledb Thick mode, use an Easy Connect string or a Connect Descriptor string.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Default</h4><pre><code class="language-ts"><span class="hl-5">60.0</span>
+</code><button>Copy</button></pre>
+
+<h4>Since</h4><p>6.0</p>
+</div></li></ul><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/1cd6789/src/lib/pools.ts#L54">src/lib/pools.ts:54</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/abbvie-external/oracle-helpers/blob/f95a32f/src/lib/pools.ts#L54">src/lib/pools.ts:54</a></li></ul></aside></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

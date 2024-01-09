@@ -77,6 +77,13 @@
 <li><a href="https://github.com/felixfbecker/node-sql-template-strings"><code>node-sql-template-strings</code></a>: promotes mutation via chained methods and lacks nesting SQL statements. - supports postgres and mysql</li>
 <li><a href="https://github.com/XeCycle/pg-template-tag"><code>pg-template-tag</code></a>: missing TypeScript and MySQL support. By supporting <code>pg</code> only it has the ability to <a href="https://github.com/XeCycle/pg-template-tag/issues/5#issuecomment-386875336">dedupe <code>values</code></a>. - That&#39;s where I got the idea to dedupe values in this fork.</li>
 </ul>
+<a id="md:development" class="tsd-anchor"></a><h1><a href="#md:development">Development</a></h1><a id="md:environment" class="tsd-anchor"></a><h2><a href="#md:environment">Environment</a></h2><p>This package has tests (src/tests/sqlHelpers.spec.ts) which are reliant on a OracleDB instance existing. However, it doesn&#39;t create the instance, so in order to run the tests fully, there are 3 environment variables needed to connect to the DB for running the tests:</p>
+<pre><code class="language-env">NODE_ORACLEDB_CONNECTION_STRING
+NODE_ORACLEDB_USER
+NODE_ORACLEDB_PASSWORD
+</code><button>Copy</button></pre>
+<a id="md:commits" class="tsd-anchor"></a><h2><a href="#md:commits">Commits</a></h2><p>Commits need to be in the Conventional Commit form for automatic changelog generation</p>
+<a id="md:publishing" class="tsd-anchor"></a><h2><a href="#md:publishing">Publishing</a></h2><p>In order to publish, run <code>npm run prepare-release</code> then follow the instructions.</p>
 </div></div>
 <div class="col-sidebar">
 <div class="page-menu">
@@ -128,7 +135,13 @@
 <li><a href="#md:join"><span>Join</span></a></li>
 <li><a href="#md:raw"><span>Raw</span></a></li>
 <li><a href="#md:empty"><span>Empty</span></a></li></ul></li>
-<li><a href="#md:related"><span>Related</span></a></li></ul></li></ul></li></ul></div></details></div>
+<li><a href="#md:related"><span>Related</span></a></li></ul></li>
+<li><a href="#md:development"><span>Development</span></a></li>
+<li>
+<ul>
+<li><a href="#md:environment"><span>Environment</span></a></li>
+<li><a href="#md:commits"><span>Commits</span></a></li>
+<li><a href="#md:publishing"><span>Publishing</span></a></li></ul></li></ul></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="modules.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>oracle-<wbr/>helpers</span></a>
 <ul class="tsd-small-nested-navigation">
