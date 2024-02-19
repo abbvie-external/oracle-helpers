@@ -393,9 +393,53 @@ mutateManySql(dbConfig, mutation.sql, mutation.values);
 
 ### Join
 
-Accepts an array of values and returns a SQL instance with the values joined by the separator. E.g.
+Accepts an array of values and returns an `Sql` instance with the values joined by a separator.
+
+#### `Sql#join` method
+
+In `Sql#join`, the separator is the `Sql` instance that the method is called on.
 
 ```js
+const query = sql`,`.join([1, 2, 3]);
+
+query.sql; //=> ":1, :2, :3"
+query.values; //=> {1: 1, 2: 2, 3: 3}
+```
+
+It can also be used to create dynamic SQL by joining multiple values together.
+
+```js
+const queries = [sql`one = ${1}`, sql`two = ${2}`, sql`three = ${3}`];
+const filters = sql` AND `.join(queries);
+const result = sql`select * from table ${
+  queries.length ? sql`WHERE ${filters}` : empty
+} ORDER BY two`;
+result.sql; //=> "select * from table WHERE one = :1 AND two = :2 AND three = :3 ORDER BY two"
+result.values; //=> {1: 1, 2: 2, 3: 3}
+```
+
+By making a quick helper, you can simplify this use case:
+
+```js
+function joinWhere(filters, useAndAfter = false) {
+  if (useAndAfter) {
+    filters = filters.concat(empty);
+  }
+  if (filters.length) {
+    return `WHERE ${join(filters.concat(empty), ' AND ')}`;
+  }
+}
+const queries = [sql`one = ${1}`, sql`two = ${2}`, sql`three = ${3}`];
+const result = sql`select * from table ${joinWhere(queries)} ORDER BY two`;
+```
+
+#### Function
+
+The standalone `join` function takes the separator as the second argument, with `,` as the default separator
+
+```js
+import { join } from 'oracle-helpers';
+
 const query = join([1, 2, 3]);
 
 query.sql; //=> ":1, :2, :3"
@@ -422,7 +466,7 @@ function joinWhere(filters, useAndAfter = false) {
     filters = filters.concat(empty);
   }
   if (filters.length) {
-    return `WHERE ${join(filters.concat(empty), ' AND ')}`;
+    return `WHERE ${sql` AND `.join(filters.concat(empty))}`;
   }
 }
 const queries = [sql`one = ${1}`, sql`two = ${2}`, sql`three = ${3}`];

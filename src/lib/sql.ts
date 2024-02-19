@@ -111,6 +111,24 @@ export class Sql {
       }
     });
   }
+  /**
+   * Join together mutliple values into a single `Sql` instance
+   * @param values The values to join together
+   * @returns an `Sql` instance with the values joined by the separator (the `this` Sql instance)
+   */
+  join(values: RawValue[]): Sql {
+    if (!Array.isArray(values) || !values.length) {
+      return empty;
+    }
+    const toAdd: RawValue[] = [];
+    for (let i = 0; i < values.length; ++i) {
+      toAdd.push(values[i]);
+      if (i !== values.length - 1) {
+        toAdd.push(this);
+      }
+    }
+    return new Sql(Array(toAdd.length + 1).fill(''), toAdd);
+  }
   get sql() {
     this.updateMap();
     return this.strings
@@ -185,16 +203,16 @@ export class Sql {
   }
 }
 
-// Work around MySQL enumerable keys in issue #2.
-// Object.defineProperty(Sql.prototype, '_values', {
-//   enumerable: false,
-//   writable: true,
-// });
 Object.defineProperty(Sql.prototype, 'values', { enumerable: true });
 Object.defineProperty(Sql.prototype, 'sql', { enumerable: true });
 
 /**
- * Create a SQL query for a list of values.
+ * Join together mutliple values into a single `Sql` instance
+ * @param values The values to join together
+ * @param separator The string to use in joining the values together. Defaults to '`,`'.
+ *
+ * Note: Does not get sanitized! Never let user controlled values be used as the separator!
+ * @returns an `Sql` instance with the values joined by the separator
  */
 export function join(values: RawValue[], separator = ',') {
   if (!Array.isArray(values) || !values.length) {
@@ -219,7 +237,12 @@ export function raw(value: number | string | Sql) {
 }
 
 /**
- * Placeholder value for "no text".
+ * Convenience value for an empty `Sql` instance.
+ *
+ * Shortcut for `raw('')`.
+ *
+ * note that `raw('') != empty` and `sql != empty` due to object references,
+ * so it is often better to just use this whenever you are dealing with an empty `Sql` value
  */
 export const empty = raw('');
 
