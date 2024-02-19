@@ -71,6 +71,15 @@ function isConnection(
 }
 
 /**
+ * Transform non-array properties on an object to arrays, as Oracle's outbinds is always an array
+ */
+export type ToOutBinds<T> = T extends object
+  ? {
+      [key in keyof T]: T[key] extends Array<unknown> ? T[key] : T[key][];
+    }
+  : T;
+
+/**
  * Runs SQL to get values
  *
  * @param configOrConnection Either a dbConfig object or the connection to execute with
@@ -368,7 +377,7 @@ function mutateSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: Sql,
   options?: ExecuteOptions,
-): Promise<Result<T>>;
+): Promise<Result<ToOutBinds<T>>>;
 /**
  * Executes SQL mutate the database
  * @param configOrConnection Either a dbConfig object or the connection to execute with
@@ -382,19 +391,19 @@ function mutateSql<T>(
   sql: string,
   params?: BindParameters,
   options?: ExecuteOptions,
-): Promise<Result<T>>;
+): Promise<Result<ToOutBinds<T>>>;
 async function mutateSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string | Sql,
   paramsOrOptions: BindParameters | ExecuteOptions = {},
   options: ExecuteOptions = {},
-): Promise<Result<T>> {
+): Promise<Result<ToOutBinds<T>>> {
   const args = mutateSqlParameters(sql, paramsOrOptions, options);
   const isConfig = !isConnection(configOrConnection);
   const connection: Connection = isConnection(configOrConnection)
     ? configOrConnection
     : await oracledb.getConnection(configOrConnection);
-  return await mutateSqlInner<T>(connection, ...args, isConfig);
+  return await mutateSqlInner(connection, ...args, isConfig);
 }
 
 /**
@@ -411,7 +420,7 @@ function mutateSqlPool<T>(
   config: ConnectionAttributes,
   sql: Sql,
   options?: ExecuteOptions,
-): Promise<Result<T>>;
+): Promise<Result<ToOutBinds<T>>>;
 /**
  * Uses a connection from a connection pool to execute SQL to mutate the database
  *
@@ -429,13 +438,13 @@ function mutateSqlPool<T>(
   sql: string,
   params?: BindParameters,
   options?: ExecuteOptions,
-): Promise<Result<T>>;
+): Promise<Result<ToOutBinds<T>>>;
 async function mutateSqlPool<T>(
   config: ConnectionAttributes,
   sql: string | Sql,
   paramsOrOptions: BindParameters | ExecuteOptions = {},
   options: ExecuteOptions = {},
-): Promise<Result<T>> {
+): Promise<Result<ToOutBinds<T>>> {
   const args = mutateSqlParameters(sql, paramsOrOptions, options);
   const connection: Connection = await getPoolConnection(config);
   return await mutateSqlInner(connection, ...args, true);
@@ -477,7 +486,7 @@ function mutateManySql<T>(
   configOrConnection: ConfigOrConnection,
   sql: Sql,
   options?: ExecuteManyOptions,
-): Promise<Results<T>>;
+): Promise<Results<ToOutBinds<T>>>;
 /**
  * Executes SQL mutate the database via the `executeMany` command.
  *
@@ -494,13 +503,13 @@ function mutateManySql<T>(
   sql: string,
   params: BindParameters[],
   options?: ExecuteManyOptions,
-): Promise<Results<T>>;
+): Promise<Results<ToOutBinds<T>>>;
 async function mutateManySql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string | Sql,
   paramsOrOptions: BindParameters[] | ExecuteManyOptions,
   options?: ExecuteManyOptions,
-): Promise<Results<T>> {
+): Promise<Results<ToOutBinds<T>>> {
   const args = mutateSqlParameters(sql, paramsOrOptions, options, true);
   const isConfig = !isConnection(configOrConnection);
   const connection: Connection = isConnection(configOrConnection)
@@ -525,7 +534,7 @@ function mutateManySqlPool<T>(
   config: ConnectionAttributes,
   sql: Sql,
   options?: ExecuteManyOptions,
-): Promise<Results<T>>;
+): Promise<Results<ToOutBinds<T>>>;
 /**
  * Uses a connection from a connection pool to execute SQL to mutate the database via the `executeMany` command.
  *
@@ -544,13 +553,13 @@ function mutateManySqlPool<T>(
   sql: string,
   params: BindParameters[],
   options?: ExecuteManyOptions,
-): Promise<Results<T>>;
+): Promise<Results<ToOutBinds<T>>>;
 async function mutateManySqlPool<T>(
   config: ConnectionAttributes,
   sql: string | Sql,
   paramsOrOptions: BindParameters[] | ExecuteOptions,
   options?: ExecuteManyOptions,
-): Promise<Results<T>> {
+): Promise<Results<ToOutBinds<T>>> {
   const args = mutateSqlParameters(sql, paramsOrOptions, options, true);
   const connection: Connection = await getPoolConnection(config);
   return await mutateManySqlInner(connection, ...args, true);

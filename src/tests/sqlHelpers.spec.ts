@@ -333,7 +333,7 @@ describe('sqlHelpers', () => {
       expect(deletion.rowsAffected).toBe(extraBooks.length);
     });
     test('Should insert many rows and retrieve the IDs without the template tag', async () => {
-      const result = await mutateManySql<{ id: [number]; title: [string] }>(
+      const result = await mutateManySql<{ id: number; title: string }>(
         dbConfig,
         `${insertBook.sql} (:ID, :TITLE, :AUTHOR, :PAGES)
               RETURNING ID, TITLE into :idOut, :titleOut`,
