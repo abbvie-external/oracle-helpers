@@ -18,18 +18,40 @@ https://abbvie-external.github.io/oracle-helpers/
 
 # Options
 
-### pool `configuration`
+## Pools
+
+### Pool Defaults
+
+Pool Defaults lets you set the behavior of the generated pools. These will not automatically reconfigure the pools when changed. If you want to change the pool settings after the initial creation of the pool, use `getPool` and the `Pool#reconfigure` method.
+
+```js
+import { setPoolDefaults } from 'oracle-helpers';
+
+export const dbConfig = {
+  /* ... */
+};
+
+setPoolDefaults(dbConfig, {
+  poolMin: 12,
+  poolMax: 20,
+  poolTimeout: 120,
+});
+
+const curDefaults = getPoolDefaults(dbConfig);
+```
+
+### Pool `configuration` - Deprecated
 
 Configuration lets you set up certain behaviors to customize how the pools work outside of oracle
 
-This is deprecated and will be removed in the future!
+This is deprecated and will be removed in the future! Use [Pool Defaults](#pool-defaults) instead
 
 ```js
 import { configuration } from 'oracle-helpers';
 /**
- * The number of ms between the sending of keepalive probes. If this property is set to a value greater than zero, it enables the keepalive probes
+ * The number of ms between the sending of keep alive probes. If this property is set to a value greater than zero, it enables the keep alive probes
  *
- * set to `undefined` to remove this behavior
+ * set to `undefined` to ignore these settings
  * @deprecated For thin mode with oracledb v6+, use `setPoolDefaults` to set `expireTime` instead.
  *
  * For thick mode with oracle 19c+, use an Easy Connect string or a Connect Descriptor string. the property is `EXPIRE_TIME`
@@ -38,7 +60,7 @@ configuration.pingTime = 60000; // 1 minute
 /**
  * The timeout duration in ms for an application to establish an Oracle Net connection.
  *
- * set to `undefined` to remove this behavior
+ * set to `undefined` to ignore these settings
  * @deprecated For thin mode with oracledb v6+, use `setPoolDefaults` to set `connectTimeout` instead.
  *
  * For thick mode with oracle 19c+, use an Easy Connect string or a Connect Descriptor string. the property is `CONNECT_TIMEOUT`
@@ -46,21 +68,7 @@ configuration.pingTime = 60000; // 1 minute
 configuration.connectionTimeout = 10000; // 10 seconds
 ```
 
-### `poolOptions`
-
-poolOptions lets you set the behavior of the pools within oracle
-
-```js
-import { poolOptions } from 'oracle-helpers';
-
-poolOptions['oracle db connection string'] = {
-  poolMin: 12,
-  poolMax: 20,
-  poolTimeout: 120,
-};
-```
-
-### debug logging
+## Debug Logging
 
 For improved debugging, you can set up a function to log the errors from oracle with the sql and parameters
 
@@ -76,7 +84,7 @@ if (process.env.NODE_ENV === 'development') {
 
 # Usage
 
-## sql tagged template vs sql text + params:
+## `sql` Tagged Template Vs Sql Text + Params:
 
 ```ts
 import { sql, getSql, getSqlPool } from 'oracle-helpers';

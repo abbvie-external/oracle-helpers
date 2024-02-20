@@ -10,9 +10,9 @@ import type {
  */
 export interface Configuration {
   /**
-   * The number of ms between the sending of keepalive probes. If this property is set to a value greater than zero, it enables the keepalive probes
+   * The number of ms between the sending of keep alive probes. If this property is set to a value greater than zero, it enables the keep alive probes
    *
-   * set to `undefined` to remove this behavior
+   * set to `undefined` to ignore these settings
    * @deprecated For thin mode with oracledb v6+, use `setPoolDefaults` to set `expireTime` instead.
    *
    * For thick mode with oracle 19c+, use an Easy Connect string or a Connect Descriptor string. the property is `EXPIRE_TIME`
@@ -23,7 +23,7 @@ export interface Configuration {
   /**
    * The timeout duration in ms for an application to establish an Oracle Net connection.
    *
-   * set to `undefined` to remove this behavior
+   * set to `undefined` to ignore these settings
    * @deprecated For thin mode with oracledb v6+, use `setPoolDefaults` to set `connectTimeout` instead.
    *
    * For thick mode with oracle 19c+, use an Easy Connect string or a Connect Descriptor string. the property is `CONNECT_TIMEOUT`
@@ -52,9 +52,11 @@ export const configuration: Configuration = {
   pingTimeout: 3 * SECOND,
 };
 
-export type PoolOptions = Omit<
-  PoolAttributes,
-  'poolAlias' | 'user' | 'password' | 'connectString' | 'connectionString'
+export type PoolOptions = Partial<
+  Omit<
+    PoolAttributes,
+    'poolAlias' | 'user' | 'connectString' | 'connectionString'
+  >
 >;
 
 /**
@@ -66,10 +68,17 @@ export const poolOptions: Record<string, PoolOptions> = {};
 
 const internalPoolOptions = new Map<string, PoolOptions>();
 
+/**
+ * Sets the default pool options for generating the pool from its config.
+ *
+ * Setting this multiple times for the same pool will completely override any previously set values
+ * @param dbConfig
+ * @param options
+ */
 export function setPoolDefaults(
   dbConfig: ConnectionAttributes,
   options: PoolOptions | undefined,
-) {
+): void {
   if (!options) {
     internalPoolOptions.delete(getConfigKey(dbConfig));
   } else {
@@ -77,7 +86,12 @@ export function setPoolDefaults(
   }
 }
 
-export function getPoolDefaults(dbConfig: ConnectionAttributes) {
+/**
+ * Get the current set of default options for generating a pool from its config
+ * @param dbConfig
+ * @returns
+ */
+export function getPoolDefaults(dbConfig: ConnectionAttributes): PoolOptions {
   return {
     ...poolOptions[getConnectString(dbConfig)],
     ...internalPoolOptions.get(getConfigKey(dbConfig)),
@@ -117,11 +131,11 @@ export async function createPool(
     stmtCacheSize: dbConfig.stmtCacheSize,
     connectTimeout: configuration.connectionTimeout / SECOND,
     expireTime: configuration.pingTime / MINUTE,
+    password: dbConfig.password,
     ...getPoolDefaults(dbConfig),
     ...options,
     poolAlias: dbConfig.poolAlias,
     user: dbConfig.user,
-    password: dbConfig.password,
     connectString,
   });
   pools.set(configKey, promise);
