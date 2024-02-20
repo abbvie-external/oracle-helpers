@@ -568,6 +568,61 @@ Some other modules exist that do something similar but for the wrong form of sql
 - [`node-sql-template-strings`](https://github.com/felixfbecker/node-sql-template-strings): promotes mutation via chained methods and lacks nesting SQL statements. - supports postgres and mysql
 - [`pg-template-tag`](https://github.com/XeCycle/pg-template-tag): missing TypeScript and MySQL support. By supporting `pg` only, it has the ability to [dedupe `values`](https://github.com/XeCycle/pg-template-tag/issues/5#issuecomment-386875336). - That's where I got the idea to dedupe values in this fork.
 
+# Typescript
+
+All the sql helper functions have generics for type definitions of the return values. The generics don't affect the actual return values, so it is up to you to keep them accurate for your returns.
+
+## Utility types
+
+### `ToDBType`
+
+The `ToDBType` utility type will convert an object to a representation of it that would be returned from the database. It changes any objects/arrays to `string`s. If you want to convert them to something else, you can use the third template parameter (`ObjectType`) to change the behavior. `Date`s will remain `Date` objects as Oracledb does return dates as dates. That is configurable by passing in `true` for the `DateString` argument which will also convert `Date`s to `string`s.
+
+```ts
+type Foo = {
+  a: number;
+  b?: string[];
+  c: { id: number; value: string };
+  d: Date;
+};
+type FooDB = ToDBType<Foo>;
+//=> {
+// 	a: number;
+// 	b: string | null;
+// 	c: string;
+// 	d: Date;
+//}
+type FooDBNoDate = ToDBType<Foo, true>;
+//=> {
+// 	a: number;
+// 	b: string | null;
+// 	c: string;
+// 	d: string;
+//}
+type FooDBBufferNoDate = ToDBType<Foo, true, Buffer>;
+//=> {
+// 	a: number;
+// 	b: Buffer | null;
+// 	c: Buffer;
+// 	d: string;
+//}
+```
+
+## Type Guards
+
+### `isDBError`
+
+The `isDBError` is a convenience function for duck-typing if an error is an Oracle DBError as node-oracledb doesn't expose one.
+
+```ts
+try {
+} catch (error) {
+  if (isDBError(error)) {
+    // TS knows that this is a DBError type from node-oracledb
+  }
+}
+```
+
 # Development
 
 ## Environment

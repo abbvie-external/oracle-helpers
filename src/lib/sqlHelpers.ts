@@ -35,6 +35,51 @@ export function isDBError(error: unknown): error is DBError {
 }
 
 /**
+ * Change a type into what would be returned from the database
+ *
+ * e.g. any object or array will be returned as a JSON string, except Date which is returned from the Database by default.
+ *
+ * To convert dates to strings as well, pass `true` into the second template parameter
+ *
+ * To convert objects/arrays into something other than strings, use the third template parameter to set what they will be returned as
+ * @example
+ * ```ts
+ * type Foo = {
+ *   a: number;
+ *   b?: string[];
+ *   c: { id: number, value: string };
+ *   d: Date;
+ * }
+ * type FooDB = ToDBType<Foo>;
+ * //=> {
+ * // 	a: number;
+ * // 	b: string | null;
+ * // 	c: string;
+ * // 	d: Date;
+ * //}
+ * ```
+ */
+export type ToDBType<
+  T extends object,
+  DateString extends boolean = false,
+  ObjectType = string,
+> = {
+  [P in keyof T]-?: NonNullable<T[P]> extends Date
+    ? T[P] extends NonNullable<T[P]>
+      ? DateString extends false
+        ? Date
+        : string
+      : (DateString extends false ? Date : string) | null
+    : NonNullable<T[P]> extends object | Array<unknown>
+    ? T[P] extends NonNullable<T[P]>
+      ? ObjectType
+      : ObjectType | null
+    : T[P] extends NonNullable<T[P]>
+    ? T[P]
+    : NonNullable<T[P]> | null;
+};
+
+/**
  * A function called when an error occurs
  */
 export type Logger = (
