@@ -2,7 +2,9 @@
 
 A collection of helpers for alleviating boilerplate in OracleDB projects
 
+[Usage](#usage)
 [SQL Template Tag](#SQL-Template-Tag)
+[Typescript](#typescript)
 
 ## Note:
 
@@ -395,26 +397,24 @@ const runSql = async () => {
 
 # SQL Template Tag
 
-> ES2015 tagged template string for preparing SQL statements, works for this oracle helpers library.
+> ES2015 tagged template string for preparing SQL statements, works for this oracle helpers library without any issues.
 
 ### Modified from:
 
 https://github.com/blakeembrey/sql-template-tag
 
-## Installation
-
-```
-npm install sql-template-tag --save
-```
-
 ## Extension for syntax highlighting (basic):
+
+https://marketplace.visualstudio.com/items?itemName=thebearingedge.vscode-sql-lit
+
+This one has more issues in my experience:
 
 https://marketplace.visualstudio.com/items?itemName=frigus02.vscode-sql-tagged-template-literals-syntax-only
 
 ## Usage
 
 ```ts
-import { sql, empty, join, raw, getSql, mutateManySql } from 'sql-template-tag';
+import { sql, empty, join, raw, getSql, mutateManySql } from 'oracle-helpers';
 
 const query = sql`SELECT * FROM books WHERE id = ${id}`;
 
@@ -481,7 +481,7 @@ const queries = [sql`one = ${1}`, sql`two = ${2}`, sql`three = ${3}`];
 const result = sql`select * from table ${joinWhere(queries)} ORDER BY two`;
 ```
 
-#### Function
+#### `join` Function
 
 The standalone `join` function takes the separator as the second argument, with `,` as the default separator
 
@@ -525,7 +525,7 @@ const result = sql`select * from table ${joinWhere(queries)} ORDER BY two`;
 
 Accepts a string and returns a SQL instance, useful if you want some part of the SQL to be dynamic.
 
-**Do not** accept raw user input to `raw`, this will create a SQL injection vulnerability.
+**Do not** accept raw user input to `raw`, this will create a SQL injection vulnerability!
 
 ```js
 raw('SELECT'); // equivalent to: sql`SELECT`
