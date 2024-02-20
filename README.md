@@ -564,7 +564,7 @@ sql`${sqlBool(isUpdate && sql`UPDATE Test WHERE ...`)}`;
 
 Some other modules exist that do something similar but for the wrong form of sql! Every flavour does variables differently:
 
-- [`sql-template-tag`](https://github.com/blakeembrey/sql-template-tag): The origin for this part of the module. - supports postgres and mysql, but not oracledb
+- [`sql-template-tag`](https://github.com/blakeembrey/sql-template-tag): The origin for this part of the module. - supports postgres, mysql, and oracledb. - not as integrated with oracle
 - [`node-sql-template-strings`](https://github.com/felixfbecker/node-sql-template-strings): promotes mutation via chained methods and lacks nesting SQL statements. - supports postgres and mysql
 - [`pg-template-tag`](https://github.com/XeCycle/pg-template-tag): missing TypeScript and MySQL support. By supporting `pg` only, it has the ability to [dedupe `values`](https://github.com/XeCycle/pg-template-tag/issues/5#issuecomment-386875336). - That's where I got the idea to dedupe values in this fork.
 
