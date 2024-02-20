@@ -516,8 +516,10 @@ const result = sql`select * from table ${joinWhere(queries)} ORDER BY two`;
 
 Accepts a string and returns a SQL instance, useful if you want some part of the SQL to be dynamic.
 
+**Do not** accept raw user input to `raw`, this will create a SQL injection vulnerability.
+
 ```js
-raw('SELECT'); // == sql`SELECT`
+raw('SELECT'); // equivalent to: sql`SELECT`
 ```
 
 ```js
@@ -526,14 +528,12 @@ const TABLES = new Map([
   ['users', 'ENV.USERS'],
   ['devUsers', 'DEV_ENV.USERS'],
 ]);
-sql`SELECT * FROM ${raw(TABLES.get(input))}`; // == sql`SELECT * FROM DEV_ENV.USERS`
+sql`SELECT * FROM ${raw(TABLES.get(input))}`; // equivalent to sql`SELECT * FROM DEV_ENV.USERS`
 ```
-
-**Do not** accept raw user input to `raw`, this will create a SQL injection vulnerability.
 
 ### Empty
 
-Simple placeholder value for an empty SQL string. Equivalent to `raw("")`.
+Simple placeholder value for an empty SQL string. Equivalent to `raw('')`.
 
 You can use this to great effect when creating dynamic SQL.
 
@@ -555,9 +555,9 @@ sql`${sqlBool(isUpdate && sql`UPDATE Test WHERE ...`)}`;
 
 Some other modules exist that do something similar but for the wrong form of sql! Every flavour does variables differently:
 
-- [`sql-template-tag`](https://github.com/blakeembrey/sql-template-tag): The origin for this part of the module. - supports postgres and mysql
+- [`sql-template-tag`](https://github.com/blakeembrey/sql-template-tag): The origin for this part of the module. - supports postgres and mysql, but not oracledb
 - [`node-sql-template-strings`](https://github.com/felixfbecker/node-sql-template-strings): promotes mutation via chained methods and lacks nesting SQL statements. - supports postgres and mysql
-- [`pg-template-tag`](https://github.com/XeCycle/pg-template-tag): missing TypeScript and MySQL support. By supporting `pg` only it has the ability to [dedupe `values`](https://github.com/XeCycle/pg-template-tag/issues/5#issuecomment-386875336). - That's where I got the idea to dedupe values in this fork.
+- [`pg-template-tag`](https://github.com/XeCycle/pg-template-tag): missing TypeScript and MySQL support. By supporting `pg` only, it has the ability to [dedupe `values`](https://github.com/XeCycle/pg-template-tag/issues/5#issuecomment-386875336). - That's where I got the idea to dedupe values in this fork.
 
 # Development
 

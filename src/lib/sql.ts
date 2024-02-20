@@ -131,17 +131,15 @@ export class Sql {
   }
   get sql() {
     this.updateMap();
-    return this.strings
-      .reduce((text, part, index) => {
-        const value = this.#values[index - 1];
-        const position = this.#valueMap.get(value);
-        let name: string | number = position + 1;
-        if (value && typeof value === 'object' && 'name' in value) {
-          name = value.name;
-        }
-        return `${text}:${name}${part}`;
-      })
-      .replace(/\n\s*/g, '\n');
+    return this.strings.reduce((text, part, index) => {
+      const value = this.#values[index - 1];
+      const position = this.#valueMap.get(value);
+      let name: string | number = position + 1;
+      if (value && typeof value === 'object' && 'name' in value) {
+        name = value.name;
+      }
+      return `${text}:${name}${part}`;
+    });
   }
 
   get values(): Record<string, Value> | Record<string, Value>[] {

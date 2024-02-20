@@ -39,8 +39,8 @@ describe('sql', () => {
       type: NUMBER,
     };
     const query = sql`INSERT INTO books (TITLE, AUTHOR, PAGES)
-                                 VALUES (${title}, ${author}, ${pages})
-                      RETURNING ID into ${bind}`;
+VALUES (${title}, ${author}, ${pages})
+RETURNING ID into ${bind}`;
     expect(query.sql).toBe(
       `INSERT INTO books (TITLE, AUTHOR, PAGES)\nVALUES (:1, :2, :3)\nRETURNING ID into :id`,
     );
@@ -59,8 +59,8 @@ describe('sql', () => {
       type: NUMBER,
     };
     const query = sql`INSERT INTO books (TITLE, AUTHOR, PAGES)
-                                 VALUES (${title}, ${author}, ${pages})
-                      RETURNING ID into ${bind}`;
+VALUES (${title}, ${author}, ${pages})
+RETURNING ID into ${bind}`;
     expect(query.sql).toBe(
       `INSERT INTO books (TITLE, AUTHOR, PAGES)\nVALUES (:1, :2, :3)\nRETURNING ID into :id`,
     );
@@ -87,10 +87,10 @@ describe('sql', () => {
     'should dedupe values correctly when there are values after the deduped ones',
     () => {
       const query = sql`update ARS_FIELDS
-    set GROUP = ${1},
-        LABEL = ${2},
-        TYPE = ${1},
-        IS_UPDATABLE = ${3}`;
+set GROUP = ${1},
+LABEL = ${2},
+TYPE = ${1},
+IS_UPDATABLE = ${3}`;
       expect(query.sql).toBe(
         'update ARS_FIELDS\nset GROUP = :1,\nLABEL = :2,\nTYPE = :1,\nIS_UPDATABLE = :4',
       );
@@ -114,17 +114,17 @@ describe('sql', () => {
         fieldOrder = 130,
         fieldId = 52;
       const query = sql`update ARS_FIELDS
-    set FIELD_GROUP = ${fieldGroup},
-        FIELD_LABEL = ${fieldLabel},
-        FIELD_TYPE  = ${fieldType},
-        COL_WIDTH   = ${colWidth},
-        IS_UPDATABLE = ${isUpdatable},
-        REQUIRED_FIELD = ${requiredField},
-        VALUE_TYPE = ${valueType},
-        COLUMN_ID = ${columnId},
-        GROUP_ORDER = ${groupOrder},
-        FIELD_ORDER = ${fieldOrder}
-    where FIELD_ID = ${fieldId}`;
+set FIELD_GROUP = ${fieldGroup},
+FIELD_LABEL = ${fieldLabel},
+FIELD_TYPE  = ${fieldType},
+COL_WIDTH   = ${colWidth},
+IS_UPDATABLE = ${isUpdatable},
+REQUIRED_FIELD = ${requiredField},
+VALUE_TYPE = ${valueType},
+COLUMN_ID = ${columnId},
+GROUP_ORDER = ${groupOrder},
+FIELD_ORDER = ${fieldOrder}
+where FIELD_ID = ${fieldId}`;
       expect(query.sql).toBe(
         'update ARS_FIELDS\n' +
           'set FIELD_GROUP = :1,\n' +
@@ -350,21 +350,5 @@ describe('sql', () => {
     ]}, ${['fantasy', 'historical']})`;
     expect(query.sql).toBe('INSERT INTO books (author, genre) values(:1, :2)');
     expect(() => query.values).toThrow(TypeError);
-  });
-
-  test.concurrent('should clean up extra new lines', () => {
-    const query = sql`Hi
-                  I'm
-                  A
-                  Long string
-                  And
-                  I have
-                  lot's of spaces and new lines!
-                      `;
-
-    expect(query.sql).toBe(
-      `Hi\nI'm\nA\nLong string\nAnd\nI have\nlot's of spaces and new lines!\n`,
-    );
-    expect(query.values).toEqual({});
   });
 });
