@@ -5,25 +5,51 @@ import type {
   Pool,
   PoolAttributes,
 } from 'oracledb';
-
 /**
  * Customize the way the pools works.
  */
 export interface Configuration {
-  /** Amount of time (in ms) between pings to check on connection behavior. */
-  pingTime: number;
-  /** Amount of time to wait (in ms) for getting a connection before deciding that there's a problem with the pool */
-  connectionTimeout: number;
-  /** Amount of time to wait (in ms) for the ping to complete before deciding that there's a problem with the pool */
-  pingTimeout: number;
+  /**
+   * The number of ms between the sending of keepalive probes. If this property is set to a value greater than zero, it enables the keepalive probes
+   *
+   * set to `undefined` to remove this behavior
+   * @deprecated For thin mode with oracledb v6+, use `setPoolDefaults` to set `expireTime` instead.
+   *
+   * For thick mode with oracle 19c+, use an Easy Connect string or a Connect Descriptor string. the property is `EXPIRE_TIME`
+   *
+   * @default 60_000
+   */
+  pingTime?: number;
+  /**
+   * The timeout duration in ms for an application to establish an Oracle Net connection.
+   *
+   * set to `undefined` to remove this behavior
+   * @deprecated For thin mode with oracledb v6+, use `setPoolDefaults` to set `connectTimeout` instead.
+   *
+   * For thick mode with oracle 19c+, use an Easy Connect string or a Connect Descriptor string. the property is `CONNECT_TIMEOUT`
+   * @default 1_000
+   */
+  connectionTimeout?: number;
+  /**
+   * No longer does anything.
+   *
+   * @deprecated There is no equivalent for this.
+   */
+  pingTimeout?: number;
 }
+const SECOND = 1000;
+const MINUTE = SECOND * 60;
 /**
  * Various Configurations to customize the way the pools works.
+ * @deprecated Will be removed in the next major version. use pool defaults instead.
+ * For thin mode, use pool defaults instead. If using oracledb@^5 or thick-mode, use an Easy Connect string or a Connect Descriptor string.
+ *
+ * If you use the Easy Connect or Connect Description setup, disable these configurations by setting them all to undefined
  */
 export const configuration: Configuration = {
-  pingTime: 1000 * 60,
-  connectionTimeout: 10000,
-  pingTimeout: 3000,
+  pingTime: MINUTE,
+  connectionTimeout: 10 * SECOND,
+  pingTimeout: 3 * SECOND,
 };
 
 export type PoolOptions = Omit<
@@ -59,7 +85,6 @@ export function getPoolDefaults(dbConfig: ConnectionAttributes) {
 }
 
 const pools = new Map<string, Pool | Promise<Pool>>();
-const pings = new Map<string, Date>();
 /**
  * Create/Get a connection pool
  *
@@ -90,6 +115,8 @@ export async function createPool(
     events: dbConfig.events,
     externalAuth: dbConfig.externalAuth,
     stmtCacheSize: dbConfig.stmtCacheSize,
+    connectTimeout: configuration.connectionTimeout / SECOND,
+    expireTime: configuration.pingTime / MINUTE,
     ...getPoolDefaults(dbConfig),
     ...options,
     poolAlias: dbConfig.poolAlias,
@@ -101,7 +128,6 @@ export async function createPool(
   try {
     const pool = await promise;
     pools.set(configKey, pool);
-    pings.set(configKey, new Date());
     return pool;
   } catch (error) {
     pools.delete(configKey);
@@ -127,37 +153,13 @@ export async function getPool(
 /**
  * Gets a connection from a pool. Will run createPool automatically
  *
- * Has a 3 seconds timeout before it abandons the currently extant pool and tries again.
- * This is in order to make the application able to recover.
- *
- * Will also run a ping on a connection at least every `configuration.pingTime` miliseconds.
- * This is set to 1 minute by default as it can be slower.
- *
  * @returns an oracle connection object
  */
 export async function getPoolConnection(
   dbConfig: ConnectionAttributes,
 ): Promise<Connection> {
-  const configKey = getConfigKey(dbConfig);
-  let pool = await createPool(dbConfig);
-  try {
-    const connection = await promiseOrTimeout(
-      pool.getConnection(),
-      configuration.connectionTimeout,
-    );
-    if (
-      pings.has(configKey) &&
-      new Date().valueOf() >
-        pings.get(configKey).valueOf()! + configuration.pingTime
-    ) {
-      pings.set(configKey, new Date());
-      await promiseOrTimeout(connection.ping(), configuration.pingTimeout);
-    }
-    return connection;
-  } catch (error) {
-    pool = await recreatePool(dbConfig, pool);
-    return await pool.getConnection();
-  }
+  const pool = await createPool(dbConfig);
+  return await pool.getConnection();
 }
 
 /**
@@ -199,35 +201,6 @@ export async function closePools(
       }),
     )
   ).filter((result): result is NonNullable<typeof result> => !!result);
-}
-
-async function promiseOrTimeout<T>(
-  promise: Promise<T>,
-  timeout = 3000,
-): Promise<T> {
-  let timeoutId: ReturnType<typeof setTimeout>;
-  return await Promise.race([
-    promise,
-    new Promise<never>((_resolve, reject) => {
-      timeoutId = setTimeout(() => {
-        reject('Timeout');
-      }, timeout);
-    }),
-  ]).finally(() => clearTimeout(timeoutId));
-}
-
-async function recreatePool(
-  dbConfig: ConnectionAttributes,
-  pool: Pool,
-): Promise<Pool> {
-  const configKey = getConfigKey(dbConfig);
-  try {
-    await pool.close(1000);
-    // eslint-disable-next-line no-empty
-  } catch {}
-  pools.delete(configKey);
-  pool = await createPool(dbConfig);
-  return pool;
 }
 
 function getConnectString(dbConfig: ConnectionAttributes): string {

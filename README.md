@@ -18,17 +18,35 @@ https://abbvie-external.github.io/oracle-helpers/
 
 # Options
 
+### pool `configuration`
+
 Configuration lets you set up certain behaviors to customize how the pools work outside of oracle
+
+This is deprecated and will be removed in the future!
 
 ```js
 import { configuration } from 'oracle-helpers';
-/** Amount of time (in ms) between pings to check on connection behavior. */
+/**
+ * The number of ms between the sending of keepalive probes. If this property is set to a value greater than zero, it enables the keepalive probes
+ *
+ * set to `undefined` to remove this behavior
+ * @deprecated For thin mode with oracledb v6+, use `setPoolDefaults` to set `expireTime` instead.
+ *
+ * For thick mode with oracle 19c+, use an Easy Connect string or a Connect Descriptor string. the property is `EXPIRE_TIME`
+ */
 configuration.pingTime = 60000; // 1 minute
-/** Amount of time to wait (in ms) for getting a connection before deciding that there's a problem with the pool */
+/**
+ * The timeout duration in ms for an application to establish an Oracle Net connection.
+ *
+ * set to `undefined` to remove this behavior
+ * @deprecated For thin mode with oracledb v6+, use `setPoolDefaults` to set `connectTimeout` instead.
+ *
+ * For thick mode with oracle 19c+, use an Easy Connect string or a Connect Descriptor string. the property is `CONNECT_TIMEOUT`
+ */
 configuration.connectionTimeout = 10000; // 10 seconds
-/** Amount of time to wait (in ms) for the ping to complete before deciding that there's a problem with the pool */
-configuration.pingTimeout = 3000; // 3 seconds
 ```
+
+### `poolOptions`
 
 poolOptions lets you set the behavior of the pools within oracle
 
@@ -41,6 +59,8 @@ poolOptions['oracle db connection string'] = {
   poolTimeout: 120,
 };
 ```
+
+### debug logging
 
 For improved debugging, you can set up a function to log the errors from oracle with the sql and parameters
 
