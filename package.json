@@ -7,8 +7,14 @@
   "module": "build/module/index.js",
   "type": "module",
   "exports": {
-    "import": "./build/module/index.js",
-    "require": "./build/main/index.js"
+    ".":{
+      "import": "./build/module/index.js",
+      "require": "./build/main/index.js"
+    },
+    "./sql": {
+      "require": "./build/main/lib/sql.js",
+      "import": "./build/module/lib/sql.js"
+    }
   },
   "repository": "https://github.com/abbvie-external/oracle-helpers",
   "license": "MIT",

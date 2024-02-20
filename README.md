@@ -397,7 +397,7 @@ const runSql = async () => {
 
 # SQL Template Tag
 
-> ES2015 tagged template string for preparing SQL statements, works for this oracle helpers library without any issues.
+> ES2015 tagged template string for preparing SQL statements, integrated with this oracle helpers library.
 
 ### Modified from:
 
@@ -437,6 +437,26 @@ const mutation = sql`INSERT INTO books (author, genre) values(${[
   'bill',
 ]}, ${['fantasy', 'historical', 'romance']})`;
 mutateManySql(dbConfig, mutation.sql, mutation.values);
+```
+
+Without the rest of oracle-helpers (assuming node16+ resolution):
+
+```ts
+import { sql } from 'oracle-helpers/sql';
+import oracledb from 'oracledb';
+
+const query = sql`SELECT * FROM books where id = ${3}`;
+
+const connection = await oracledb.getConnection(dbConfig);
+try {
+  const { rows: books } = await connection.execute(query.sql, query.values, {
+    outFormat: oracledb.OUT_FORMAT_OBJECT,
+    resultSet: false,
+  });
+  // do something with books here
+} finally {
+  await connection.close();
+}
 ```
 
 ### Join
