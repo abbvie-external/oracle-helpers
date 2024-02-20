@@ -106,7 +106,7 @@ export function getPoolDefaults(dbConfig?: ConnectionAttributes): PoolOptions {
     return { ...internalPoolOptions.get(undefined) };
   }
   return {
-    ...poolOptions[getConnectString(dbConfig)],
+    ...poolOptions[getConnectString(dbConfig) || ''],
     ...internalPoolOptions.get(getConfigKey(dbConfig)),
   };
 }
@@ -142,8 +142,14 @@ export async function createPool(
     events: dbConfig.events,
     externalAuth: dbConfig.externalAuth,
     stmtCacheSize: dbConfig.stmtCacheSize,
-    connectTimeout: configuration.connectionTimeout / SECOND,
-    expireTime: configuration.pingTime / MINUTE,
+    connectTimeout:
+      configuration.connectionTimeout != null
+        ? configuration.connectionTimeout / SECOND
+        : undefined,
+    expireTime:
+      configuration.pingTime != null
+        ? configuration.pingTime / MINUTE
+        : undefined,
     ...getPoolDefaults(undefined),
     password: dbConfig.password,
     ...getPoolDefaults(dbConfig),
@@ -231,7 +237,7 @@ export async function closePools(
   ).filter((result): result is NonNullable<typeof result> => !!result);
 }
 
-function getConnectString(dbConfig: ConnectionAttributes): string {
+function getConnectString(dbConfig: ConnectionAttributes): string | undefined {
   return dbConfig.connectString || dbConfig.connectionString;
 }
 

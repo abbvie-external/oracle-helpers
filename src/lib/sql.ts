@@ -134,6 +134,9 @@ export class Sql {
     return this.strings.reduce((text, part, index) => {
       const value = this.#values[index - 1];
       const position = this.#valueMap.get(value);
+      if (position == null) {
+        throw new TypeError('position cannot be null');
+      }
       let name: string | number = position + 1;
       if (value && typeof value === 'object' && 'name' in value) {
         name = value.name;
@@ -147,8 +150,11 @@ export class Sql {
     let numRows = 0;
 
     const uniqueValues = this.#values
-      .map<[ValueArray, number | string]>((values, index) => {
+      .map<[ValueArray, number | string] | null>((values, index) => {
         const position = this.#valueMap.get(values);
+        if (position == null) {
+          throw new TypeError('position cannot be null');
+        }
         let name: number | string = position + 1;
         if (values && typeof values === 'object' && 'name' in values) {
           name = values.name;
@@ -158,7 +164,7 @@ export class Sql {
         }
         return [values, name];
       })
-      .filter((val) => val);
+      .filter((val): val is NonNullable<typeof val> => !!val);
 
     this.#values.forEach((value) => {
       if (Array.isArray(value)) {

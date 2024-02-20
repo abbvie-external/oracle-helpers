@@ -23,6 +23,7 @@ oracledb.fetchAsString = [oracledb.CLOB];
  */
 export function isDBError(error: unknown): error is DBError {
   if (
+    error != null &&
     typeof error === 'object' &&
     'errorNum' in error &&
     'offset' in error &&
@@ -147,9 +148,10 @@ async function getSql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string | Sql,
   paramsOrOptions: BindParameters | ExecuteOptions = {},
-  optionsOrCb: ExecuteOptions | ((record: T) => void) = sql instanceof Sql
-    ? undefined
-    : {},
+  optionsOrCb:
+    | ExecuteOptions
+    | ((record: T) => void)
+    | undefined = sql instanceof Sql ? undefined : {},
   cb?: (record: T) => void,
 ): Promise<void | T[]> {
   const args = getSqlParameters(sql, paramsOrOptions, optionsOrCb, cb);
@@ -175,7 +177,7 @@ function getSqlParameters<T>(
   string,
   oracledb.BindParameters,
   oracledb.ExecuteOptions,
-  (record: T) => void,
+  ((record: T) => void) | undefined,
 ] {
   let text = '';
   let params: BindParameters;
@@ -200,7 +202,7 @@ async function getSqlInner<T>(
   sql: string,
   params: BindParameters,
   options: ExecuteOptions,
-  cb: (record: T) => void,
+  cb: ((record: T) => void) | undefined,
 ): Promise<void | T[]> {
   let sqlResult: Result<T>;
   try {
@@ -210,17 +212,17 @@ async function getSqlInner<T>(
       resultSet: cb ? true : false,
     });
   } catch (error) {
-    log(error, sql, params);
+    if (error instanceof Error) log(error, sql, params);
     throw error;
   }
   if (!cb) {
     return sqlResult.rows;
   }
   let row: T;
-  while ((row = await sqlResult.resultSet.getRow())) {
+  while ((row = await sqlResult.resultSet!.getRow())) {
     cb(row);
   }
-  sqlResult.resultSet.close();
+  sqlResult.resultSet!.close();
 }
 
 /**
@@ -323,7 +325,7 @@ function mutateSqlParameters(
 ): [
   string,
   BindParameters | BindParameters[],
-  ExecuteOptions | ExecuteManyOptions,
+  ExecuteOptions | ExecuteManyOptions | undefined,
 ] {
   let text = '';
   let params: BindParameters;
@@ -357,7 +359,7 @@ async function mutateSqlInner<T>(
       ...options,
     });
   } catch (error) {
-    log(error, sql, params);
+    if (error instanceof Error) log(error, sql, params);
     throw error;
   } finally {
     if (isConfig) {
@@ -463,7 +465,7 @@ async function mutateManySqlInner<T>(
       ...options,
     });
   } catch (error) {
-    log(error, sql, binds);
+    if (error instanceof Error) log(error, sql, binds);
     throw error;
   } finally {
     if (isConfig) {
@@ -507,7 +509,7 @@ function mutateManySql<T>(
 async function mutateManySql<T>(
   configOrConnection: ConfigOrConnection,
   sql: string | Sql,
-  paramsOrOptions: BindParameters[] | ExecuteManyOptions,
+  paramsOrOptions?: BindParameters[] | ExecuteManyOptions,
   options?: ExecuteManyOptions,
 ): Promise<Results<ToOutBinds<T>>> {
   const args = mutateSqlParameters(sql, paramsOrOptions, options, true);
@@ -557,7 +559,7 @@ function mutateManySqlPool<T>(
 async function mutateManySqlPool<T>(
   config: ConnectionAttributes,
   sql: string | Sql,
-  paramsOrOptions: BindParameters[] | ExecuteOptions,
+  paramsOrOptions?: BindParameters[] | ExecuteOptions,
   options?: ExecuteManyOptions,
 ): Promise<Results<ToOutBinds<T>>> {
   const args = mutateSqlParameters(sql, paramsOrOptions, options, true);

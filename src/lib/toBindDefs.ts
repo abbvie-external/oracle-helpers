@@ -32,7 +32,7 @@ function getTypeFromValue(key: string, values: Values): number | undefined {
 
 function getMaxSize(
   key: string,
-  type: number,
+  type: number | undefined,
   values: Record<string, Value>[],
 ): number | undefined {
   switch (type) {
