@@ -71,7 +71,7 @@ function isConnection(
 }
 
 /**
- * Transform non-array properties on an object to arrays, as Oracle's outbinds is always an array
+ * Transform non-array properties on an object to arrays, as Oracle's `outBinds` is always an array
  */
 export type ToOutBinds<T> = T extends object
   ? {

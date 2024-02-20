@@ -112,7 +112,7 @@ export class Sql {
     });
   }
   /**
-   * Join together mutliple values into a single `Sql` instance
+   * Join together multiple values into a single `Sql` instance
    * @param values The values to join together
    * @returns an `Sql` instance with the values joined by the separator (the `this` Sql instance)
    */
@@ -207,7 +207,7 @@ Object.defineProperty(Sql.prototype, 'values', { enumerable: true });
 Object.defineProperty(Sql.prototype, 'sql', { enumerable: true });
 
 /**
- * Join together mutliple values into a single `Sql` instance
+ * Join together multiple values into a single `Sql` instance
  * @param values The values to join together
  * @param separator The string to use in joining the values together. Defaults to '`,`'.
  *
