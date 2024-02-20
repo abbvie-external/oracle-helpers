@@ -4,6 +4,15 @@ A collection of helpers for alleviating boilerplate in OracleDB projects
 
 [SQL Template Tag](#SQL-Template-Tag)
 
+## Note:
+
+This package sets `fetchAsBuffer` and `fetchAsString` automatically. This will be changed in the next major version to avoid unexpected side-effects!
+
+```js
+oracledb.fetchAsBuffer = [oracledb.BLOB];
+oracledb.fetchAsString = [oracledb.CLOB];
+```
+
 # Installation
 
 Install using
