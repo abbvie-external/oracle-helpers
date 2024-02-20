@@ -1,6 +1,6 @@
 import { inspect } from 'util';
 import oracledb from 'oracledb';
-import { empty, join, raw, sql, Sql } from '../';
+import { empty, join, raw, sql, Sql } from '../lib/sql.js';
 
 const { BIND_OUT, NUMBER } = oracledb;
 

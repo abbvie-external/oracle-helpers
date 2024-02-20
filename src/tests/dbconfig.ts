@@ -1,8 +1,7 @@
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
-import { ConnectionAttributes } from 'oracledb';
-import { sql } from '..';
-import { raw, Sql } from '../lib/sql';
+import { ConnectionAttributes, DBError } from 'oracledb';
+import { raw, Sql, sql } from '../lib/sql.js';
 
 const myEnv = dotenv.config();
 dotenvExpand.expand(myEnv);
@@ -14,6 +13,20 @@ export const dbConfig: ConnectionAttributes = {
 };
 
 export const ERR_NOT_EXIST = 942;
+
+/**
+ *
+ * @param error
+ */
+export function isOracleError(error: unknown): error is DBError {
+  if (error instanceof Error && 'errorNum' in error && 'offset' in error) {
+    return true;
+  }
+  return false;
+}
+export function isNotExistError(error: unknown): boolean {
+  return isOracleError(error) && error.errorNum === ERR_NOT_EXIST;
+}
 
 export const getTable = (add: string) => sql`OH_TEST_BOOKS_${raw(add)}`;
 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ToOutBinds } from '../lib/sqlHelpers';
+import { ToOutBinds } from '../lib/sqlHelpers.js';
 
 type Expect<T extends true> = T;
 

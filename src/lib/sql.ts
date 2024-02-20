@@ -29,9 +29,11 @@ export type RawValue = Value | Sql | Value[];
 /**
  * A SQL instance can be nested within each other to build SQL strings.
  *
+ * Extension: https://marketplace.visualstudio.com/items?itemName=thebearingedge.vscode-sql-lit
+ *
  * Extension: https://marketplace.visualstudio.com/items?itemName=frigus02.vscode-sql-tagged-template-literals-syntax-only
  *
- * @author Adapted for Oracle from https://github.com/blakeembrey/sql-template-tag
+ * Adapted for Oracle from https://github.com/blakeembrey/sql-template-tag
  *
  */
 export class Sql {

@@ -1,12 +1,18 @@
 import { jest } from '@jest/globals';
+import type { BindParameters, Connection } from 'oracledb';
 import OracleDB from 'oracledb';
-import type { Connection, BindParameters } from 'oracledb';
-import { getSql, join, mutateManySql, mutateSql, sql, toBindDefs } from '../';
-import { Value } from '../lib/sql';
-import { Logger, isDBError, setSqlErrorLogger } from '../lib/sqlHelpers';
+import { Value, join, sql } from '../lib/sql.js';
+import {
+  Logger,
+  getSql,
+  isDBError,
+  mutateManySql,
+  mutateSql,
+  setSqlErrorLogger,
+} from '../lib/sqlHelpers.js';
+import { toBindDefs } from '../lib/toBindDefs.js';
 import {
   Book,
-  ERR_NOT_EXIST,
   dbConfig,
   extraBooks,
   getDropTable,
@@ -14,8 +20,9 @@ import {
   getSelectBooks,
   getTable,
   getTableCreation,
+  isNotExistError,
   seedBooks,
-} from './dbConfig';
+} from './dbconfig.js';
 
 const { BIND_OUT, NUMBER, STRING, getConnection } = OracleDB;
 
@@ -35,7 +42,7 @@ describe('sqlHelpers', () => {
         await connection.execute(dropTable);
       } catch (error) {
         // Ignore does not exist errors
-        if (error.errorNum !== ERR_NOT_EXIST) {
+        if (!isNotExistError(error)) {
           throw error;
         }
       }
@@ -54,7 +61,7 @@ describe('sqlHelpers', () => {
     try {
       await connection.execute(dropTable);
     } catch (error) {
-      if (error.errorNum !== 942) {
+      if (!isNotExistError(error)) {
         throw error;
       }
     } finally {
@@ -85,7 +92,9 @@ describe('sqlHelpers', () => {
         try {
           await getSql(connection, query);
         } catch (error) {
-          errorObj = error;
+          if (error instanceof Error) {
+            errorObj = error;
+          }
           throw error;
         }
       }).rejects.toThrow();
@@ -173,7 +182,9 @@ describe('sqlHelpers', () => {
         try {
           await mutateSql(connection, query);
         } catch (error) {
-          errorObj = error;
+          if (error instanceof Error) {
+            errorObj = error;
+          }
           throw error;
         }
       }).rejects.toThrow();
@@ -291,7 +302,9 @@ describe('sqlHelpers', () => {
         try {
           await mutateManySql(connection, query);
         } catch (error) {
-          errorObj = error;
+          if (error instanceof Error) {
+            errorObj = error;
+          }
           throw error;
         }
       }).rejects.toThrow();

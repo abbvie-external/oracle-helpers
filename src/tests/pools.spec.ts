@@ -12,14 +12,14 @@ import {
   getPoolDefaults,
   setPoolDefaults,
   PoolOptions,
-} from '../lib/pools';
-import { join, sql } from '../lib/sql';
+} from '../lib/pools.js';
+import { join, sql } from '../lib/sql.js';
 import {
   getSqlPool,
   mutateManySqlPool,
   mutateSql,
   mutateSqlPool,
-} from '../lib/sqlHelpers';
+} from '../lib/sqlHelpers.js';
 import {
   allBooks,
   dbConfig,
@@ -29,8 +29,9 @@ import {
   getSelectBooks,
   getTable,
   getTableCreation,
+  isNotExistError,
   seedBooks,
-} from './dbConfig';
+} from './dbconfig.js';
 
 const table = getTable('pools');
 const insertBook = getInsertBook(table);
@@ -45,7 +46,7 @@ async function seedDatabase() {
         await connection.execute(dropTable);
       } catch (error) {
         // Ignore does not exist errors
-        if (error.errorNum !== 942) {
+        if (!isNotExistError(error)) {
           throw error;
         }
       }
@@ -70,7 +71,7 @@ describe('pools', () => {
       await mutateSql(dbConfig, dropTable);
     } catch (err) {
       // Ignore does not exist errors
-      if (err.errorNum !== 942) {
+      if (!isNotExistError(err)) {
         throw err;
       }
     } finally {

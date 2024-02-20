@@ -9,8 +9,8 @@ import type {
   Results,
   DBError,
 } from 'oracledb';
-import { getPoolConnection } from './pools';
-import { Sql } from './sql';
+import { getPoolConnection } from './pools.js';
+import { Sql } from './sql.js';
 
 oracledb.fetchAsBuffer = [oracledb.BLOB];
 oracledb.fetchAsString = [oracledb.CLOB];

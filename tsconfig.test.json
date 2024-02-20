@@ -2,9 +2,11 @@
   "extends": "./tsconfig",
   "compilerOptions": {
     "target": "es2017",
-    "outDir": "build/test",
-    "module": "commonjs"
+    "noEmit": true
+    // "outDir": "build/test"
+    // "module": "commonjs",
+    // "moduleResolution": "Node10"
   },
-  "include": ["jest.config.ts", "src/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": []
 }

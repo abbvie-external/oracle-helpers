@@ -1,5 +1,5 @@
 import OracleDB from 'oracledb';
-import { sql, toBindDefs } from '../';
+import { sql, toBindDefs } from '../index.js';
 
 describe('toBindDefs', () => {
   test.concurrent('Should work with a non-array input', () => {
