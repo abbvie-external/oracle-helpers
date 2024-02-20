@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.4.0](https://github.com/abbvie-external/oracle-helpers/compare/v3.3.1...v3.4.0) (2024-02-20)
+
+
+### Features
+
+* deprecate the `configuration` settings ([78b47b8](https://github.com/abbvie-external/oracle-helpers/commit/78b47b882e7c1f976554bf6f1d8d6382ce18fc47))
+* **pools:** add ability to set global defaults  using `setPoolDefaults` ([b7f22cd](https://github.com/abbvie-external/oracle-helpers/commit/b7f22cd792b7d6dc5e35d8de039a7ae72d00de26))
+* properly export an es module build ([dd81c5b](https://github.com/abbvie-external/oracle-helpers/commit/dd81c5b1591f842aacf1f6f07ab8bc79affd1e4d))
+* **sql:** add `Sql#join` instance method ([8a9cbde](https://github.com/abbvie-external/oracle-helpers/commit/8a9cbde6f9bdf744205a47cf462907696fb90789))
+* **sql:** add `sql` as a separate export for use without the rest of the helpers ([d801b7a](https://github.com/abbvie-external/oracle-helpers/commit/d801b7a2fb8561cfe70e7f969c34eeb703a37c1f))
+* **types:** add `toDBType` utility type ([8f7f20c](https://github.com/abbvie-external/oracle-helpers/commit/8f7f20c9129cbd3a5e2e18825a1a7492bd331807))
+* **types:** make the outbind types automatically convert objects to the correct format. ([3f31ae2](https://github.com/abbvie-external/oracle-helpers/commit/3f31ae28b6d475fd0e610ad406f78af7dd775f6d))
+
+
+### Bug Fixes
+
+* **sql:** remove unexpected dedent behavior ([735db78](https://github.com/abbvie-external/oracle-helpers/commit/735db782394419e0a855cea4c3d9dfb640ae873d))
+
 ### [3.3.1](https://github.com/abbvie-external/oracle-helpers/compare/v3.3.0...v3.3.1) (2024-01-09)
 
 
