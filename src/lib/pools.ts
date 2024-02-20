@@ -41,8 +41,9 @@ const SECOND = 1000;
 const MINUTE = SECOND * 60;
 /**
  * Various Configurations to customize the way the pools works.
- * @deprecated Will be removed in the next major version. use pool defaults instead.
- * For thin mode, use pool defaults instead. If using oracledb@^5 or thick-mode, use an Easy Connect string or a Connect Descriptor string.
+ * @deprecated Will be removed in the next major version.
+ *
+ * For thin mode, use {@link setPoolDefaults} with `undefined` as the config instead for global pool settings.. If using oracledb@^5 or thick-mode, use an Easy Connect string or a Connect Descriptor string.
  *
  * If you use the Easy Connect or Connect Description setup, disable these configurations by setting them all to undefined
  */
@@ -61,37 +62,49 @@ export type PoolOptions = Partial<
 
 /**
  * Use this to set the options for the pool based on the connect string
- * @deprecated Use setPoolDefaults instead
+ * @deprecated Use {@link setPoolDefaults} instead
  *
  */
 export const poolOptions: Record<string, PoolOptions> = {};
 
-const internalPoolOptions = new Map<string, PoolOptions>();
+const internalPoolOptions = new Map<string | undefined, PoolOptions>();
 
 /**
  * Sets the default pool options for generating the pool from its config.
  *
+ * If `undefined` is passed for the config, the defaults will apply globally (to all future pools).
+ *
+ * The most specific options will win in the case of the same setting being applied in different ways.
+ *
  * Setting this multiple times for the same pool will completely override any previously set values
+ *
+ * Passing in `undefined` for `options` will remove the set values
  * @param dbConfig
  * @param options
  */
 export function setPoolDefaults(
-  dbConfig: ConnectionAttributes,
+  dbConfig: ConnectionAttributes | undefined,
   options: PoolOptions | undefined,
 ): void {
+  const key = dbConfig ? getConfigKey(dbConfig) : undefined;
   if (!options) {
-    internalPoolOptions.delete(getConfigKey(dbConfig));
+    internalPoolOptions.delete(key);
   } else {
-    internalPoolOptions.set(getConfigKey(dbConfig), { ...options });
+    internalPoolOptions.set(key, { ...options });
   }
 }
 
 /**
- * Get the current set of default options for generating a pool from its config
+ * Get the current set of default options for generating a pool from its config.
+ *
+ * If `undefined` is passed for the config, it will return the global defaults
  * @param dbConfig
  * @returns
  */
-export function getPoolDefaults(dbConfig: ConnectionAttributes): PoolOptions {
+export function getPoolDefaults(dbConfig?: ConnectionAttributes): PoolOptions {
+  if (!dbConfig) {
+    return { ...internalPoolOptions.get(undefined) };
+  }
   return {
     ...poolOptions[getConnectString(dbConfig)],
     ...internalPoolOptions.get(getConfigKey(dbConfig)),
@@ -131,6 +144,7 @@ export async function createPool(
     stmtCacheSize: dbConfig.stmtCacheSize,
     connectTimeout: configuration.connectionTimeout / SECOND,
     expireTime: configuration.pingTime / MINUTE,
+    ...getPoolDefaults(undefined),
     password: dbConfig.password,
     ...getPoolDefaults(dbConfig),
     ...options,

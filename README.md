@@ -22,10 +22,21 @@ https://abbvie-external.github.io/oracle-helpers/
 
 ### Pool Defaults
 
-Pool Defaults lets you set the behavior of the generated pools. These will not automatically reconfigure the pools when changed. If you want to change the pool settings after the initial creation of the pool, use `getPool` and the `Pool#reconfigure` method.
+Pool Defaults lets you set the behavior of the generated pools. These will not automatically reconfigure the pools when changed unless you close the pool first to re-create it. If you want to change the pool settings after the initial creation of the pool without closing and re-making the pool, use `getPool` and the `Pool#reconfigure` method.
+
+To set the defaults for all future pools, use `setPoolDefaults` with `undefined` as the first parameter
 
 ```js
 import { setPoolDefaults } from 'oracle-helpers';
+
+setPoolDefaults(undefined, {
+  expireTime: 1,
+  connectTimeout: 10,
+  poolMin: 12,
+  poolMax: 20,
+  poolTimeout: 120,
+});
+const globalDefaults = getPoolDefaults(undefined);
 
 export const dbConfig = {
   /* ... */

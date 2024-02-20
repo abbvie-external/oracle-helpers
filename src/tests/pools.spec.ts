@@ -112,6 +112,8 @@ describe('pools', () => {
       const options: PoolOptions = { poolMax: 1 };
       setPoolDefaults(dbConfig, options);
       expect(getPoolDefaults(dbConfig)).toEqual(options);
+      let pool = await createPool(dbConfig);
+      expect(pool.poolMax).toBe(options.poolMax);
       const aliasedConfig: ConnectionAttributes = {
         ...dbConfig,
         poolAlias: 'aliasedConfig',
@@ -120,10 +122,35 @@ describe('pools', () => {
       setPoolDefaults(aliasedConfig, aliasedOptions);
       expect(getPoolDefaults(aliasedConfig)).toEqual(aliasedOptions);
       expect(getPoolDefaults(dbConfig)).not.toEqual(aliasedOptions);
+      let aliasedPool = await createPool(aliasedConfig);
+      expect(pool).not.toEqual(aliasedPool);
+      expect(aliasedPool.poolMax).toBe(aliasedOptions.poolMax);
+
+      // clear default for db config.
+      // ensure that the existing pool's value didn't change
+      // ensure that the aliasedConfig's defaults didn't change
       setPoolDefaults(dbConfig, undefined);
       expect(getPoolDefaults(dbConfig)).toEqual({});
-      setPoolDefaults(aliasedConfig, undefined);
-      expect(getPoolDefaults(aliasedConfig)).toEqual({});
+      expect(pool.poolMax).toBe(options.poolMax);
+      expect(getPoolDefaults(aliasedConfig)).toEqual(aliasedOptions);
+
+      await closePools(0);
+      // re-create the pool, and make sure the original defaults didn't apply
+      pool = await createPool(dbConfig);
+      expect(pool.poolMax).not.toBe(options.poolMax);
+
+      // Set some global options, make sure that they are applied as well as the config specific options
+      const globalOptions: PoolOptions = { poolPingInterval: 30, poolMax: 3 };
+      setPoolDefaults(undefined, globalOptions);
+      expect(getPoolDefaults()).toEqual(globalOptions);
+      aliasedPool = await createPool(aliasedConfig);
+      expect(aliasedPool.poolPingInterval).toEqual(
+        globalOptions.poolPingInterval,
+      );
+      expect(aliasedPool.poolMax).toBe(aliasedOptions.poolMax);
+
+      setPoolDefaults(undefined, undefined);
+      expect(getPoolDefaults()).toEqual({});
     });
     test('should allow creating a connection', async () => {
       const connection = await getPoolConnection(dbConfig);
@@ -133,6 +160,7 @@ describe('pools', () => {
         await connection.close().catch(() => {});
       }
     });
+
     test('should create a new pool after closing the old one', async () => {
       const aliasedConfig: ConnectionAttributes = {
         ...dbConfig,
