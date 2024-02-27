@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.4.1](https://github.com/abbvie-external/oracle-helpers/compare/v3.4.0...v3.4.1) (2024-02-27)
+
+
+### Bug Fixes
+
+* **types:** `ToOutBinds` had incorrect types when dealing with optional properties ([6bed6d4](https://github.com/abbvie-external/oracle-helpers/commit/6bed6d4ea29bba565584a35dc4c4dff2422ca017))
+
 ## [3.4.0](https://github.com/abbvie-external/oracle-helpers/compare/v3.3.1...v3.4.0) (2024-02-20)
 
 
