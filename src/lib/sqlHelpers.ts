@@ -121,7 +121,13 @@ function isConnection(
  */
 export type ToOutBinds<T> = T extends object
   ? {
-      [key in keyof T]: T[key] extends Array<unknown> ? T[key] : T[key][];
+      [key in keyof T]: NonNullable<T[key]> extends Array<unknown>
+        ? undefined extends T[key]
+          ? NonNullable<T[key]> | undefined
+          : T[key]
+        : undefined extends T[key]
+        ? Exclude<T[key], undefined>[] | undefined
+        : T[key][];
     }
   : T;
 
