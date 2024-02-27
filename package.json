@@ -51,7 +51,7 @@
   "devDependencies": {
     "@types/jest": "^29.5.3",
     "@types/node": "^20.4.9",
-    "@types/oracledb": "^6.0.4",
+    "@types/oracledb": "^6.2.0",
     "@typescript-eslint/eslint-plugin": "^6.3.0",
     "@typescript-eslint/parser": "^6.3.0",
     "cspell": "^6.31.3",
