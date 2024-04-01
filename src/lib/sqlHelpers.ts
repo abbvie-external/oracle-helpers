@@ -25,9 +25,10 @@ export function isDBError(error: unknown): error is DBError {
   if (
     error != null &&
     typeof error === 'object' &&
-    'errorNum' in error &&
-    'offset' in error &&
-    'message' in error
+    (('errorNum' in error && 'offset' in error && 'message' in error) ||
+      ('code' in error &&
+        typeof error.code === 'string' &&
+        (error.code.startsWith('ORA') || error.code.startsWith('NJS'))))
   ) {
     return true;
   }
