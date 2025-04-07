@@ -5,8 +5,9 @@ import { Value } from './sql.js';
 const { BIND_IN, BUFFER, DATE, NUMBER, STRING } = oracledb;
 
 type Values = Record<string, Value>[];
+type BindDefType = BindDefinition['type'];
 
-function getTypeFromValue(key: string, values: Values): number | undefined {
+function getTypeFromValue(key: string, values: Values): BindDefType {
   for (let i = 0; i < values.length; ++i) {
     const value = values[i][key];
     if (value == null) {
@@ -32,7 +33,7 @@ function getTypeFromValue(key: string, values: Values): number | undefined {
 
 function getMaxSize(
   key: string,
-  type: number | undefined,
+  type: BindDefType,
   values: Record<string, Value>[],
 ): number | undefined {
   switch (type) {
