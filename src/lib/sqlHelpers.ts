@@ -72,12 +72,12 @@ export type ToDBType<
         : string
       : (DateString extends false ? Date : string) | null
     : NonNullable<T[P]> extends object | Array<unknown>
-    ? T[P] extends NonNullable<T[P]>
-      ? ObjectType
-      : ObjectType | null
-    : T[P] extends NonNullable<T[P]>
-    ? T[P]
-    : NonNullable<T[P]> | null;
+      ? T[P] extends NonNullable<T[P]>
+        ? ObjectType
+        : ObjectType | null
+      : T[P] extends NonNullable<T[P]>
+        ? T[P]
+        : NonNullable<T[P]> | null;
 };
 
 /**
@@ -127,8 +127,8 @@ export type ToOutBinds<T> = T extends object
           ? NonNullable<T[key]> | undefined
           : T[key]
         : undefined extends T[key]
-        ? Exclude<T[key], undefined>[] | undefined
-        : T[key][];
+          ? Exclude<T[key], undefined>[] | undefined
+          : T[key][];
     }
   : T;
 

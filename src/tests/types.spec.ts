@@ -7,11 +7,10 @@ type Expect<T extends true> = T;
 /**
  * @link https://github.com/sindresorhus/type-fest
  */
-type IsEqual<A, B> = (<G>() => G extends A ? 1 : 2) extends <G>() => G extends B
-  ? 1
-  : 2
-  ? true
-  : false;
+type IsEqual<A, B> =
+  (<G>() => G extends A ? 1 : 2) extends <G>() => G extends B ? 1 : 2
+    ? true
+    : false;
 
 describe('types', () => {
   describe('ToOutBinds', () => {
