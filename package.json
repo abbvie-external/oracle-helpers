@@ -16,12 +16,15 @@
       "require": "./build/main/lib/sql.js"
     }
   },
-  "repository": "https://github.com/abbvie-external/oracle-helpers",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abbvie-external/oracle-helpers.git"
+  },
   "license": "MIT",
   "keywords": [],
   "scripts": {
     "build": "run-p build:*",
-    "build:main": "tsc -p tsconfig.cjs.json &&  echo {\"type\": \"commonjs\"} > ./build/main/package.json",
+    "build:main": "tsc -p tsconfig.cjs.json &&  echo '{\"type\": \"commonjs\"}' > ./build/main/package.json",
     "build:module": "tsc -p tsconfig.json",
     "fix": "run-s fix:*",
     "fix:prettier": "prettier \"src/**/*.ts\" --write",
@@ -82,6 +85,7 @@
     "build/module",
     "!**/*.spec.*",
     "!**/*.json",
+    "build/main/package.json",
     "CHANGELOG.md",
     "LICENSE",
     "README.md"
