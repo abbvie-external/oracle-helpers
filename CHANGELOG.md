@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.4.3](https://github.com/abbvie-external/oracle-helpers/compare/v3.4.2...v3.4.3) (2025-12-11)
+
+
+### Bug Fixes
+
+* **commonjs:** tell node that the build/main directory is actually commonjs ([46d5c44](https://github.com/abbvie-external/oracle-helpers/commit/46d5c4456e22aa58be71ad29bcf6f2f75d584c03))
+
 ### [3.4.2](https://github.com/abbvie-external/oracle-helpers/compare/v3.4.1...v3.4.2) (2025-04-07)
 
 
