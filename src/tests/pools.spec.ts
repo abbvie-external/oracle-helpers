@@ -1,8 +1,6 @@
-import {
-  BindParameters,
-  ConnectionAttributes,
-  getConnection,
-  POOL_STATUS_OPEN,
+import OracleDB, {
+  type BindParameters,
+  type ConnectionAttributes,
 } from 'oracledb';
 import {
   closePools,
@@ -40,7 +38,7 @@ const dropTable = getDropTable(table);
 
 async function seedDatabase() {
   try {
-    const connection = await getConnection(dbConfig);
+    const connection = await OracleDB.getConnection(dbConfig);
     try {
       try {
         await connection.execute(dropTable);
@@ -93,7 +91,7 @@ describe('pools', () => {
       ]);
       expect(pools[0]).toBe(pools[1]);
       const [pool] = pools;
-      expect(pool.status).toBe(POOL_STATUS_OPEN);
+      expect(pool.status).toBe(OracleDB.POOL_STATUS_OPEN);
       expect(pool.poolMax).toBe(1);
       expect(pool.poolAlias).toBe(aliasedConfig.poolAlias);
 
@@ -170,7 +168,7 @@ describe('pools', () => {
       const pool = await createPool(aliasedConfig);
       await pool.close();
       const pool2 = await createPool(dbConfig);
-      expect(pool2.status).toBe(POOL_STATUS_OPEN);
+      expect(pool2.status).toBe(OracleDB.POOL_STATUS_OPEN);
       expect(pool2).not.toBe(pool);
     });
     test('should throw on creating a pool without a connectString', async () => {
