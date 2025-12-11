@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { describe, it } from 'node:test';
 import { Lob } from 'oracledb';
 import { ToDBType, ToOutBinds } from '../lib/sqlHelpers.js';
 

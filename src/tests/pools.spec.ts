@@ -1,3 +1,4 @@
+import test, { after, afterEach, describe } from 'node:test';
 import OracleDB, {
   type BindParameters,
   type ConnectionAttributes,
@@ -8,8 +9,8 @@ import {
   getPool,
   getPoolConnection,
   getPoolDefaults,
-  setPoolDefaults,
   PoolOptions,
+  setPoolDefaults,
 } from '../lib/pools.js';
 import { join, sql } from '../lib/sql.js';
 import {
@@ -64,7 +65,7 @@ async function seedDatabase() {
 }
 
 describe('pools', () => {
-  afterAll(async () => {
+  after(async () => {
     try {
       await mutateSql(dbConfig, dropTable);
     } catch (err) {
@@ -80,7 +81,7 @@ describe('pools', () => {
     afterEach(async () => {
       await closePools(0);
     });
-    test('should create and get the same pool via the same config', async () => {
+    test('should create and get the same pool via the same config', async (t) => {
       const aliasedConfig: ConnectionAttributes = {
         ...dbConfig,
         poolAlias: 'sameConfig',
@@ -89,78 +90,79 @@ describe('pools', () => {
         createPool(aliasedConfig, { poolMax: 1 }),
         createPool(aliasedConfig, { poolMax: 1 }),
       ]);
-      expect(pools[0]).toBe(pools[1]);
+      t.assert.equal(pools[0], pools[1]);
       const [pool] = pools;
-      expect(pool.status).toBe(OracleDB.POOL_STATUS_OPEN);
-      expect(pool.poolMax).toBe(1);
-      expect(pool.poolAlias).toBe(aliasedConfig.poolAlias);
+      t.assert.equal(pool.status, OracleDB.POOL_STATUS_OPEN);
+      t.assert.equal(pool.poolMax, 1);
+      t.assert.equal(pool.poolAlias, aliasedConfig.poolAlias);
 
       const pool2 = await createPool(aliasedConfig);
-      expect(pool2).toBe(pool);
+      t.assert.equal(pool2, pool);
     });
-    test('should support connectionString as well as connectString', async () => {
+    test('should support connectionString as well as connectString', async (t) => {
       const { connectString, ...config } = dbConfig;
       const pool = await createPool(dbConfig);
       const pool2 = await createPool({
         connectionString: connectString,
         ...config,
       });
-      expect(pool2).toBe(pool);
+      t.assert.equal(pool2, pool);
     });
-    test('setPoolDefaults should work', async () => {
+    test('setPoolDefaults should work', async (t) => {
       const options: PoolOptions = { poolMax: 1 };
       setPoolDefaults(dbConfig, options);
-      expect(getPoolDefaults(dbConfig)).toEqual(options);
+      t.assert.deepEqual(getPoolDefaults(dbConfig), options);
       let pool = await createPool(dbConfig);
-      expect(pool.poolMax).toBe(options.poolMax);
+      t.assert.equal(pool.poolMax, options.poolMax);
       const aliasedConfig: ConnectionAttributes = {
         ...dbConfig,
         poolAlias: 'aliasedConfig',
       };
       const aliasedOptions: PoolOptions = { poolMax: 2 };
       setPoolDefaults(aliasedConfig, aliasedOptions);
-      expect(getPoolDefaults(aliasedConfig)).toEqual(aliasedOptions);
-      expect(getPoolDefaults(dbConfig)).not.toEqual(aliasedOptions);
+      t.assert.deepEqual(getPoolDefaults(aliasedConfig), aliasedOptions);
+      t.assert.notDeepEqual(getPoolDefaults(dbConfig), aliasedOptions);
       let aliasedPool = await createPool(aliasedConfig);
-      expect(pool).not.toEqual(aliasedPool);
-      expect(aliasedPool.poolMax).toBe(aliasedOptions.poolMax);
+      t.assert.notDeepEqual(pool, aliasedPool);
+      t.assert.equal(aliasedPool.poolMax, aliasedOptions.poolMax);
 
       // clear default for db config.
       // ensure that the existing pool's value didn't change
       // ensure that the aliasedConfig's defaults didn't change
       setPoolDefaults(dbConfig, undefined);
-      expect(getPoolDefaults(dbConfig)).toEqual({});
-      expect(pool.poolMax).toBe(options.poolMax);
-      expect(getPoolDefaults(aliasedConfig)).toEqual(aliasedOptions);
+      t.assert.deepEqual(getPoolDefaults(dbConfig), {});
+      t.assert.equal(pool.poolMax, options.poolMax);
+      t.assert.deepEqual(getPoolDefaults(aliasedConfig), aliasedOptions);
 
       await closePools(0);
       // re-create the pool, and make sure the original defaults didn't apply
       pool = await createPool(dbConfig);
-      expect(pool.poolMax).not.toBe(options.poolMax);
+      t.assert.notEqual(pool.poolMax, options.poolMax);
 
       // Set some global options, make sure that they are applied as well as the config specific options
       const globalOptions: PoolOptions = { poolPingInterval: 30, poolMax: 3 };
       setPoolDefaults(undefined, globalOptions);
-      expect(getPoolDefaults()).toEqual(globalOptions);
+      t.assert.deepEqual(getPoolDefaults(), globalOptions);
       aliasedPool = await createPool(aliasedConfig);
-      expect(aliasedPool.poolPingInterval).toEqual(
+      t.assert.equal(
+        aliasedPool.poolPingInterval,
         globalOptions.poolPingInterval,
       );
-      expect(aliasedPool.poolMax).toBe(aliasedOptions.poolMax);
+      t.assert.equal(aliasedPool.poolMax, aliasedOptions.poolMax);
 
       setPoolDefaults(undefined, undefined);
-      expect(getPoolDefaults()).toEqual({});
+      t.assert.deepEqual(getPoolDefaults(), {});
     });
-    test('should allow creating a connection', async () => {
+    test('should allow creating a connection', async (t) => {
       const connection = await getPoolConnection(dbConfig);
       try {
-        await connection.ping();
+        await t.assert.doesNotReject(connection.ping());
       } finally {
         await connection.close().catch(() => {});
       }
     });
 
-    test('should create a new pool after closing the old one', async () => {
+    test('should create a new pool after closing the old one', async (t) => {
       const aliasedConfig: ConnectionAttributes = {
         ...dbConfig,
         poolAlias: 'poolClosing',
@@ -168,14 +170,16 @@ describe('pools', () => {
       const pool = await createPool(aliasedConfig);
       await pool.close();
       const pool2 = await createPool(dbConfig);
-      expect(pool2.status).toBe(OracleDB.POOL_STATUS_OPEN);
-      expect(pool2).not.toBe(pool);
+      t.assert.equal(pool2.status, OracleDB.POOL_STATUS_OPEN);
+      t.assert.notDeepEqual(pool2, pool);
     });
-    test('should throw on creating a pool without a connectString', async () => {
-      expect(createPool({ connectString: '' })).rejects.toThrow(
+    test('should throw on creating a pool without a connectString', async (t) => {
+      t.assert.rejects(
+        createPool({ connectString: '' }),
         new Error('Invalid Connection'),
       );
-      expect(createPool({ connectionString: '' })).rejects.toThrow(
+      t.assert.rejects(
+        createPool({ connectionString: '' }),
         new Error('Invalid Connection'),
       );
     });
@@ -184,33 +188,33 @@ describe('pools', () => {
     afterEach(async () => {
       await closePools(0);
     });
-    test('should return a pool', async () => {
+    test('should return a pool', async (t) => {
       const pool = await createPool(dbConfig);
-      expect(pool).toBe(await getPool(dbConfig));
+      t.assert.deepEqual(pool, await getPool(dbConfig));
     });
-    test('should return null if the pool is closed or does not exist', async () => {
+    test('should return null if the pool is closed or does not exist', async (t) => {
       const aliasedConfig: ConnectionAttributes = {
         ...dbConfig,
         poolAlias: 'getPoolNull',
       };
-      expect(await getPool(aliasedConfig)).toBeNull();
+      t.assert.deepEqual(await getPool(aliasedConfig), null);
     });
   });
   describe('closePools', () => {
     afterEach(async () => {
       await closePools(0);
     });
-    test("should return pools that didn't close", async () => {
+    test("should return pools that didn't close", async (t) => {
       const pool = await createPool(dbConfig);
       const connection = await getPoolConnection(dbConfig);
       const results = await closePools();
-      expect(results?.[0]?.pool).toBe(pool);
+      t.assert.deepEqual(results?.[0]?.pool, pool);
       await connection.close();
     });
-    test('should return an empty array if all pools closed successfully', async () => {
+    test('should return an empty array if all pools closed successfully', async (t) => {
       await createPool(dbConfig);
       const results = await closePools();
-      expect(results).toHaveLength(0);
+      t.assert.equal(results.length, 0);
     });
   });
   describe('sqlHelpers', () => {
@@ -218,19 +222,20 @@ describe('pools', () => {
       ...dbConfig,
       poolAlias: 'sqlHelpers',
     };
-    afterAll(async () => {
+    after(async () => {
       await closePools(0);
     });
     describe('getSqlPool', () => {
-      test('Should work through a pool', async () => {
+      test('Should work through a pool', async (t) => {
         await seedDatabase();
-        await expect(getSqlPool(aliasedConfig, selectBooks)).resolves.toEqual(
+        t.assert.deepEqual(
+          await getSqlPool(aliasedConfig, selectBooks),
           seedBooks,
         );
       });
     });
     describe('mutateManySqlPool', () => {
-      test('Should work through a pool', async () => {
+      test('Should work through a pool', async (t) => {
         await seedDatabase();
         const query = sql`${insertBook}
           (${extraBooks.map(({ ID }) => ID)},
@@ -241,17 +246,18 @@ describe('pools', () => {
           id: [number];
           title: [string];
         }>(aliasedConfig, query);
-        expect(result.rowsAffected).toBe(extraBooks.length);
-        expect(
+        t.assert.equal(result.rowsAffected, extraBooks.length);
+        t.assert.deepEqual(
           await getSqlPool(aliasedConfig, sql`${selectBooks} order by ID`),
-        ).toEqual(allBooks);
+          allBooks,
+        );
         const deletion = await mutateSqlPool(
           aliasedConfig,
           sql`DELETE FROM ${table} WHERE ID in (${join(
             extraBooks.map(({ ID }) => ID),
           )})`,
         );
-        expect(deletion.rowsAffected).toBe(extraBooks.length);
+        t.assert.equal(deletion.rowsAffected, extraBooks.length);
       });
     });
   });

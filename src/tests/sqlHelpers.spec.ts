@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import test, { after, before, describe } from 'node:test';
 import type { BindParameters, Connection } from 'oracledb';
 import OracleDB from 'oracledb';
 import { Value, join, sql } from '../lib/sql.js';
@@ -35,7 +35,7 @@ const dropTable = getDropTable(table);
 // });
 let connection: Connection;
 describe('sqlHelpers', () => {
-  beforeAll(async () => {
+  before(async () => {
     try {
       connection = await getConnection(dbConfig);
       try {
@@ -57,7 +57,7 @@ describe('sqlHelpers', () => {
       throw error;
     }
   });
-  afterAll(async () => {
+  after(async () => {
     try {
       await connection.execute(dropTable);
     } catch (error) {
@@ -69,26 +69,27 @@ describe('sqlHelpers', () => {
     }
   });
   describe('isDBError', () => {
-    test('Should return true for an Oracle error', async () => {
+    test('Should return true for an Oracle error', async (t: test.TestContext) => {
       try {
         await getSql(connection, sql`select '5' from dual where fish = ${0}`);
       } catch (error) {
-        expect(isDBError(error)).toBe(true);
+        t.assert.equal(isDBError(error), true);
       }
     });
   });
   describe('getSql', () => {
-    test('Should throw an error when config is undefined', async () => {
-      await expect(
+    test('Should throw an error when config is undefined', async (t: test.TestContext) => {
+      await t.assert.rejects(
         getSql(undefined as unknown as Connection, ''),
-      ).rejects.toThrow(new TypeError('ConfigOrConnection must be defined'));
+        new TypeError('ConfigOrConnection must be defined'),
+      );
     });
-    test("Should log when there's an error", async () => {
-      const logger = jest.fn<Logger>();
+    test("Should log when there's an error", async (t: test.TestContext) => {
+      const logger = t.mock.fn<Logger>();
       setSqlErrorLogger(logger);
       const query = sql`select '5' from dual where fish = ${0}`;
       let errorObj: Error | undefined;
-      await expect(async () => {
+      await t.assert.rejects(async () => {
         try {
           await getSql(connection, query);
         } catch (error) {
@@ -97,88 +98,93 @@ describe('sqlHelpers', () => {
           }
           throw error;
         }
-      }).rejects.toThrow();
-
-      expect(logger).toBeCalledTimes(1);
-      expect(logger).toBeCalledWith(errorObj, query.sql, query.values);
+      });
+      t.assert.equal(logger.mock.callCount(), 1);
+      t.assert.deepEqual(logger.mock.calls[0].arguments, [
+        errorObj,
+        query.sql,
+        query.values,
+      ]);
 
       setSqlErrorLogger(undefined);
     });
-    test('Should retrieve an array', async () => {
+    test('Should retrieve an array', async (t: test.TestContext) => {
       const result = await getSql<Book>(connection, selectBooks);
-      expect(result).toEqual(seedBooks);
+      t.assert.deepEqual(result, seedBooks);
     });
-    test('Should work without sql templates', async () => {
-      await expect(
-        getSql(connection, `${selectBooks.sql} where id = :id`, {
+    test('Should work without sql templates', async (t: test.TestContext) => {
+      t.assert.deepEqual(
+        await getSql(connection, `${selectBooks.sql} where id = :id`, {
           id: seedBooks[0].ID,
         }),
-      ).resolves.toEqual([seedBooks[0]]);
+        [seedBooks[0]],
+      );
     });
-    test('Should support connectionString in addition to connectString', async () => {
+    test('Should support connectionString in addition to connectString', async (t: test.TestContext) => {
       const { connectString, ...config } = dbConfig;
       const newConfig = { ...config, connectionString: connectString };
       const result = await getSql<Book>(newConfig, selectBooks);
-      expect(result).toEqual(seedBooks);
+      t.assert.deepEqual(result, seedBooks);
     });
-    test('Should call the callback for each item', async () => {
+    test('Should call the callback for each item', async (t: test.TestContext) => {
       const books: Book[] = [];
       await getSql<Book>(connection, selectBooks, {}, (book) => {
         books.push(book);
       });
-      expect(books).toEqual(seedBooks);
+      t.assert.deepEqual(books, seedBooks);
     });
-    test('Should successfully use a new connection when passed config', async () => {
+    test('Should successfully use a new connection when passed config', async (t: test.TestContext) => {
       const result = await getSql<Book>(dbConfig, selectBooks);
-      expect(result).toEqual(seedBooks);
+      t.assert.deepEqual(result, seedBooks);
     });
-    test('Should successfully bind a value', async () => {
+    test('Should successfully bind a value', async (t: test.TestContext) => {
       const seedBook = seedBooks[1];
-      expect(
+      t.assert.deepEqual(
         await getSql<Book>(
           connection,
           sql`${selectBooks} WHERE ID = ${seedBook.ID}`,
         ),
-      ).toEqual([seedBook]);
+        [seedBook],
+      );
     });
-    test('Should prevent sql injection', async () => {
+    test('Should prevent sql injection', async (t: test.TestContext) => {
       const injection = `' OR ''='`;
       const results = await getSql(
         connection,
         sql`${selectBooks} WHERE TITLE = ${injection}`,
       );
-      expect(results).toHaveLength(0);
+      t.assert.deepEqual(results, []);
     });
-    test('Should error when attempting to bind arrays', async () => {
-      await expect(
+    test('Should error when attempting to bind arrays', async (t: test.TestContext) => {
+      await t.assert.rejects(
         getSql(
           connection,
           sql`${selectBooks} WHERE ID = ${seedBooks.map(({ ID }) => ID)}`,
         ),
-      ).rejects.toThrow(
+
         new TypeError('Cannot bind array values outside mutateManySql'),
       );
     });
-    test("Should release the connection on error if there's an error", async () => {
+    test("Should release the connection on error if there's an error", async (t: test.TestContext) => {
       // Note: It's nearly impossible to actually determine if the connection that was created in
       // the function was *in fact* released, it'll show in the code coverage...
-      await expect(getSql(dbConfig, '')).rejects.toThrow(/(ORA|NJS)-/);
+      await t.assert.rejects(getSql(dbConfig, ''), /(ORA|NJS)-/);
     });
   });
   describe('mutateSql', () => {
-    test('Should throw when sending an array binding parameter', async () => {
-      await expect(
+    test('Should throw when sending an array binding parameter', async (t: test.TestContext) => {
+      await t.assert.rejects(
         mutateSql(connection, '', [] as BindParameters[]),
-      ).rejects.toThrow(
+
         new TypeError('Cannot bind array values outside mutateManySql'),
       );
     });
-    test("Should log when there's an error", async () => {
-      const logger = jest.fn<Logger>();
+    test("Should log when there's an error", async (t: test.TestContext) => {
+      const logger = test.mock.fn<Logger>();
       setSqlErrorLogger(logger);
       const query = sql`select '5' from dual where fish = ${0}`;
       let errorObj: Error | undefined;
-      await expect(async () => {
+      await t.assert.rejects(async () => {
         try {
           await mutateSql(connection, query);
         } catch (error) {
@@ -187,63 +193,68 @@ describe('sqlHelpers', () => {
           }
           throw error;
         }
-      }).rejects.toThrow();
+      });
 
-      expect(logger).toBeCalledTimes(1);
-      expect(logger).toBeCalledWith(errorObj, query.sql, query.values);
+      t.assert.equal(logger.mock.callCount(), 1);
+      t.assert.deepEqual(logger.mock.calls[0].arguments, [
+        errorObj,
+        query.sql,
+        query.values,
+      ]);
 
       setSqlErrorLogger(undefined);
     });
-    test('Should allow updating a row', async () => {
+    test('Should allow updating a row', async (t: test.TestContext) => {
       const book = { ...seedBooks[3] };
       book.TITLE = 'Sequel Cookbook';
       const result = await mutateSql(
         connection,
         sql`Update ${table} set TITLE= ${book.TITLE} WHERE ID = ${book.ID}`,
       );
-      expect(result.rowsAffected).toBe(1);
+      t.assert.equal(result.rowsAffected, 1);
       const books = await getSql(connection, sql`${selectBooks}`);
-      expect(books).toEqual(
+      t.assert.deepEqual(
+        books,
         seedBooks.map((seed) => (seed.ID === book.ID ? book : seed)),
       );
       await connection.rollback();
     });
-    test('Should auto commit when using a dbConfig', async () => {
+    test('Should auto commit when using a dbConfig', async (t: test.TestContext) => {
       const book = extraBooks[0];
       const insertion = await mutateSql(
         dbConfig,
         sql`${insertBook}
                   (${book.ID}, ${book.TITLE}, ${book.AUTHOR}, ${book.PAGES})`,
       );
-      expect(insertion.rowsAffected).toBe(1);
+      t.assert.equal(insertion.rowsAffected, 1);
       const [newBook] = await getSql(
         connection,
         sql`${selectBooks} WHERE ID = ${book.ID}`,
       );
-      expect(newBook).toEqual(book);
+      t.assert.deepEqual(newBook, book);
       const deletion = await mutateSql(
         connection,
         sql`DELETE FROM ${table} WHERE ID = ${book.ID}`,
         { autoCommit: true },
       );
-      expect(deletion.rowsAffected).toEqual(1);
+      t.assert.deepEqual(deletion.rowsAffected, 1);
     });
-    test('Should not auto commit when using a connection', async () => {
+    test('Should not auto commit when using a connection', async (t: test.TestContext) => {
       const book = extraBooks[0];
       const insertion = await mutateSql(
         connection,
         sql`${insertBook}
           (${book.ID}, ${book.TITLE}, ${book.AUTHOR}, ${book.PAGES})`,
       );
-      expect(insertion.rowsAffected).toBe(1);
+      t.assert.equal(insertion.rowsAffected, 1);
       connection.rollback();
       const books = await getSql(
         connection,
         sql`${selectBooks} WHERE ID = ${book.ID}`,
       );
-      expect(books).toHaveLength(0);
+      t.assert.deepEqual(books, []);
     });
-    test('Should support dynamic PL/SQL', async () => {
+    test('Should support dynamic PL/SQL', async (t: test.TestContext) => {
       const query = sql`BEGIN
           ${join(
             extraBooks.map(
@@ -262,43 +273,43 @@ describe('sqlHelpers', () => {
         connection,
         sql`${selectBooks} ${whereClause}`,
       );
-      expect(newBooks).toEqual(extraBooks);
+      t.assert.deepEqual(newBooks, extraBooks);
       const deletion = await mutateSql(
         connection,
         sql`DELETE FROM ${table} ${whereClause}`,
       );
-      expect(deletion.rowsAffected).toBe(extraBooks.length);
+      t.assert.equal(deletion.rowsAffected, extraBooks.length);
     });
-    test('Should error when attempting to bind arrays', async () => {
-      await expect(
+    test('Should error when attempting to bind arrays', async (t: test.TestContext) => {
+      await t.assert.rejects(
         getSql(
           connection,
           sql`${selectBooks} WHERE ID = ${seedBooks.map(({ ID }) => ID)}`,
         ),
-      ).rejects.toThrow(
+
         new TypeError('Cannot bind array values outside mutateManySql'),
       );
     });
-    test("Should release the connection on error if there's an error", async () => {
+    test("Should release the connection on error if there's an error", async (t: test.TestContext) => {
       // Note: It's nearly impossible to actually determine if the connection that was created in
       // the function was *in fact* released, it'll show in the code coverage...
-      await expect(getSql(dbConfig, '')).rejects.toThrow(/(ORA|NJS)-/);
+      await t.assert.rejects(getSql(dbConfig, ''), /(ORA|NJS)-/);
     });
   });
   describe('mutateManySql', () => {
-    test('Should throw when sending a non-array parameter', async () => {
-      await expect(
+    test('Should throw when sending a non-array parameter', async (t: test.TestContext) => {
+      await t.assert.rejects(
         mutateManySql(connection, '', {} as BindParameters[]),
-      ).rejects.toThrow(
+
         new TypeError('Must bind array values in mutateManySql'),
       );
     });
-    test("Should log when there's an error", async () => {
-      const logger = jest.fn<Logger>();
+    test("Should log when there's an error", async (t: test.TestContext) => {
+      const logger = t.mock.fn<Logger>();
       setSqlErrorLogger(logger);
       const query = sql`select '5' from dual where fish = ${[0]}`;
       let errorObj: Error | undefined;
-      await expect(async () => {
+      await t.assert.rejects(async () => {
         try {
           await mutateManySql(connection, query);
         } catch (error) {
@@ -307,14 +318,18 @@ describe('sqlHelpers', () => {
           }
           throw error;
         }
-      }).rejects.toThrow();
+      });
 
-      expect(logger).toBeCalledTimes(1);
-      expect(logger).toBeCalledWith(errorObj, query.sql, query.values);
+      t.assert.equal(logger.mock.callCount(), 1);
+      t.assert.deepEqual(logger.mock.calls[0].arguments, [
+        errorObj,
+        query.sql,
+        query.values,
+      ]);
 
       setSqlErrorLogger(undefined);
     });
-    test('Should insert many rows and retrieve the IDs', async () => {
+    test('Should insert many rows and retrieve the IDs', async (t: test.TestContext) => {
       const query = sql`${insertBook}
       (${extraBooks.map(({ ID }) => ID)},
        ${extraBooks.map(({ TITLE }) => TITLE)},
@@ -332,9 +347,10 @@ describe('sqlHelpers', () => {
           autoCommit: true,
         },
       );
-      expect(result.rowsAffected).toBe(extraBooks.length);
-      expect(result.outBinds).toHaveLength(extraBooks.length);
-      expect(result.outBinds).toEqual(
+      t.assert.equal(result.rowsAffected, extraBooks.length);
+      t.assert.equal(result.outBinds?.length, extraBooks.length);
+      t.assert.deepEqual(
+        result.outBinds,
         extraBooks.map(({ ID, TITLE }) => ({ id: [ID], title: [TITLE] })),
       );
       const deletion = await mutateSql(
@@ -343,9 +359,9 @@ describe('sqlHelpers', () => {
           extraBooks.map(({ ID }) => ID),
         )})`,
       );
-      expect(deletion.rowsAffected).toBe(extraBooks.length);
+      t.assert.equal(deletion.rowsAffected, extraBooks.length);
     });
-    test('Should insert many rows and retrieve the IDs without the template tag', async () => {
+    test('Should insert many rows and retrieve the IDs without the template tag', async (t: test.TestContext) => {
       const result = await mutateManySql<{ id: number; title: string }>(
         dbConfig,
         `${insertBook.sql} (:ID, :TITLE, :AUTHOR, :PAGES)
@@ -362,9 +378,10 @@ describe('sqlHelpers', () => {
           ),
         },
       );
-      expect(result.rowsAffected).toBe(extraBooks.length);
-      expect(result.outBinds).toHaveLength(extraBooks.length);
-      expect(result.outBinds).toEqual(
+      t.assert.equal(result.rowsAffected, extraBooks.length);
+      t.assert.equal(result.outBinds?.length, extraBooks.length);
+      t.assert.deepEqual(
+        result.outBinds,
         extraBooks.map(({ ID, TITLE }) => ({ idOut: [ID], titleOut: [TITLE] })),
       );
       const deletion = await mutateSql(
@@ -373,9 +390,9 @@ describe('sqlHelpers', () => {
           extraBooks.map(({ ID }) => ID),
         )})`,
       );
-      expect(deletion.rowsAffected).toBe(extraBooks.length);
+      t.assert.equal(deletion.rowsAffected, extraBooks.length);
     });
-    test('should insert row data when using toBindDefs with nulls', async () => {
+    test('should insert row data when using toBindDefs with nulls', async (t: test.TestContext) => {
       const rows: Book[] = [
         {
           AUTHOR: 'test',
@@ -395,7 +412,7 @@ describe('sqlHelpers', () => {
       )})`;
       const bindDefs = toBindDefs(mutation.values);
       const result = await mutateManySql(connection, mutation, { bindDefs });
-      expect(result.rowsAffected).toBe(rows.length);
+      t.assert.equal(result.rowsAffected, rows.length);
       await connection.rollback();
     });
   });
