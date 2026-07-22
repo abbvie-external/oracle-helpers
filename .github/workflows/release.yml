@@ -1,6 +1,9 @@
 on:
   workflow_dispatch:
 name: release-to-npm
+permissions:
+  contents: read
+  id-token: write
 jobs:
   release-to-npm:
     runs-on: ubuntu-latest
