@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.5.0](https://github.com/abbvie-external/oracle-helpers/compare/v3.4.5...v3.5.0) (2026-07-22)
+
+
+### Features
+
+* **sql:** add `Sql.name`, `Sql.literal`, and `Sql.raw` functions ([bc01c76](https://github.com/abbvie-external/oracle-helpers/commit/bc01c76975c64fb53534cd1203010ea72fcfdf00))
+
+
+### Bug Fixes
+
+* **sql:** add support for bigint values ([a7fa880](https://github.com/abbvie-external/oracle-helpers/commit/a7fa880bc73d8c62106752b4e1065bbe94e2fbd4))
+* **sql:** rename `Sql.name` to `Sql.ident` due to typescript disliking it ([a11f1ec](https://github.com/abbvie-external/oracle-helpers/commit/a11f1ecbdff526a7c2293f3eee647656e38a626a))
+
 ### [3.4.5](https://github.com/abbvie-external/oracle-helpers/compare/v3.4.4...v3.4.5) (2026-07-22)
 
 
