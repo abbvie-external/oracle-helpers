@@ -161,6 +161,17 @@ describe('pools', () => {
         await connection.close().catch(() => {});
       }
     });
+    test('should close a connection with explicit resource managemenet', async (t) => {
+      const pool = await createPool(dbConfig);
+      let connsInUse: number;
+      {
+        await using connection = await getPoolConnection(dbConfig);
+
+        await t.assert.doesNotReject(connection.ping());
+        connsInUse = pool?.connectionsInUse ?? 1;
+      }
+      t.assert.equal(connsInUse - 1, pool?.connectionsInUse ?? 0);
+    });
 
     test('should create a new pool after closing the old one', async (t) => {
       const aliasedConfig: ConnectionAttributes = {
