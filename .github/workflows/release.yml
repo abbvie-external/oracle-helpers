@@ -1,0 +1,17 @@
+on:
+  workflow_dispatch:
+name: release-to-npm
+jobs:
+  release-to-npm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 24
+          cache: "npm"
+      - run: npm ci
+      - name: Publish
+        run: |
+          npm publish
