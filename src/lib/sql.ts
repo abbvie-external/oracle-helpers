@@ -253,7 +253,7 @@ export class Sql {
    *
    * @param name — The string to be quoted for identifier use.
    */
-  static name(
+  static ident(
     name: string | Sql,
     { capitalize = true, alwaysEnquote = false }: EnquoteNameOptions = {},
   ): Sql {

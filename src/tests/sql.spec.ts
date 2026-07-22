@@ -419,20 +419,20 @@ where FIELD_ID = ${fieldId}`;
     t.assert.equal(query.sql, "'test'");
     t.assert.equal(Sql.literal("'test'").sql, "'''test'''");
   });
-  test('Sql.name', { concurrency: true }, (t: test.TestContext) => {
-    t.assert.equal(Sql.name('test').sql, 'test');
-    t.assert.throws(() => Sql.name('"test"', { alwaysEnquote: true }).sql);
-    t.assert.equal(Sql.name('"test"', { alwaysEnquote: false }).sql, '"test"');
-    t.assert.equal(Sql.name('test', { capitalize: false }).sql, '"test"');
+  test('Sql.ident', { concurrency: true }, (t: test.TestContext) => {
+    t.assert.equal(Sql.ident('test').sql, 'test');
+    t.assert.throws(() => Sql.ident('"test"', { alwaysEnquote: true }).sql);
+    t.assert.equal(Sql.ident('"test"', { alwaysEnquote: false }).sql, '"test"');
+    t.assert.equal(Sql.ident('test', { capitalize: false }).sql, '"test"');
     t.assert.equal(
-      Sql.name('test.table', { capitalize: false }).sql,
+      Sql.ident('test.table', { capitalize: false }).sql,
       'test.table',
     );
     t.assert.equal(
-      Sql.name('test.table', { capitalize: false, alwaysEnquote: true }).sql,
+      Sql.ident('test.table', { capitalize: false, alwaysEnquote: true }).sql,
       '"test.table"',
     );
-    t.assert.equal(Sql.name("'test'").sql, `"'TEST'"`);
-    t.assert.equal(Sql.name('"test"."test2"').sql, '"test"."test2"');
+    t.assert.equal(Sql.ident("'test'").sql, `"'TEST'"`);
+    t.assert.equal(Sql.ident('"test"."test2"').sql, '"test"."test2"');
   });
 });

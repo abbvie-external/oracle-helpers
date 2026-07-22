@@ -38,7 +38,7 @@ Pool Defaults lets you set the behavior of the generated pools. These will not a
 To set the defaults for all future pools, use `setPoolDefaults` with `undefined` as the first parameter
 
 ```js
-import { setPoolDefaults } from 'oracle-helpers';
+import { setPoolDefaults } from "oracle-helpers";
 
 setPoolDefaults(undefined, {
   expireTime: 1,
@@ -69,7 +69,7 @@ Configuration lets you set up certain behaviors to customize how the pools work 
 This is deprecated and will be removed in the future! Use [Pool Defaults](#pool-defaults) instead
 
 ```js
-import { configuration } from 'oracle-helpers';
+import { configuration } from "oracle-helpers";
 /**
  * The number of ms between the sending of keep alive probes. If this property is set to a value greater than zero, it enables the keep alive probes
  *
@@ -95,9 +95,9 @@ configuration.connectionTimeout = 10000; // 10 seconds
 For improved debugging, you can set up a function to log the errors from oracle with the sql and parameters
 
 ```js
-import { setSqlErrorLogger } from 'oracle-helpers';
+import { setSqlErrorLogger } from "oracle-helpers";
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === "development") {
   setSqlErrorLogger((error, sql, params) => {
     console.error(error, sql, params);
   });
@@ -109,12 +109,12 @@ if (process.env.NODE_ENV === 'development') {
 ## `sql` Tagged Template Vs Sql Text + Params:
 
 ```ts
-import { sql, getSql, getSqlPool } from 'oracle-helpers';
+import { sql, getSql, getSqlPool } from "oracle-helpers";
 
 const dbConfig = {
-  user: 'username',
-  password: 'password',
-  connectString: 'oracle db connection string',
+  user: "username",
+  password: "password",
+  connectString: "oracle db connection string",
 };
 
 // sql tagged template!
@@ -146,12 +146,12 @@ getSql<{ ID: number; NAME: string }[]>(dbConfig, query2.sql, { id: 5 }).then(
 ## Getters
 
 ```ts
-import { sql, getSql, getSqlPool } from 'oracle-helpers';
+import { sql, getSql, getSqlPool } from "oracle-helpers";
 
 const dbConfig = {
-  user: 'username',
-  password: 'password',
-  connectString: 'oracle db connection string',
+  user: "username",
+  password: "password",
+  connectString: "oracle db connection string",
 };
 const query = sql`SELECT * FROM TABLE where ID=${5}`;
 
@@ -173,29 +173,29 @@ import {
   mutateSqlPool,
   mutateManySql,
   mutateManySqlPool,
-} from 'oracle-helpers';
+} from "oracle-helpers";
 
 const dbConfig = {
-  user: 'username',
-  password: 'password',
-  connectString: 'oracle db connection string',
+  user: "username",
+  password: "password",
+  connectString: "oracle db connection string",
 };
 
 const runSql = async () => {
   const query = `INSERT INTO TABLE (ID, NAME) VALUES (:id, :name)`;
 
-  await mutateSql(dbConfig, query, { id: 5, name: 'test' });
+  await mutateSql(dbConfig, query, { id: 5, name: "test" });
 
-  await mutateSqlPool(dbConfig, query, { id: 6, name: 'test2' });
+  await mutateSqlPool(dbConfig, query, { id: 6, name: "test2" });
 
   await mutateManySql(dbConfig, query, [
-    { id: 7, name: 'test3' },
-    { id: 8, name: 'test4' },
+    { id: 7, name: "test3" },
+    { id: 8, name: "test4" },
   ]);
 
   await mutateManySqlPool(dbConfig, query, [
-    { id: 8, name: 'test5' },
-    { id: 9, name: 'test6' },
+    { id: 8, name: "test5" },
+    { id: 9, name: "test6" },
   ]);
 };
 
@@ -204,7 +204,7 @@ const runSql = async () => {
 const runSql = async () => {
   const query = sql`INSERT INTO TABLE (ID, NAME)
                     VALUES (${[7, 8, 9, 10]},
-                            ${['test', 'test2', 'test3', 'test4']}
+                            ${["test", "test2", "test3", "test4"]}
                           )`;
   await mutateManySql(dbConfig, query);
 };
@@ -219,20 +219,20 @@ This is especially important in `mutateMany` in which you can't include the bind
 This means that if you want to use `returning` in mutateMany, you need to set up the whole bind definitions object yourself. And that's what `toBindDefs` helps solve.
 
 ```ts
-import OracleDB from 'oracledb';
-import { mutateManySqlPool, toBindDefs } from 'oracle-helpers';
+import OracleDB from "oracledb";
+import { mutateManySqlPool, toBindDefs } from "oracle-helpers";
 const dbConfig = {
-  user: 'username',
-  password: 'password',
-  connectString: 'oracle db connection string',
+  user: "username",
+  password: "password",
+  connectString: "oracle db connection string",
 };
 
 const runSql = async () => {
   const query = sql`INSERT INTO books (author, genre) values(${[
-    'bob',
-    'joe',
-    'bill',
-  ]}, ${'fantasy'}) RETURNING id into :id`;
+    "bob",
+    "joe",
+    "bill",
+  ]}, ${"fantasy"}) RETURNING id into :id`;
   // Important to pull values out of query ahead of time to avoid extra calculations.
   const { values, sql: sqlQuery } = query;
   const result = await mutateManySqlPool<{ id: [number] }>(
@@ -249,7 +249,7 @@ const runSql = async () => {
     },
   );
   const ids = results.outBinds.map(({ id }) => id[0]);
-  console.log('newIds:', ids);
+  console.log("newIds:", ids);
 };
 ```
 
@@ -258,12 +258,12 @@ const runSql = async () => {
 Run multiple mutations with a get inbetween in a single all-or-nothing transaction including returning a value from an insert.
 
 ```ts
-import { STRING, NUMBER, BIND_OUT, BIND_IN } from 'oracledb';
-import { getPoolConnection, getSql, mutateSql } from 'oracle-helpers';
+import { STRING, NUMBER, BIND_OUT, BIND_IN } from "oracledb";
+import { getPoolConnection, getSql, mutateSql } from "oracle-helpers";
 const dbConfig = {
-  user: 'username',
-  password: 'password',
-  connectString: 'oracle db connection string',
+  user: "username",
+  password: "password",
+  connectString: "oracle db connection string",
 };
 const sql = `INSERT INTO TABLE (ID, NAME) VALUES (ID_SEQ.NEXT_VAL, :name) returning ID into :id`;
 const selectSql = `SELECT * FROM TABLE where ID=:id`;
@@ -276,7 +276,7 @@ const runSql = async () => {
       connection,
       sql,
       {
-        name: 'test',
+        name: "test",
       },
       {
         bindDefs: {
@@ -293,16 +293,16 @@ const runSql = async () => {
     const insertMultipleSql = `INSERT INTO TABLE_TERM (TABLE_ID, TERM_ID, TERM) VALUES (:tableId, ID_SEQ.NEXT_VAL, :term)`;
 
     const terms = [
-      'Yes',
-      'No',
-      'Maybe',
-      'Y',
-      'N',
-      'M',
-      'Yeah',
-      'Nah',
-      'Aye',
-      'Nay',
+      "Yes",
+      "No",
+      "Maybe",
+      "Y",
+      "N",
+      "M",
+      "Yeah",
+      "Nah",
+      "Aye",
+      "Nay",
     ];
 
     await mutateManySql(
@@ -323,25 +323,25 @@ const runSql = async () => {
 ### Advanced with the tagged template:
 
 ```ts
-import { STRING, NUMBER, BIND_IN, BIND_OUT } from 'oracledb';
+import { STRING, NUMBER, BIND_IN, BIND_OUT } from "oracledb";
 import {
   sql,
   getPoolConnection,
   getSql,
   mutateSql,
   toBindDefs,
-} from 'oracle-helpers';
+} from "oracle-helpers";
 const dbConfig = {
-  user: 'username',
-  password: 'password',
-  connectString: 'oracle db connection string',
+  user: "username",
+  password: "password",
+  connectString: "oracle db connection string",
 };
 
 const runSql = async () => {
   const connection = await getPoolConnection(dbConfig);
 
   try {
-    const value = 'test';
+    const value = "test";
 
     const result = await mutateSql<{ id: number[] }>(
       connection,
@@ -350,7 +350,7 @@ const runSql = async () => {
         returning ID into ${{
           dir: BIND_OUT,
           type: NUMBER,
-          name: 'id',
+          name: "id",
         }}`,
     );
 
@@ -361,16 +361,16 @@ const runSql = async () => {
     const row = await getSql(connection, selectSql)[0];
 
     const terms = [
-      'Yes',
-      'No',
-      'Maybe',
-      'Y',
-      'N',
-      'M',
-      'Yeah',
-      'Nah',
-      'Aye',
-      'Nay',
+      "Yes",
+      "No",
+      "Maybe",
+      "Y",
+      "N",
+      "M",
+      "Yeah",
+      "Nah",
+      "Aye",
+      "Nay",
     ];
 
     const insertMultipleSql = sql`INSERT INTO TABLE_TERM
@@ -414,7 +414,7 @@ https://marketplace.visualstudio.com/items?itemName=frigus02.vscode-sql-tagged-t
 ## Usage
 
 ```ts
-import { sql, empty, join, raw, getSql, mutateManySql } from 'oracle-helpers';
+import { sql, empty, join, raw, getSql, mutateManySql } from "oracle-helpers";
 
 const query = sql`SELECT * FROM books WHERE id = ${id}`;
 
@@ -424,7 +424,7 @@ query.values; //=> {1: id}
 getSql(dbConfig, query.sql, query.values);
 
 // Embed SQL instances inside SQL instances.
-const nested = sql`SELECT id FROM authors WHERE name = ${'Blake'}`;
+const nested = sql`SELECT id FROM authors WHERE name = ${"Blake"}`;
 const query = sql`SELECT * FROM books WHERE author_id IN (${nested})`;
 
 // Join and "empty" helpers (useful for nested queries).
@@ -432,18 +432,18 @@ sql`SELECT * FROM books ${hasIds ? sql`WHERE ids IN (${join(ids)})` : empty}`;
 
 // Mutate Many
 const mutation = sql`INSERT INTO books (author, genre) values(${[
-  'bob',
-  'joe',
-  'bill',
-]}, ${['fantasy', 'historical', 'romance']})`;
+  "bob",
+  "joe",
+  "bill",
+]}, ${["fantasy", "historical", "romance"]})`;
 mutateManySql(dbConfig, mutation.sql, mutation.values);
 ```
 
 Without the rest of oracle-helpers (assuming node16+ resolution):
 
 ```ts
-import { sql } from 'oracle-helpers/sql';
-import oracledb from 'oracledb';
+import { sql } from "oracle-helpers/sql";
+import oracledb from "oracledb";
 
 const query = sql`SELECT * FROM books where id = ${3}`;
 
@@ -466,12 +466,12 @@ try {
 Enquotes literals with single quotes if they are a string, otherwise passes numbers and bigints as literal Sql text directly. If a string already has single quotes, those are escaped by doubling them.
 
 ```js
-Sql.literal('hi').sql; //=> "'hi'"
+Sql.literal("hi").sql; //=> "'hi'"
 Sql.literal("this is a 'test' value").sql; //=> "'this is a ''test'' value'"
 Sql.literal(3).sql; //=> "3"
 ```
 
-#### `Sql.name` function
+#### `Sql.ident` function
 
 Enquotes identifiers (names) with double quotes when they need to be.
 
@@ -480,15 +480,15 @@ Values will be enquoted if `alwaysEnquote` is `true`, or if its a simpleSqlName 
 Capitalize defaults to `true`, and `alwaysEnquote` defaults to `false`.
 
 ```js
-Sql.name('test'); //=> 'test'
-Sql.name('"test"', { alwaysEnquote: false }).sql; //=> '"test"'
-Sql.name('test', { capitalize: false }).sql; //=> '"test"'
-Sql.name('test.table', { capitalize: false }).sql; //=> 'test.table'
+Sql.ident("test"); //=> 'test'
+Sql.ident('"test"', { alwaysEnquote: false }).sql; //=> '"test"'
+Sql.ident("test", { capitalize: false }).sql; //=> '"test"'
+Sql.ident("test.table", { capitalize: false }).sql; //=> 'test.table'
 // Due to oracle's enquoteName function being designed around enquoting a simple name, this ends up becoming one name rather a qualified name
 // "test.table" vs "test"."table"
-Sql.name('test.table', { capitalize: false, alwaysEnquote: true }).sql; //=> '"test.table"';
-Sql.name("'test'").sql; //=> `"'TEST'"`
-Sql.name('"test"."test2"').sql; //=> '"test"."test2"'
+Sql.ident("test.table", { capitalize: false, alwaysEnquote: true }).sql; //=> '"test.table"';
+Sql.ident("'test'").sql; //=> `"'TEST'"`
+Sql.ident('"test"."test2"').sql; //=> '"test"."test2"'
 ```
 
 #### `Sql.raw` function
@@ -498,14 +498,14 @@ Accepts a string and returns a SQL instance, useful if you want some part of the
 **Do not** accept raw user input to `raw`, this will create a SQL injection vulnerability!
 
 ```js
-Sql.raw('SELECT'); // equivalent to: sql`SELECT`
+Sql.raw("SELECT"); // equivalent to: sql`SELECT`
 ```
 
 ```js
-const input = 'devUsers';
+const input = "devUsers";
 const TABLES = new Map([
-  ['users', 'ENV.USERS'],
-  ['devUsers', 'DEV_ENV.USERS'],
+  ["users", "ENV.USERS"],
+  ["devUsers", "DEV_ENV.USERS"],
 ]);
 sql`SELECT * FROM ${Sql.raw(TABLES.get(input))}`; // equivalent to sql`SELECT * FROM DEV_ENV.USERS`
 ```
@@ -517,14 +517,14 @@ Accepts a string and returns a SQL instance, useful if you want some part of the
 **Do not** accept raw user input to `raw`, this will create a SQL injection vulnerability!
 
 ```js
-raw('SELECT'); // equivalent to: sql`SELECT`
+raw("SELECT"); // equivalent to: sql`SELECT`
 ```
 
 ```js
-const input = 'devUsers';
+const input = "devUsers";
 const TABLES = new Map([
-  ['users', 'ENV.USERS'],
-  ['devUsers', 'DEV_ENV.USERS'],
+  ["users", "ENV.USERS"],
+  ["devUsers", "DEV_ENV.USERS"],
 ]);
 sql`SELECT * FROM ${raw(TABLES.get(input))}`; // equivalent to sql`SELECT * FROM DEV_ENV.USERS`
 ```
@@ -564,7 +564,7 @@ function joinWhere(filters, useAndAfter = false) {
     filters = filters.concat(empty);
   }
   if (filters.length) {
-    return `WHERE ${join(filters.concat(empty), ' AND ')}`;
+    return `WHERE ${join(filters.concat(empty), " AND ")}`;
   }
 }
 const queries = [sql`one = ${1}`, sql`two = ${2}`, sql`three = ${3}`];
@@ -576,7 +576,7 @@ const result = sql`select * from table ${joinWhere(queries)} ORDER BY two`;
 The standalone `join` function takes the separator as the second argument, with `,` as the default separator
 
 ```js
-import { join } from 'oracle-helpers';
+import { join } from "oracle-helpers";
 
 const query = join([1, 2, 3]);
 
@@ -588,7 +588,7 @@ It can also be used to create dynamic SQL by joining multiple values together.
 
 ```js
 const queries = [sql`one = ${1}`, sql`two = ${2}`, sql`three = ${3}`];
-const filters = join(queries, ' AND ');
+const filters = join(queries, " AND ");
 const result = sql`select * from table ${
   filters === empty ? empty : sql`WHERE ${filters}`
 } ORDER BY two`;
@@ -624,7 +624,7 @@ You can use this to great effect when creating dynamic SQL.
  * great for ensuring short-circuiting behavior while still being more readable than nested ternaries directly
  */
 function sqlBool(sql: boolean | RawValue) {
-  return typeof sql === 'boolean' ? empty : sql;
+  return typeof sql === "boolean" ? empty : sql;
 }
 
 const isUpdate = false;
