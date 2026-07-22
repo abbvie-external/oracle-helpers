@@ -207,6 +207,16 @@ export class Sql {
       values: this.values,
     };
   }
+  /**
+   * Create raw SQL statement.
+   *
+   * This allows you to turn a variable directly into sql without making it a bind parameter.
+   *
+   * **Warning** This is dangerous and should only be used with trusted input or escaped input.
+   */
+  static raw(value: number | bigint | string | Sql): Sql {
+    return raw(value);
+  }
 }
 
 Object.defineProperty(Sql.prototype, 'values', { enumerable: true });
@@ -235,8 +245,12 @@ export function join(values: RawValue[], separator = ',') {
  *
  * **Warning** This is dangerous and should only be used with trusted input or escaped input.
  */
-export function raw(value: number | string | Sql) {
-  if (typeof value === 'string' || typeof value === 'number') {
+export function raw(value: number | bigint | string | Sql): Sql {
+  if (
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'bigint'
+  ) {
     return new Sql([`${value}`], []);
   }
   return value;

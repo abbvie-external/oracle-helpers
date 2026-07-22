@@ -184,6 +184,19 @@ where FIELD_ID = ${fieldId}`;
     },
   );
 
+  test('should support bigint values', (t: test.TestContext) => {
+    const bigIntValue = BigInt('12345678901234567890');
+    const query = sql`INSERT INTO test_table (bigint_column) VALUES (${bigIntValue})`;
+
+    t.assert.equal(
+      query.sql,
+      'INSERT INTO test_table (bigint_column) VALUES (:1)',
+    );
+    t.assert.deepStrictEqual(query.values, { 1: bigIntValue });
+
+    t.assert.equal(raw(bigIntValue).sql, `${bigIntValue}`);
+  });
+
   test(
     'should separate strings from numbers when caching',
     { concurrency: true },
