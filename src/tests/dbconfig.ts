@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
 import { ConnectionAttributes } from 'oracledb';
-import { Sql, raw, sql } from '../lib/sql.js';
+import { raw, Sql, sql } from '../lib/sql.js';
 import { isDBError } from '../lib/sqlHelpers.js';
 
 const myEnv = dotenv.config();

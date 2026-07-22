@@ -1,5 +1,5 @@
-import oracledb from 'oracledb';
 import type { BindDefinition } from 'oracledb';
+import oracledb from 'oracledb';
 import { Value } from './sql.js';
 
 const { BIND_IN, BUFFER, DATE, NUMBER, STRING } = oracledb;

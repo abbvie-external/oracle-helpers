@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/** biome-ignore-all lint/correctness/noUnusedVariables: They are unused as part of the test since this is about the types */
 import { describe, it } from 'node:test';
 import { Lob } from 'oracledb';
 import { ToDBType, ToOutBinds } from '../lib/sqlHelpers.js';

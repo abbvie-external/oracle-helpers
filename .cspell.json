@@ -33,7 +33,14 @@
     "transpiled",
     "typedoc",
     "typeof",
-    "untracked"
+    "untracked",
+    "enquote",
+    "enquoted",
+    "enquotes",
+    "enquoting",
+    "bigint",
+    "bigints",
+    "uppercasing"
   ],
   "flagWords": [],
   "ignorePaths": [

@@ -1,14 +1,14 @@
-import oracledb from 'oracledb';
 import type {
   BindParameters,
   Connection,
   ConnectionAttributes,
+  DBError,
   ExecuteManyOptions,
   ExecuteOptions,
   Result,
   Results,
-  DBError,
 } from 'oracledb';
+import oracledb from 'oracledb';
 import { getPoolConnection } from './pools.js';
 import { Sql } from './sql.js';
 
@@ -621,9 +621,9 @@ async function mutateManySqlPool<T>(
 
 export {
   getSql,
-  mutateSql,
-  mutateSqlPool,
   getSqlPool,
   mutateManySql,
   mutateManySqlPool,
+  mutateSql,
+  mutateSqlPool,
 };

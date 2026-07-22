@@ -1,10 +1,10 @@
-import oracledb from 'oracledb';
 import type {
   Connection,
   ConnectionAttributes,
   Pool,
   PoolAttributes,
 } from 'oracledb';
+import oracledb from 'oracledb';
 /**
  * Customize the way the pools works.
  */
@@ -214,7 +214,7 @@ export async function closePools(
         if (pool instanceof Promise) {
           try {
             pool = await pool;
-          } catch (error) {
+          } catch {
             // at this point, don't bother with a pool that failed to start!
             return undefined;
           }

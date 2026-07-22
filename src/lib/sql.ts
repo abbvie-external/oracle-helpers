@@ -1,4 +1,5 @@
 import type { BindParameter } from 'oracledb';
+import OracleDB from 'oracledb';
 
 /**
  * Provides the ability to Bind a parameter with a name that will be used
@@ -22,7 +23,14 @@ import type { BindParameter } from 'oracledb';
 export type BindWithName = BindParameter & { name: string };
 export type Value =
   // | Record<string, unknown>
-  BindParameter | BindWithName | string | number | Date | Buffer | null;
+  | BindParameter
+  | BindWithName
+  | string
+  | number
+  | bigint
+  | Date
+  | Buffer
+  | null;
 export type ValueArray = Value[] | Value;
 export type RawValue = Value | Sql | Value[];
 
@@ -182,10 +190,13 @@ export class Sql {
         (rows, [values, position]) => {
           if (Array.isArray(values)) {
             // values is an array of column values
-            values.forEach((value, index) => (rows[index][position] = value));
-            // rows.forEach((row,index))
+            values.forEach((value, index) => {
+              rows[index][position] = value;
+            });
           } else {
-            rows.forEach((row) => (row[position] = values));
+            rows.forEach((row) => {
+              row[position] = values;
+            });
           }
           return rows;
         },
@@ -206,6 +217,77 @@ export class Sql {
       sql: this.sql,
       values: this.values,
     };
+  }
+  /**
+   * This synchronous method returns the input value as a string that can safely be included in a SQL statement as a string literal.
+   *
+   * Embedded single quote characters are doubled. Non-string, non number values fail standard parameter validation.
+   *
+   * **NOTE** Requires > OracleDB@v7
+   * @param value — The value to be converted to a SQL string literal.
+   */
+  static literal(value: number | bigint | string | Sql): Sql {
+    if (
+      typeof value === 'string' ||
+      typeof value === 'number' ||
+      typeof value === 'bigint'
+    ) {
+      if ('enquoteLiteral' in OracleDB) {
+        return raw(OracleDB.enquoteLiteral(`${value}`));
+      } else {
+        throw new TypeError('OracleDB.enquoteLiteral is not available');
+      }
+    }
+    return value;
+  }
+  /**
+   * This synchronous method returns the input string as Sql validated to be a valid SQL identifier. If needed, it will be enclosed in double quotes to make it valid.
+   *
+   * Values will be enquoted if `alwaysEnquote` is `true`, or if its a simpleSqlName with `capitalize` `false` that doesn't include quotes. If a non quoted value is input with `capitalize` `false`, then even if its already a simpleSqlName, it will be enquoted to preserve the intended case.
+   *
+   * The default value of `capitalize` is `true`, so the input is converted to uppercase using locale-independent Unicode rules before quoting. Set capitalize to false to preserve case. Any input containing a double quote character is rejected.
+   *
+   * Uppercasing is done in the Node.js client and can differ from Oracle Database DBMS_ASSERT.ENQUOTE_NAME() behavior for some characters.
+   *
+   * **NOTE** Requires > OracleDB@v7
+   *
+   * @param name — The string to be quoted for identifier use.
+   */
+  static name(
+    name: string | Sql,
+    { capitalize = true, alwaysEnquote = false }: EnquoteNameOptions = {},
+  ): Sql {
+    if (typeof name === 'string') {
+      if ('enquoteName' in OracleDB) {
+        if (!alwaysEnquote) {
+          if (name.includes('.') && OracleDB.isQualifiedSqlName(name)) {
+            return raw(name);
+          }
+          if (
+            (capitalize || name.includes('"')) &&
+            OracleDB.isSimpleSqlName(name)
+          ) {
+            return raw(name);
+          }
+        }
+        return raw(OracleDB.enquoteName(`${name}`, capitalize));
+      } else {
+        throw new TypeError('OracleDB.enquoteName is not available');
+      }
+    }
+    return name;
+  }
+  /**
+   * Create raw SQL statement.
+   *
+   * This allows you to turn a variable directly into sql without making it a bind parameter.
+   *
+   * **Warning** This is dangerous and should only be used with trusted input or escaped input.
+   *
+   * Use `Sql.name` or `Sql.literal` instead whenever possible to ensure proper quoting and escaping.
+   */
+  static raw(value: number | bigint | string | Sql): Sql {
+    return raw(value);
   }
 }
 
@@ -234,12 +316,31 @@ export function join(values: RawValue[], separator = ',') {
  * This allows you to turn a variable directly into sql without making it a bind parameter.
  *
  * **Warning** This is dangerous and should only be used with trusted input or escaped input.
+ *
+ * Use `Sql.name` or `Sql.literal` instead whenever possible to ensure proper quoting and escaping.
  */
-export function raw(value: number | string | Sql) {
-  if (typeof value === 'string' || typeof value === 'number') {
+export function raw(value: number | bigint | string | Sql): Sql {
+  if (
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'bigint'
+  ) {
     return new Sql([`${value}`], []);
   }
   return value;
+}
+
+export interface EnquoteNameOptions {
+  /**
+   * Indicates whether the input string is converted to uppercase before quoting. The default is true.
+   * @default true
+   */
+  capitalize?: boolean;
+  /**
+   * If true, the input string will always be run through `oracledb.enquoteName` instead of checking if its a valid SQL identifier (simple or complex) first
+   * @default false
+   */
+  alwaysEnquote?: boolean;
 }
 
 /**
