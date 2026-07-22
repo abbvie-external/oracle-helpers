@@ -468,4 +468,25 @@ where FIELD_ID = ${fieldId}`;
       t.assert.throws(() => query.values, TypeError);
     },
   );
+  test('Sql.literal', { concurrency: true }, (t: test.TestContext) => {
+    const query = Sql.literal('test');
+    t.assert.equal(query.sql, "'test'");
+    t.assert.equal(Sql.literal("'test'").sql, "'''test'''");
+  });
+  test('Sql.name', { concurrency: true }, (t: test.TestContext) => {
+    t.assert.equal(Sql.name('test').sql, 'test');
+    t.assert.throws(() => Sql.name('"test"', { alwaysEnquote: true }).sql);
+    t.assert.equal(Sql.name('"test"', { alwaysEnquote: false }).sql, '"test"');
+    t.assert.equal(Sql.name('test', { capitalize: false }).sql, '"test"');
+    t.assert.equal(
+      Sql.name('test.table', { capitalize: false }).sql,
+      'test.table',
+    );
+    t.assert.equal(
+      Sql.name('test.table', { capitalize: false, alwaysEnquote: true }).sql,
+      '"test.table"',
+    );
+    t.assert.equal(Sql.name("'test'").sql, `"'TEST'"`);
+    t.assert.equal(Sql.name('"test"."test2"').sql, '"test"."test2"');
+  });
 });

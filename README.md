@@ -459,6 +459,76 @@ try {
 }
 ```
 
+### Static functions
+
+#### `Sql.literal` function
+
+Enquotes literals with single quotes if they are a string, otherwise passes numbers and bigints as literal Sql text directly. If a string already has single quotes, those are escaped by doubling them.
+
+```js
+Sql.literal('hi').sql; //=> "'hi'"
+Sql.literal("this is a 'test' value").sql; //=> "'this is a ''test'' value'"
+Sql.literal(3).sql; //=> "3"
+```
+
+#### `Sql.name` function
+
+Enquotes identifiers (names) with double quotes when they need to be.
+
+Values will be enquoted if `alwaysEnquote` is `true`, or if its a simpleSqlName with `capitalize` `false` that doesn't include quotes. If a non quoted value is input with `capitalize` `false`, then even if its already a simpleSqlName, it will be enquoted to preserve the intended case.
+
+Capitalize defaults to `true`, and `alwaysEnquote` defaults to `false`.
+
+```js
+Sql.name('test'); //=> 'test'
+Sql.name('"test"', { alwaysEnquote: false }).sql; //=> '"test"'
+Sql.name('test', { capitalize: false }).sql; //=> '"test"'
+Sql.name('test.table', { capitalize: false }).sql; //=> 'test.table'
+// Due to oracle's enquoteName function being designed around enquoting a simple name, this ends up becoming one name rather a qualified name
+// "test.table" vs "test"."table"
+Sql.name('test.table', { capitalize: false, alwaysEnquote: true }).sql; //=> '"test.table"';
+Sql.name("'test'").sql; //=> `"'TEST'"`
+Sql.name('"test"."test2"').sql; //=> '"test"."test2"'
+```
+
+#### `Sql.raw` function
+
+Accepts a string and returns a SQL instance, useful if you want some part of the SQL to be dynamic.
+
+**Do not** accept raw user input to `raw`, this will create a SQL injection vulnerability!
+
+```js
+Sql.raw('SELECT'); // equivalent to: sql`SELECT`
+```
+
+```js
+const input = 'devUsers';
+const TABLES = new Map([
+  ['users', 'ENV.USERS'],
+  ['devUsers', 'DEV_ENV.USERS'],
+]);
+sql`SELECT * FROM ${Sql.raw(TABLES.get(input))}`; // equivalent to sql`SELECT * FROM DEV_ENV.USERS`
+```
+
+### Raw
+
+Accepts a string and returns a SQL instance, useful if you want some part of the SQL to be dynamic.
+
+**Do not** accept raw user input to `raw`, this will create a SQL injection vulnerability!
+
+```js
+raw('SELECT'); // equivalent to: sql`SELECT`
+```
+
+```js
+const input = 'devUsers';
+const TABLES = new Map([
+  ['users', 'ENV.USERS'],
+  ['devUsers', 'DEV_ENV.USERS'],
+]);
+sql`SELECT * FROM ${raw(TABLES.get(input))}`; // equivalent to sql`SELECT * FROM DEV_ENV.USERS`
+```
+
 ### Join
 
 Accepts an array of values and returns an `Sql` instance with the values joined by a separator.
@@ -539,25 +609,6 @@ function joinWhere(filters, useAndAfter = false) {
 }
 const queries = [sql`one = ${1}`, sql`two = ${2}`, sql`three = ${3}`];
 const result = sql`select * from table ${joinWhere(queries)} ORDER BY two`;
-```
-
-### Raw
-
-Accepts a string and returns a SQL instance, useful if you want some part of the SQL to be dynamic.
-
-**Do not** accept raw user input to `raw`, this will create a SQL injection vulnerability!
-
-```js
-raw('SELECT'); // equivalent to: sql`SELECT`
-```
-
-```js
-const input = 'devUsers';
-const TABLES = new Map([
-  ['users', 'ENV.USERS'],
-  ['devUsers', 'DEV_ENV.USERS'],
-]);
-sql`SELECT * FROM ${raw(TABLES.get(input))}`; // equivalent to sql`SELECT * FROM DEV_ENV.USERS`
 ```
 
 ### Empty
