@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.4.5](https://github.com/abbvie-external/oracle-helpers/compare/v3.4.4...v3.4.5) (2026-07-22)
+
+
+### Bug Fixes
+
+* **deps:** support oracledb 7 ([0420036](https://github.com/abbvie-external/oracle-helpers/commit/042003622f2cb8d41dfacc79e0e8f692e15b2152))
+
 ### [3.4.4](https://github.com/abbvie-external/oracle-helpers/compare/v3.4.3...v3.4.4) (2025-12-11)
 
 
