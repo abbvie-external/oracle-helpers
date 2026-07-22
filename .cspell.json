@@ -35,6 +35,11 @@
     "typeof",
     "untracked",
     "enquote",
+    "enquoted",
+    "enquotes",
+    "enquoting",
+    "bigint",
+    "bigints",
     "uppercasing"
   ],
   "flagWords": [],

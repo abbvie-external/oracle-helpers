@@ -1,11 +1,11 @@
 import test, { after, before, describe } from 'node:test';
 import type { BindParameters, Connection } from 'oracledb';
 import OracleDB from 'oracledb';
-import { Value, join, sql } from '../lib/sql.js';
+import { join, sql, Value } from '../lib/sql.js';
 import {
-  Logger,
   getSql,
   isDBError,
+  Logger,
   mutateManySql,
   mutateSql,
   setSqlErrorLogger,

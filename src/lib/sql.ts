@@ -190,10 +190,13 @@ export class Sql {
         (rows, [values, position]) => {
           if (Array.isArray(values)) {
             // values is an array of column values
-            values.forEach((value, index) => (rows[index][position] = value));
-            // rows.forEach((row,index))
+            values.forEach((value, index) => {
+              rows[index][position] = value;
+            });
           } else {
-            rows.forEach((row) => (row[position] = values));
+            rows.forEach((row) => {
+              row[position] = values;
+            });
           }
           return rows;
         },
